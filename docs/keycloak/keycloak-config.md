@@ -190,7 +190,7 @@ docker-compose logs -f keycloak
 ### 2.1 Acceder a Admin Console
 1. Abrir navegador: `http://localhost:8080`
 2. Hacer clic en "Administration Console"
-3. Login: `admin` / `AdminSGD2024!`
+3. Login: `admin` / `keycloak`
 
 **¿Por qué este flujo?** Keycloak separa la interfaz de usuario (realm) de la consola administrativa por seguridad.
 
@@ -384,7 +384,7 @@ Admin URL: (vacío)
 **General Settings:**
 ```
 Client type: OpenID Connect
-Client ID: sgd-frontend
+Client ID: sgd-panel-frontend
 Name: SGD Frontend Web
 Description: NextJS Frontend para Sistema de Gestión Deportiva
 ```
@@ -438,7 +438,7 @@ Admin URL: (vacío)
 2. Copiar **Client secret**
 3. Guardar en archivo seguro: `BACKEND_CLIENT_SECRET=<valor>`
 
-**Para sgd-frontend:**
+**Para sgd-panel-frontend**
 1. Ir a **Clients → sgd-frontend → Credentials**  
 2. Copiar **Client secret**
 3. Guardar: `FRONTEND_CLIENT_SECRET=<valor>`
@@ -563,9 +563,9 @@ Los usuarios necesitarán estos atributos personalizados:
 - **full_name/phone**: Información adicional para la UI
 
 ### 6.2 Crear Protocol Mappers
-**Ir a: Clients → sgd-frontend → Client Scopes → sgd-frontend-dedicated → Mappers → Create Protocol Mapper**
+**Ir a: Clients → sgd-panel-frontend → Client Scopes → sgd-panel-frontend-dedicated → Mappers → Create Protocol Mapper**
 
-> **NOTA v26.3.2**: La interfaz de mappers ha sido reorganizada. Si no encuentras "sgd-frontend-dedicated", busca en **Client Scopes** en la navegación principal, luego selecciona el scope dedicado del client.
+> **NOTA v26.3.2**: La interfaz de mappers ha sido reorganizada. Si no encuentras "sgd-panel-frontend-dedicated", busca en **Client Scopes** en la navegación principal, luego selecciona el scope dedicado del client.
 
 **Mapper 1: club_id**
 ```
@@ -874,7 +874,7 @@ Crear archivo: `keycloak-checklist.md`
 
 ## ✅ Clients
 - [ ] sgd-backend: bearer-only, service accounts habilitado, Token Exchange habilitado
-- [ ] sgd-frontend: standard flow, client authentication, PAR habilitado
+- [ ] sgd-panel-frontend: standard flow, client authentication, PAR habilitado
 - [ ] Client secrets generados y guardados
 
 ## ✅ Roles  
