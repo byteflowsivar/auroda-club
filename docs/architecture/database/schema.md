@@ -271,6 +271,7 @@ erDiagram
 | `is_primary` | BOOLEAN | DEFAULT false | Tutor principal |
 | `active` | BOOLEAN | DEFAULT true | Relación activa |
 | `created_at` | TIMESTAMP | DEFAULT NOW() | Fecha de creación |
+| `updated_at` | TIMESTAMP | DEFAULT NOW() | Última actualización |
 
 **Constraints**:
 - `UNIQUE(athlete_id, guardian_id)` - Evita duplicados
