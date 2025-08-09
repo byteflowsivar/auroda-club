@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Header } from "./Header"
-import { Sidebar } from "./Sidebar"
+import { DashboardLayout } from "./DashboardLayout"
 import { AuthGuard } from "@/components/auth/AuthGuard"
 import { ROLES } from "@/lib/auth"
 
@@ -17,32 +15,10 @@ export function AppLayout({
   requireAuth = true, 
   allowedRoles = [ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB, ROLES.PROFESOR] 
 }: AppLayoutProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false)
-  }
-
   const layoutContent = (
-    <div className="app-grid">
-      <Header 
-        onMenuToggle={toggleMobileMenu} 
-        isMobileMenuOpen={isMobileMenuOpen}
-      />
-      <Sidebar 
-        isOpen={isMobileMenuOpen} 
-        onClose={closeMobileMenu}
-      />
-      <main className="app-main bg-background-secondary overflow-hidden">
-        <div className="h-full overflow-y-auto">
-          {children}
-        </div>
-      </main>
-    </div>
+    <DashboardLayout>
+      {children}
+    </DashboardLayout>
   )
 
   // Si no requiere autenticación, renderizar directamente
@@ -63,9 +39,11 @@ export function AppLayout({
  */
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppLayout allowedRoles={[ROLES.ADMIN_GENERAL]}>
-      {children}
-    </AppLayout>
+    <AuthGuard allowedRoles={[ROLES.ADMIN_GENERAL]}>
+      <DashboardLayout>
+        {children}
+      </DashboardLayout>
+    </AuthGuard>
   )
 }
 
@@ -74,9 +52,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
  */
 export function ClubAdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppLayout allowedRoles={[ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB]}>
-      {children}
-    </AppLayout>
+    <AuthGuard allowedRoles={[ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB]}>
+      <DashboardLayout>
+        {children}
+      </DashboardLayout>
+    </AuthGuard>
   )
 }
 
@@ -85,8 +65,10 @@ export function ClubAdminLayout({ children }: { children: React.ReactNode }) {
  */
 export function TeacherLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppLayout allowedRoles={[ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB, ROLES.PROFESOR]}>
-      {children}
-    </AppLayout>
+    <AuthGuard allowedRoles={[ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB, ROLES.PROFESOR]}>
+      <DashboardLayout>
+        {children}
+      </DashboardLayout>
+    </AuthGuard>
   )
 }

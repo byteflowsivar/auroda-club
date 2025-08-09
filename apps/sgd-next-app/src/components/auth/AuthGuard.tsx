@@ -1,8 +1,8 @@
 "use client"
 
-import { useSession } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { ReactNode, useEffect } from "react"
+import { ReactNode } from "react"
 import { hasAnyRole } from "@/lib/auth"
 import { Loader2, AlertTriangle, Lock } from "lucide-react"
 
@@ -10,43 +10,23 @@ interface AuthGuardProps {
   children: ReactNode
   allowedRoles?: string[]
   fallback?: ReactNode
-  redirectTo?: string
 }
 
 export function AuthGuard({ 
   children, 
   allowedRoles = [],
-  fallback,
-  redirectTo = "/auth/signin"
+  fallback
 }: AuthGuardProps) {
   const { data: session, status } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    // Si no hay sesión y no está cargando, redirigir al login
-    if (status === "unauthenticated") {
-      router.push(redirectTo)
-      return
-    }
-
-    // Si hay roles requeridos y el usuario no los tiene, redirigir a unauthorized
-    if (
-      session && 
-      allowedRoles.length > 0 && 
-      !hasAnyRole(session.user.roles, allowedRoles)
-    ) {
-      router.push("/unauthorized")
-      return
-    }
-  }, [session, status, allowedRoles, router, redirectTo])
 
   // Mostrar loading mientras se valida la sesión
   if (status === "loading") {
     return fallback || <LoadingScreen />
   }
 
-  // Si no hay sesión, no mostrar nada (ya se redirigió)
+  // Redirigir a Keycloak automáticamente si no está autenticado
   if (!session) {
+    signIn("keycloak")
     return fallback || <LoadingScreen />
   }
 

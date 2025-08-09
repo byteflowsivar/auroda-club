@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth"
 import { JWT } from "next-auth/jwt"
+import KeycloakProvider from "next-auth/providers/keycloak"
 
 // Extender los tipos de NextAuth para incluir nuestros campos personalizados
 declare module "next-auth" {
@@ -41,37 +42,22 @@ declare module "next-auth/jwt" {
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    {
-      id: "keycloak",
-      name: "Keycloak",
-      type: "oauth",
-      // Configuración manual de endpoints ya que wellKnown no está disponible
+    KeycloakProvider({
+      clientId: process.env.KEYCLOAK_ID!,
+      clientSecret: process.env.KEYCLOAK_SECRET!,
       issuer: process.env.KEYCLOAK_ISSUER,
-      authorization: {
-        url: `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
-        params: { 
-          scope: "openid email profile roles" 
-        } 
-      },
-      token: `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
-      userinfo: `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
-      jwks_uri: `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/certs`,
-      clientId: process.env.KEYCLOAK_CLIENT_ID,
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      idToken: true,
-      checks: ["state"], // Quitar PKCE para simplificar
-      profile(profile: Record<string, unknown>) {
+      profile(profile) {
         return {
-          id: profile.sub as string,
-          email: profile.email as string,
-          name: (profile.name || profile.preferred_username) as string,
-          roles: (profile.realm_access as { roles?: string[] })?.roles || [],
-          clubId: (profile.club_id as string) || null,
-          venueIds: (profile.venue_ids as string[]) || null,
-          sportIds: (profile.sport_ids as string[]) || null,
+          id: profile.sub,
+          email: profile.email,
+          name: profile.name || profile.preferred_username,
+          roles: profile.realm_access?.roles || [],
+          clubId: profile.club_id || null,
+          venueIds: profile.venue_ids || null,
+          sportIds: profile.sport_ids || null,
         }
       },
-    },
+    }),
   ],
   callbacks: {
     async jwt({ token, user, account }) {
