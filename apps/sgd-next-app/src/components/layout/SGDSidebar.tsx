@@ -141,7 +141,7 @@ const navigationData: NavigationItem[] = [
   },
 ]
 
-interface SGDSidebarProps extends React.ComponentProps<typeof Sidebar> {}
+type SGDSidebarProps = React.ComponentProps<typeof Sidebar>
 
 export function SGDSidebar({ ...props }: SGDSidebarProps) {
   const { data: session } = useSession()

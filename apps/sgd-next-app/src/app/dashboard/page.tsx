@@ -8,12 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, UserCheck, Trophy, MapPin, Calendar, AlertTriangle } from "lucide-react"
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Panel principal del Sistema de Gestión Deportiva con resumen de actividades, estadísticas y accesos rápidos.",
-}
 
 export default function DashboardPage() {
   const { data: session } = useSession()

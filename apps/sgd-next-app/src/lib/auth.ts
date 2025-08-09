@@ -9,6 +9,7 @@ declare module "next-auth" {
       id: string
       email?: string | null
       name?: string | null
+      image?: string | null
       roles: string[]
       clubId?: string | null
       venueIds?: string[] | null
@@ -51,7 +52,8 @@ export const authOptions: NextAuthOptions = {
           id: profile.sub,
           email: profile.email,
           name: profile.name || profile.preferred_username,
-          roles: profile.realm_access?.roles || [],
+          // Los roles se extraerán del JWT en el callback jwt()
+          roles: [],
           clubId: profile.club_id || null,
           venueIds: profile.venue_ids || null,
           sportIds: profile.sport_ids || null,
@@ -63,10 +65,25 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       // Guardar el token de acceso y refresh token cuando se inicia sesión
       if (account && user) {
+        // Decodificar el ID token para obtener los roles
+        let roles: string[] = []
+        if (account.access_token) {
+          try {
+            // Decodificar el JWT sin verificar (solo para extraer claims)
+            const base64Payload = account.access_token.split('.')[1]
+            const decodedPayload = JSON.parse(Buffer.from(base64Payload, 'base64').toString())
+            console.log('Decoded ID Token:', decodedPayload)
+            roles = decodedPayload.realm_access?.roles || []
+          } catch (error) {
+            console.error('Error decoding ID token:', error)
+            roles = []
+          }
+        }
+
         return {
           ...token,
           id: user.id,
-          roles: user.roles,
+          roles: roles,
           clubId: user.clubId,
           venueIds: user.venueIds,
           sportIds: user.sportIds,
