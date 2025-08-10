@@ -1,5 +1,5 @@
-import { NextAuthOptions } from "next-auth"
-import { JWT } from "next-auth/jwt"
+import {NextAuthOptions} from "next-auth"
+import {JWT} from "next-auth/jwt"
 import KeycloakProvider from "next-auth/providers/keycloak"
 
 // Extender los tipos de NextAuth para incluir nuestros campos personalizados

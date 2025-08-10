@@ -1,5 +1,5 @@
-import { AuthGuard } from "@/components/auth/auth-guard"
-import { ROLES } from "@/lib/auth"
+import {AuthGuard} from "@/components/auth/auth-guard"
+import {ROLES} from "@/lib/auth"
 
 export default function AdminLayout({
   children,

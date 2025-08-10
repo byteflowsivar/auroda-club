@@ -2,32 +2,30 @@
 
 import * as React from "react"
 import {
-  IconChartBar,
-  IconDashboard,
-  IconHelp,
-  IconInnerShadowTop,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-  IconUser,
-  IconUserCheck,
-  IconTrophy,
-  IconMapPin,
+    IconChartBar,
+    IconDashboard,
+    IconHelp,
+    IconInnerShadowTop,
+    IconMapPin,
+    IconReport,
+    IconSettings,
+    IconTrophy,
+    IconUser,
+    IconUserCheck,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import {NavDocuments} from "@/components/nav-documents"
+import {NavMain} from "@/components/nav-main"
+import {NavSecondary} from "@/components/nav-secondary"
+import {NavUser} from "@/components/nav-user"
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 const data = {

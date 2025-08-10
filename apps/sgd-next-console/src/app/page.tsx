@@ -1,11 +1,11 @@
 "use client"
 
-import { useSession, signOut } from "next-auth/react"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { LoginButton } from "@/components/auth/login-button"
-import { LoadingSpinner } from "@/components/auth/loading-spinner"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {signOut, useSession} from "next-auth/react"
+import {useEffect} from "react"
+import {useRouter} from "next/navigation"
+import {LoginButton} from "@/components/auth/login-button"
+import {LoadingSpinner} from "@/components/auth/loading-spinner"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 
 export default function HomePage() {
   const { data: session, status } = useSession()

@@ -1,35 +1,20 @@
 "use client"
 
-import {
-  IconDotsVertical,
-  IconLogout,
-  IconUserCircle,
-  IconShield,
-} from "@tabler/icons-react"
-import { useSession, signOut } from "next-auth/react"
+import {IconDotsVertical, IconLogout, IconShield, IconUserCircle,} from "@tabler/icons-react"
+import {signOut, useSession} from "next-auth/react"
 
+import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { Badge } from "@/components/ui/badge"
-import { LoadingSpinner } from "@/components/auth/loading-spinner"
+import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/components/ui/sidebar"
+import {Badge} from "@/components/ui/badge"
 
 export function NavUser() {
   const { data: session, status } = useSession()

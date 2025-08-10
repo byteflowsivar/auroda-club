@@ -1,16 +1,13 @@
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-import { AuthGuard } from "@/components/auth/auth-guard"
-import { ArrowLeft, MapPin, Plus } from "lucide-react"
-import { ROLES } from "@/lib/auth"
+import {AppSidebar} from "@/components/app-sidebar"
+import {SiteHeader} from "@/components/site-header"
+import {Button} from "@/components/ui/button"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
+import {AuthGuard} from "@/components/auth/auth-guard"
+import {ArrowLeft, MapPin, Plus} from "lucide-react"
+import {ROLES} from "@/lib/auth"
 import Link from "next/link"
 
 export default function VenuesConfigPage() {

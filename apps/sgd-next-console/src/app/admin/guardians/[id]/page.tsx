@@ -1,12 +1,9 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-import { ArrowLeft, UserCheck } from "lucide-react"
+import {AppSidebar} from "@/components/app-sidebar"
+import {SiteHeader} from "@/components/site-header"
+import {Button} from "@/components/ui/button"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
+import {ArrowLeft, UserCheck} from "lucide-react"
 import Link from "next/link"
 
 interface GuardianDetailPageProps {
