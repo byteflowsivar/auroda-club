@@ -1,6 +1,7 @@
 "use client"
 
-import {signOut, useSession} from "next-auth/react"
+import {useSession} from "next-auth/react"
+import {signOutCompletely} from "@/lib/auth"
 import {useEffect} from "react"
 import {useRouter} from "next/navigation"
 import {LoginButton} from "@/components/auth/login-button"
@@ -20,7 +21,7 @@ export default function HomePage() {
       } else {
         // Sesión inválida, forzar logout
         console.log("Invalid session detected on homepage, forcing logout")
-        signOut({ callbackUrl: "/" })
+        signOutCompletely()
       }
     }
   }, [session, status, router])

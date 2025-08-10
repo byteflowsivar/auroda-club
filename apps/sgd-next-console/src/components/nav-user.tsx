@@ -1,7 +1,8 @@
 "use client"
 
 import {IconDotsVertical, IconLogout, IconShield, IconUserCircle,} from "@tabler/icons-react"
-import {signOut, useSession} from "next-auth/react"
+import {useSession} from "next-auth/react"
+import {signOutCompletely} from "@/lib/auth"
 
 import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
 import {
@@ -59,7 +60,7 @@ export function NavUser() {
   }
 
   const handleLogout = () => {
-    signOut({ callbackUrl: "/" })
+    signOutCompletely()
   }
 
   return (

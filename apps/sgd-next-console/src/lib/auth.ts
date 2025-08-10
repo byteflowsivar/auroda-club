@@ -15,6 +15,7 @@ declare module "next-auth" {
             venueIds?: string[] | null
             sportIds?: string[] | null
         }
+        id_token?: string
     }
 
     interface User {
@@ -38,6 +39,7 @@ declare module "next-auth/jwt" {
         accessToken?: string
         refreshToken?: string
         accessTokenExpires?: number
+        idToken?: string
     }
 }
 
@@ -90,6 +92,7 @@ export const authOptions: NextAuthOptions = {
                     accessToken: account.access_token,
                     refreshToken: account.refresh_token,
                     accessTokenExpires: account.expires_at ? account.expires_at * 1000 : 0,
+                    idToken: account.id_token, // Guardar el ID token para logout
                 }
             }
 
@@ -129,7 +132,7 @@ export const authOptions: NextAuthOptions = {
                 throw new Error("Session invalidated due to incomplete token")
             }
 
-            // Enviar propiedades al cliente
+            // Enviar propiedades al cliente (sin id_token para reducir tamaño de cookie)
             return {
                 ...session,
                 user: {
@@ -140,6 +143,7 @@ export const authOptions: NextAuthOptions = {
                     venueIds: token.venueIds,
                     sportIds: token.sportIds,
                 },
+                // NO incluir id_token en la sesión del cliente para evitar cookies grandes
             }
         },
         async redirect({ url, baseUrl }) {
@@ -161,7 +165,22 @@ export const authOptions: NextAuthOptions = {
     },
     session: {
         strategy: "jwt",
-        maxAge: 1 * 24 * 60 * 60, // 1 días
+        maxAge: 1 * 24 * 60 * 60, // 1 día
+    },
+    cookies: {
+        sessionToken: {
+            name: process.env.NODE_ENV === 'production' 
+                ? '__Secure-next-auth.session-token' 
+                : 'next-auth.session-token',
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+                // Permitir chunking de cookies grandes
+                domain: process.env.NODE_ENV === 'production' ? '.yourdomain.com' : undefined,
+            }
+        }
     },
     debug: process.env.NODE_ENV === "development",
 }
@@ -258,6 +277,16 @@ export function hasAnyRole(userRoles: string[], allowedRoles: string[]): boolean
  */
 export function hasRole(userRoles: string[], role: string): boolean {
     return userRoles.includes(role)
+}
+
+/**
+ * Función helper para logout completo (NextAuth + Keycloak)
+ */
+export function signOutCompletely(): void {
+    if (typeof window !== 'undefined') {
+        // Redirigir directamente al endpoint que manejará limpieza de cookies y logout de Keycloak
+        window.location.href = '/api/auth/logout-keycloak'
+    }
 }
 
 /**

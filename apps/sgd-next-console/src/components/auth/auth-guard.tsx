@@ -1,6 +1,7 @@
 "use client"
 
-import {signOut, useSession} from "next-auth/react"
+import {useSession} from "next-auth/react"
+import {signOutCompletely} from "@/lib/auth"
 import {useRouter} from "next/navigation"
 import {useEffect} from "react"
 import {LoadingSpinner} from "./loading-spinner"
@@ -40,7 +41,7 @@ export function AuthGuard({
         // Validar que la sesión tenga los datos mínimos necesarios
         if (session && (!session.user || !session.user.id)) {
             console.log("Invalid session detected, forcing logout")
-            signOut({callbackUrl: "/"}).then()
+            signOutCompletely()
             return
         }
 
