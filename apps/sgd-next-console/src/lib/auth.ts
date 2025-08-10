@@ -290,6 +290,17 @@ export function signOutCompletely(): void {
 }
 
 /**
+ * Función helper para logout local únicamente (sin Keycloak)
+ * Útil cuando hay problemas de conectividad con Keycloak
+ */
+export function signOutLocalOnly(): void {
+    if (typeof window !== 'undefined') {
+        // Redirigir al endpoint de logout local únicamente
+        window.location.href = '/api/auth/logout-local'
+    }
+}
+
+/**
  * Tipos de roles del sistema
  */
 export const ROLES = {
