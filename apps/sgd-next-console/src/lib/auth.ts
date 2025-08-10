@@ -46,8 +46,8 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
     providers: [
         KeycloakProvider({
-            clientId: process.env.KEYCLOAK_ID!,
-            clientSecret: process.env.KEYCLOAK_SECRET!,
+            clientId: process.env.KEYCLOAK_CLIENT_ID!,
+            clientSecret: process.env.KEYCLOAK_CLIENT_SECRET!,
             issuer: process.env.KEYCLOAK_ISSUER,
             profile(profile) {
                 return {
@@ -203,7 +203,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         
         console.log("Refreshing access token...")
         console.log("URL:", url)
-        console.log("Client ID:", process.env.KEYCLOAK_ID)
+        console.log("Client ID:", process.env.KEYCLOAK_CLIENT_ID)
 
         const response = await fetch(url, {
             method: "POST",
@@ -211,8 +211,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             body: new URLSearchParams({
-                client_id: process.env.KEYCLOAK_ID!,
-                client_secret: process.env.KEYCLOAK_SECRET!,
+                client_id: process.env.KEYCLOAK_CLIENT_ID!,
+                client_secret: process.env.KEYCLOAK_CLIENT_SECRET!,
                 grant_type: "refresh_token",
                 refresh_token: token.refreshToken,
             }),

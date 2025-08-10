@@ -95,9 +95,10 @@ Dashboard → Atletas → Nuevo Atleta → Formulario + Tutores → Asociar Tuto
 #### **4. Logout del Sistema**
 ```
 Header → Cerrar Sesión → 
-signOut() de NextAuth → 
-Cleanup de tokens locales →
-Redirect a página pública
+signOutCompletely() → 
+/api/auth/logout-keycloak → 
+Cleanup cookies locales + Keycloak logout → 
+Redirect a home con sesión limpia
 ```
 
 **NOTA IMPORTANTE**: No hay pantallas de login custom en NextJS. Todo login se maneja vía Keycloak hosted pages con el tema configurado en el client.
@@ -138,12 +139,14 @@ La documentación de configuración de Keycloak está en https://next-auth.js.or
 ### 📱 Componentes Principales
 
 #### **Layout Components**
-- `<AppLayout />` - Layout principal con sidebar y header (solo para usuarios autenticados)
-- `<Sidebar />` - Navegación adaptada por rol
-- `<Header />` - Barra superior con usuario y botón logout
-- `<AuthGuard />` - Wrapper que protege rutas y redirige a Keycloak
-- `<LoadingSpinner />` - Estado mientras verifica autenticación
-- `<UnauthorizedAccess />` - Página para usuarios sin permisos
+- ✅ `<AppSidebar />` - Sidebar principal con navegación adaptada por rol
+- ✅ `<NavMain />` - Navegación principal con estado activo por ruta
+- ✅ `<NavUser />` - Información de usuario autenticado con roles y logout
+- ✅ `<NavSecondary />` - Navegación secundaria (configuración, ayuda)
+- ✅ `<NavDocuments />` - Accesos rápidos (estadísticas, deportes, sedes)
+- ✅ `<AuthGuard />` - Wrapper que protege rutas y redirige a Keycloak
+- ✅ `<LoadingSpinner />` - Estado mientras verifica autenticación
+- ❌ `<UnauthorizedAccess />` - Página para usuarios sin permisos
 
 #### **Form Components**
 - `<AthleteForm />` - Formulario de registro/edición de atletas
@@ -158,14 +161,21 @@ La documentación de configuración de Keycloak está en https://next-auth.js.or
 - `<StatsWidget />` - Widgets de estadísticas para dashboard
 
 #### **Utility Components**
-- `<LoginButton />` - Botón que redirige a Keycloak (no formulario local)
-- `<LogoutButton />` - Botón de cierre de sesión
-- `<AuthGuard />` - Protección de rutas con redirect automático
-- `<ConfirmDialog />` - Dialogs de confirmación
-- `<LoadingSpinner />` - Estados de carga
-- `<ErrorBoundary />` - Manejo de errores
-- `<Toast />` - Notificaciones al usuario
-- `<UnauthorizedAccess />` - Página de acceso denegado
+- ✅ `<LoginButton />` - Botón que redirige a Keycloak (no formulario local)
+- ✅ `<LogoutButton />` - Botón de cierre de sesión (deprecated)
+- ✅ `<AuthGuard />` - Protección de rutas con redirect automático
+- ✅ `<LoadingSpinner />` - Estados de carga
+- ❌ `<ConfirmDialog />` - Dialogs de confirmación  
+- ❌ `<ErrorBoundary />` - Manejo de errores
+- ❌ `<Toast />` - Notificaciones al usuario
+- ❌ `<UnauthorizedAccess />` - Página de acceso denegado
+
+#### **Auth & Security Components**
+- ✅ `<SessionProvider />` - Proveedor de contexto de sesión NextAuth
+- ✅ `signOutCompletely()` - Logout resiliente con Keycloak + local cleanup
+- ✅ `signOutLocalOnly()` - Logout de emergencia (solo local)
+- ✅ `/api/auth/logout-keycloak` - Endpoint logout completo con fallback
+- ✅ `/api/auth/logout-local` - Endpoint fallback para logout local únicamente
 
 
 ### 🚀 Performance Considerations
@@ -209,7 +219,7 @@ KEYCLOAK_ISSUER=http://localhost:8080/realms/SGD
 KEYCLOAK_CLIENT_ID=sgd-frontend
 KEYCLOAK_CLIENT_SECRET=your-frontend-secret
 
-NEXT_PUBLIC_API_URL=http://localhost:8081/api
+API_URL=http://localhost:8081/api
 ```
 
 ---
@@ -356,20 +366,24 @@ Estas rutas deben estar dentro de /app/[admin]/ para que sean accesibles solo po
    - `<ErrorBoundary>` - Manejo errores graceful
 
 ### 📈 Estimación de Progreso
-- **Estado actual**: ~40% completado (**FASE 1 COMPLETADA** ✅)
-- **Funcionalidad core faltante**: ~60% (solo componentes de negocio)
-- **Tiempo estimado**: 2-3 semanas para funcionalidad completa
-- **Próximos componentes críticos**: AthleteForm, AthleteTable, GuardianForm
+- **Estado actual**: ~50% completado (**FASE 1 + UX COMPLETADAS** ✅)
+- **Funcionalidad core faltante**: ~50% (componentes de negocio + integración API)
+- **Tiempo estimado**: 1-2 semanas para funcionalidad completa
+- **Próximos componentes críticos**: AthleteForm, AthleteTable, GuardianForm, API integration
 
 ### ✅ **FASE 1 COMPLETADA - FOUNDATION**
 - ✅ Configuración de entorno completa (.env.example)
-- ✅ SessionProvider implementado en layout raíz
+- ✅ SessionProvider implementado en layout raíz (/app/providers.tsx)
 - ✅ Componentes de autenticación: AuthGuard, LoadingSpinner, LoginButton, LogoutButton
 - ✅ Páginas de error: /auth/error, /unauthorized
 - ✅ Estructura completa de rutas protegidas /admin/* con placeholders
 - ✅ Protección por roles en rutas administrativas
-- ✅ **NUEVO**: Redirección automática al dashboard para usuarios autenticados
-- ✅ **NUEVO**: Callback URL configurado en NextAuth para redirigir a /admin/dashboard
+- ✅ Redirección automática al dashboard para usuarios autenticados
+- ✅ Callback URL configurado en NextAuth para redirigir a /admin/dashboard
+- ✅ **NUEVO**: Sistema de logout resiliente con limpieza garantizada de cookies
+- ✅ **NUEVO**: Navegación activa en sidebar con resaltado visual
+- ✅ **NUEVO**: NavUser component con información real del usuario autenticado
+- ✅ **NUEVO**: Manejo de cookies chunked y reducción de tamaño de sesión
 
 ### 🔧 **PROBLEMAS COMUNES Y SOLUCIONES**
 
@@ -422,10 +436,93 @@ Estas rutas deben estar dentro de /app/[admin]/ para que sean accesibles solo po
 
 **Variables requeridas en .env.local**:
 ```bash
-KEYCLOAK_ID=sgd-frontend
-KEYCLOAK_SECRET=your-frontend-secret
+KEYCLOAK_CLIENT_ID=sgd-frontend
+KEYCLOAK_CLIENT_SECRET=your-frontend-secret
 KEYCLOAK_ISSUER=http://localhost:8080/realms/SGD
 ```
+
+### 🔐 **SISTEMA DE LOGOUT RESILIENTE IMPLEMENTADO**
+
+#### **Estrategia "Fail-Safe" para Logout**
+La aplicación implementa un sistema de logout robusto que **SIEMPRE limpia la sesión local** independientemente de errores con Keycloak.
+
+#### **Endpoints de Logout**
+```bash
+# Logout completo (Keycloak + Local)
+GET /api/auth/logout-keycloak
+
+# Logout solo local (fallback)  
+GET /api/auth/logout-local
+
+# Logout forzado sin Keycloak
+GET /api/auth/logout-keycloak?force_local=true
+```
+
+#### **Funciones Helper**
+```typescript
+// Logout completo (recomendado)
+signOutCompletely() // Intenta Keycloak, fallback a local
+
+// Logout solo local (emergencia)
+signOutLocalOnly() // Solo limpia cookies locales
+```
+
+#### **Comportamiento por Escenario**
+
+| Escenario | Sesión Local | Sesión Keycloak | Resultado |
+|-----------|-------------|-----------------|-----------|
+| **✅ Todo funciona** | Limpiada | Limpiada | Logout perfecto |
+| **⚠️ Keycloak offline** | Limpiada | Puede quedar | Seguro para usuario |
+| **⚠️ Error de red** | Limpiada | Puede quedar | Seguro para usuario |
+| **⚠️ Config incorrecta** | Limpiada | Puede quedar | Seguro para usuario |
+| **⚠️ Token inválido** | Limpiada | Puede quedar | Seguro para usuario |
+
+#### **Flujo de Logout Resiliente**
+```
+Usuario → "Cerrar Sesión" → signOutCompletely() → /api/auth/logout-keycloak
+                                                           ↓
+                                                  [SIEMPRE limpia cookies]
+                                                           ↓
+                                        ¿Keycloak disponible?
+                                         ↙                ↘
+                                    ✅ SÍ                ❌ NO
+                                      ↓                   ↓
+                         Redirect a Keycloak logout    Fallback local
+                                      ↓                   ↓
+                              Keycloak cierra sesión  /api/auth/logout-local
+                                      ↓                   ↓
+                              Redirect a home ←──────────┘
+```
+
+#### **Cookies Limpiadas Automáticamente**
+```typescript
+// Cookies NextAuth principales
+'next-auth.session-token'
+'__Secure-next-auth.session-token'  
+'next-auth.csrf-token'
+'__Secure-next-auth.csrf-token'
+'next-auth.callback-url'
+
+// Cookies "chunked" (cuando sesión es muy grande)
+'next-auth.session-token.0'
+'next-auth.session-token.1'
+'next-auth.session-token.2'
+```
+
+#### **Principio "Fail-Safe" Aplicado**
+> **"Mejor una sesión zombie en Keycloak que una sesión local activa cuando el usuario cree que cerró sesión"**
+
+- ✅ **Seguridad**: Usuario nunca queda con sesión local activa tras logout
+- ✅ **UX consistente**: Siempre ve pantalla de login después del logout  
+- ✅ **Resiliente**: Funciona aunque Keycloak esté caído
+- ✅ **Debugging**: Logs claros distinguen errores reales vs comportamientos normales
+
+#### **Problemas de Cookie Chunking Solucionados**
+**Antes**: Cookie de sesión excedía 4096 bytes → Fragmentación automática en múltiples cookies
+**Ahora**: 
+- ✅ `id_token` solo se mantiene en JWT del servidor (no en cookie del cliente)
+- ✅ Cookie de sesión reducida significativamente  
+- ✅ Limpieza garantizada de cookies chunked en logout
 
 ### 🚀 **PRÓXIMA FASE: Implementación de Componentes de Negocio**
 Con la base sólida implementada, ahora se puede proceder con:
