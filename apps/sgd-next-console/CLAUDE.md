@@ -366,8 +366,10 @@ Estas rutas deben estar dentro de /app/[admin]/ para que sean accesibles solo po
 - ✅ SessionProvider implementado en layout raíz
 - ✅ Componentes de autenticación: AuthGuard, LoadingSpinner, LoginButton, LogoutButton
 - ✅ Páginas de error: /auth/error, /unauthorized
-- ✅ Estructura completa de rutas protegidas /[admin]/* con placeholders
+- ✅ Estructura completa de rutas protegidas /admin/* con placeholders
 - ✅ Protección por roles en rutas administrativas
+- ✅ **NUEVO**: Redirección automática al dashboard para usuarios autenticados
+- ✅ **NUEVO**: Callback URL configurado en NextAuth para redirigir a /admin/dashboard
 
 ### 🚀 **PRÓXIMA FASE: Implementación de Componentes de Negocio**
 Con la base sólida implementada, ahora se puede proceder con:

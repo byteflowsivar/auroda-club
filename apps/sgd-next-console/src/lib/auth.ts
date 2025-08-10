@@ -115,6 +115,18 @@ export const authOptions: NextAuthOptions = {
                 },
             }
         },
+        async redirect({ url, baseUrl }) {
+            // Si el usuario se autentica exitosamente, redirigir al dashboard
+            if (url === baseUrl || url === baseUrl + "/") {
+                return baseUrl + "/admin/dashboard"
+            }
+            // Si la URL está en el mismo dominio, permitir la redirección
+            if (url.startsWith(baseUrl)) {
+                return url
+            }
+            // Para URLs externas, redirigir al dashboard por seguridad
+            return baseUrl + "/admin/dashboard"
+        },
     },
     pages: {
         // No definir signIn para usar Keycloak hosted login directamente
