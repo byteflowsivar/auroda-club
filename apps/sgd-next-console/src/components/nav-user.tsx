@@ -1,12 +1,12 @@
 "use client"
 
 import {
-  IconCreditCard,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
   IconUserCircle,
+  IconShield,
 } from "@tabler/icons-react"
+import { useSession, signOut } from "next-auth/react"
 
 import {
   Avatar,
@@ -28,17 +28,54 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { Badge } from "@/components/ui/badge"
+import { LoadingSpinner } from "@/components/auth/loading-spinner"
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
+export function NavUser() {
+  const { data: session, status } = useSession()
   const { isMobile } = useSidebar()
+
+  // Mostrar spinner si está cargando
+  if (status === "loading") {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <div className="flex items-center justify-center h-12">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+          </div>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
+
+  // Si no hay sesión, no mostrar nada
+  if (status === "unauthenticated" || !session?.user) {
+    return null
+  }
+
+  const user = session.user
+  
+  // Generar iniciales del nombre para avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  // Obtener rol principal para mostrar
+  const getPrimaryRole = (roles: string[]) => {
+    if (roles.includes("ADMIN_GENERAL")) return "Admin General"
+    if (roles.includes("ADMIN_CLUB")) return "Admin Club"
+    if (roles.includes("PROFESOR")) return "Profesor"
+    return "Usuario"
+  }
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" })
+  }
 
   return (
     <SidebarMenu>
@@ -49,14 +86,18 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={user.image || ""} alt={user.name || "Usuario"} />
+                <AvatarFallback className="rounded-lg">
+                  {user.name ? getInitials(user.name) : "U"}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">
+                  {user.name || "Usuario"}
+                </span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {user.email || "Sin email"}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
@@ -71,36 +112,52 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user.image || ""} alt={user.name || "Usuario"} />
+                  <AvatarFallback className="rounded-lg">
+                    {user.name ? getInitials(user.name) : "U"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">
+                    {user.name || "Usuario"}
+                  </span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {user.email}
+                    {user.email || "Sin email"}
                   </span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            
+            {/* Información de roles */}
+            {user.roles && user.roles.length > 0 && (
+              <>
+                <DropdownMenuLabel className="px-2 py-1.5 text-xs font-normal text-muted-foreground">
+                  Rol actual
+                </DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem className="cursor-default">
+                    <IconShield className="mr-2 h-4 w-4" />
+                    <span>{getPrimaryRole(user.roles)}</span>
+                    <Badge variant="secondary" className="ml-auto text-xs">
+                      {user.roles.length > 1 ? `+${user.roles.length - 1}` : ''}
+                    </Badge>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+              </>
+            )}
+
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
+                <IconUserCircle className="mr-2 h-4 w-4" />
+                Mi Perfil
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconLogout />
-              Log out
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50">
+              <IconLogout className="mr-2 h-4 w-4" />
+              Cerrar Sesión
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

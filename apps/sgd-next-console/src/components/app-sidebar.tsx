@@ -2,21 +2,18 @@
 
 import * as React from "react"
 import {
-  IconCamera,
   IconChartBar,
   IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
   IconUsers,
+  IconUser,
+  IconUserCheck,
+  IconTrophy,
+  IconMapPin,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -34,118 +31,79 @@ import {
 } from "@/components/ui/sidebar"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/admin/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
+      title: "Atletas",
+      url: "/admin/athletes",
+      icon: IconUser,
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: "Todos los atletas",
+          url: "/admin/athletes",
         },
         {
-          title: "Archived",
-          url: "#",
+          title: "Nuevo atleta",
+          url: "/admin/athletes/new",
         },
       ],
     },
     {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      title: "Tutores",
+      url: "/admin/guardians",
+      icon: IconUserCheck,
     },
     {
-      title: "Prompts",
-      icon: IconFileAi,
+      title: "Reportes",
       url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      icon: IconReport,
     },
   ],
   navSecondary: [
     {
-      title: "Settings",
-      url: "#",
+      title: "Configuración",
+      url: "/admin/config",
       icon: IconSettings,
+      items: [
+        {
+          title: "General",
+          url: "/admin/config",
+        },
+        {
+          title: "Deportes",
+          url: "/admin/config/sports",
+        },
+        {
+          title: "Sedes",
+          url: "/admin/config/venues",
+        },
+      ],
     },
     {
-      title: "Get Help",
+      title: "Ayuda",
       url: "#",
       icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
     },
   ],
   documents: [
     {
-      name: "Data Library",
+      name: "Estadísticas",
       url: "#",
-      icon: IconDatabase,
+      icon: IconChartBar,
     },
     {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
+      name: "Deportes",
+      url: "/admin/config/sports",
+      icon: IconTrophy,
     },
     {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
+      name: "Sedes",
+      url: "/admin/config/venues",
+      icon: IconMapPin,
     },
   ],
 }
@@ -160,9 +118,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <a href="/admin/dashboard">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">SGD Console</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -174,7 +132,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )
