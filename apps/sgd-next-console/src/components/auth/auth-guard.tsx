@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { LoadingSpinner } from "./loading-spinner"
@@ -23,9 +23,24 @@ export function AuthGuard({
   useEffect(() => {
     if (status === "loading") return
 
-    // Si no está autenticado, redirigir al login de Keycloak
+    // Si no está autenticado, redirigir al login
     if (status === "unauthenticated") {
+      console.log("User not authenticated, redirecting to login")
       router.push("/api/auth/signin")
+      return
+    }
+
+    // Si la sesión tiene error de refresh token, forzar logout y redirigir
+    if (session && 'error' in session && session.error === "RefreshAccessTokenError") {
+      console.log("Refresh token error detected, forcing logout")
+      signOut({ callbackUrl: "/api/auth/signin" })
+      return
+    }
+
+    // Validar que la sesión tenga los datos mínimos necesarios
+    if (session && (!session.user || !session.user.id)) {
+      console.log("Invalid session detected, forcing logout")
+      signOut({ callbackUrl: "/api/auth/signin" })
       return
     }
 
@@ -33,6 +48,7 @@ export function AuthGuard({
     if (session && requiredRoles.length > 0) {
       const userRoles = session.user.roles || []
       if (!hasAnyRole(userRoles, requiredRoles)) {
+        console.log("User doesn't have required roles, redirecting to unauthorized")
         router.push("/unauthorized")
         return
       }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { LoginButton } from "@/components/auth/login-button"
@@ -12,9 +12,16 @@ export default function HomePage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Si está autenticado, redirigir al dashboard
+    // Si está autenticado con sesión válida, redirigir al dashboard
     if (status === "authenticated" && session) {
-      router.push("/admin/dashboard")
+      // Validar que la sesión tenga datos válidos
+      if (session.user && session.user.id && !('error' in session)) {
+        router.push("/admin/dashboard")
+      } else {
+        // Sesión inválida, forzar logout
+        console.log("Invalid session detected on homepage, forcing logout")
+        signOut({ callbackUrl: "/" })
+      }
     }
   }, [session, status, router])
 

@@ -371,6 +371,62 @@ Estas rutas deben estar dentro de /app/[admin]/ para que sean accesibles solo po
 - ✅ **NUEVO**: Redirección automática al dashboard para usuarios autenticados
 - ✅ **NUEVO**: Callback URL configurado en NextAuth para redirigir a /admin/dashboard
 
+### 🔧 **PROBLEMAS COMUNES Y SOLUCIONES**
+
+#### **Error de Refresh Token: "invalid_client"**
+**Problema**: Error al refrescar tokens: `Invalid client or Invalid client credentials`
+
+**Causa**: Inconsistencia en variables de entorno entre la configuración del provider y la función refresh.
+
+**Solución aplicada**:
+1. ✅ **Variables de entorno consistentes**: Usar `KEYCLOAK_ID` y `KEYCLOAK_SECRET` en toda la aplicación
+2. ✅ **Función refreshAccessToken mejorada**: 
+   - Validación de refresh token antes de hacer la petición
+   - Logging inteligente (distingue errores reales vs comportamientos normales)
+   - Manejo robusto de errores
+3. ✅ **AuthGuard actualizado**: Detecta errores de refresh y redirige al login automáticamente
+4. ✅ **JWT callback mejorado**: Maneja fallos de refresh y limpia sesiones corruptas
+
+#### **"Session not active" - COMPORTAMIENTO NORMAL**
+**Mensaje**: `invalid_grant: Session not active` en refresh token
+
+**❗ ESTO NO ES UN ERROR** - Es el comportamiento de seguridad normal de Keycloak:
+
+1. **¿Cuándo ocurre?**
+   - Sesión de Keycloak expira (configurada en realm settings)
+   - Usuario inactivo por tiempo prolongado
+   - Administrador invalida sesiones manualmente
+
+2. **¿Qué hace el sistema?**
+   - ✅ Detecta automáticamente la expiración
+   - ✅ Logs informativos (no como error)
+   - ✅ **NUEVO**: Limpia cookies de sesión automáticamente
+   - ✅ **NUEVO**: Fuerza `signOut()` para destruir sesión local
+   - ✅ Redirige al usuario al login de Keycloak
+   - ✅ Usuario se re-autentica y continúa trabajando
+
+3. **Flujo temporal típico:**
+   ```
+   Access Token: 15 minutos → Se refresca automáticamente
+   Sesión Keycloak: 30 minutos → Require re-autenticación
+   ```
+
+#### **SOLUCIÓN FINAL IMPLEMENTADA**
+**Problema anterior**: Cookies de sesión no se limpiaban al expirar tokens, usuario seguía viendo dashboard con sesión inválida.
+
+**✅ Correcciones aplicadas**:
+1. **Callback `session` mejorado**: Lanza error cuando token es inválido, forzando a NextAuth a invalidar la sesión
+2. **AuthGuard con `signOut()` forzado**: Detecta sesiones inválidas y ejecuta logout automático
+3. **Homepage inteligente**: Valida sesiones antes de redireccionar al dashboard
+4. **Limpieza completa**: Cookies y estado local se destruyen automáticamente
+
+**Variables requeridas en .env.local**:
+```bash
+KEYCLOAK_ID=sgd-frontend
+KEYCLOAK_SECRET=your-frontend-secret
+KEYCLOAK_ISSUER=http://localhost:8080/realms/SGD
+```
+
 ### 🚀 **PRÓXIMA FASE: Implementación de Componentes de Negocio**
 Con la base sólida implementada, ahora se puede proceder con:
 1. Formularios (AthleteForm, GuardianForm) 

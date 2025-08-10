@@ -99,16 +99,43 @@ export const authOptions: NextAuthOptions = {
             }
 
             // Token de acceso ha expirado, intentar refrescarlo
-            return refreshAccessToken(token)
+            const refreshedToken = await refreshAccessToken(token)
+            
+            // Si el refresh falló, limpiar la sesión
+            if (refreshedToken.error === "RefreshAccessTokenError") {
+                console.log("Token refresh failed - initiating re-authentication flow")
+                // Retornar token vacío para forzar re-autenticación
+                return {
+                    ...token,
+                    accessToken: undefined,
+                    refreshToken: undefined,
+                    accessTokenExpires: 0,
+                    error: "RefreshAccessTokenError",
+                }
+            }
+            
+            return refreshedToken
         },
         async session({ session, token }) {
+            // Si el token tiene error de refresh, no devolver sesión válida
+            if (token.error === "RefreshAccessTokenError") {
+                console.log("Session callback detected invalid token - session will be invalidated")
+                throw new Error("Session invalidated due to refresh token failure")
+            }
+
+            // Validar que el token tenga los datos mínimos necesarios
+            if (!token.accessToken || !token.id) {
+                console.log("Session callback detected incomplete token - session will be invalidated")
+                throw new Error("Session invalidated due to incomplete token")
+            }
+
             // Enviar propiedades al cliente
             return {
                 ...session,
                 user: {
                     ...session.user,
                     id: token.id,
-                    roles: token.roles,
+                    roles: token.roles || [],
                     clubId: token.clubId,
                     venueIds: token.venueIds,
                     sportIds: token.sportIds,
@@ -144,7 +171,20 @@ export const authOptions: NextAuthOptions = {
  */
 async function refreshAccessToken(token: JWT): Promise<JWT> {
     try {
+        // Validar que existe el refresh token
+        if (!token.refreshToken) {
+            console.error("No refresh token available")
+            return {
+                ...token,
+                error: "RefreshAccessTokenError",
+            }
+        }
+
         const url = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`
+        
+        console.log("Refreshing access token...")
+        console.log("URL:", url)
+        console.log("Client ID:", process.env.KEYCLOAK_ID)
 
         const response = await fetch(url, {
             method: "POST",
@@ -152,27 +192,52 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             body: new URLSearchParams({
-                client_id: process.env.KEYCLOAK_CLIENT_ID!,
-                client_secret: process.env.KEYCLOAK_CLIENT_SECRET!,
+                client_id: process.env.KEYCLOAK_ID!,
+                client_secret: process.env.KEYCLOAK_SECRET!,
                 grant_type: "refresh_token",
-                refresh_token: token.refreshToken!,
+                refresh_token: token.refreshToken,
             }),
         })
 
         const refreshedTokens = await response.json()
 
         if (!response.ok) {
+            // Distinguir entre errores normales y problemas de configuración
+            if (refreshedTokens.error === 'invalid_grant' && 
+                refreshedTokens.error_description?.includes('Session not active')) {
+                console.log("Session expired naturally - user needs to re-authenticate")
+            } else if (refreshedTokens.error === 'invalid_client') {
+                console.error("CONFIGURATION ERROR - Check Keycloak client credentials:", {
+                    status: response.status,
+                    error: refreshedTokens
+                })
+            } else {
+                console.warn("Token refresh failed:", {
+                    status: response.status,
+                    statusText: response.statusText,
+                    error: refreshedTokens
+                })
+            }
             throw refreshedTokens
         }
+
+        console.log("Token refreshed successfully")
 
         return {
             ...token,
             accessToken: refreshedTokens.access_token,
             accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
             refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Usar nuevo refresh token si existe
+            error: undefined, // Limpiar error previo si existía
         }
-    } catch (error) {
-        console.error("Error refreshing access token:", error)
+    } catch (error: unknown) {
+        // No mostrar como error si es expiración natural de sesión
+        const errorObj = error as { error?: string; error_description?: string }
+        if (errorObj?.error === 'invalid_grant' && errorObj?.error_description?.includes('Session not active')) {
+            console.log("Natural session expiration - redirecting to login")
+        } else {
+            console.error("Error refreshing access token:", error)
+        }
 
         return {
             ...token,
