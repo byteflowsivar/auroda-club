@@ -1,9 +1,9 @@
-import {AppSidebar} from "@/components/app-sidebar"
-import {SiteHeader} from "@/components/site-header"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
-import {ArrowLeft, Edit, User} from "lucide-react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
+import { ArrowLeft, Edit, User } from "lucide-react"
 import Link from "next/link"
 
 interface AthleteDetailPageProps {
@@ -21,15 +21,15 @@ export default async function AthleteDetailPage({ params }: AthleteDetailPagePro
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset"/>
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader/>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="outline" size="icon" asChild>
                 <Link href="/admin/athletes">
-                  <ArrowLeft className="h-4 w-4" />
+                  <ArrowLeft className="h-4 w-4"/>
                 </Link>
               </Button>
               <div>
@@ -41,17 +41,17 @@ export default async function AthleteDetailPage({ params }: AthleteDetailPagePro
             </div>
             <Button asChild>
               <Link href={`/admin/athletes/${id}/edit`}>
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className="mr-2 h-4 w-4"/>
                 Editar
               </Link>
             </Button>
           </div>
-          
+
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
+                  <User className="h-5 w-5"/>
                   Información Personal
                 </CardTitle>
               </CardHeader>

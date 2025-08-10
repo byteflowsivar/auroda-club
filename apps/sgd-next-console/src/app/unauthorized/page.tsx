@@ -1,6 +1,6 @@
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import {ArrowLeft, Shield} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft, Shield } from "lucide-react"
 import Link from "next/link"
 
 export default function UnauthorizedPage() {
@@ -9,7 +9,7 @@ export default function UnauthorizedPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-            <Shield className="h-8 w-8 text-destructive" />
+            <Shield className="h-8 w-8 text-destructive"/>
           </div>
           <CardTitle className="text-2xl">Acceso Denegado</CardTitle>
           <CardDescription>
@@ -25,7 +25,7 @@ export default function UnauthorizedPage() {
           <div className="flex flex-col gap-2">
             <Button asChild className="w-full">
               <Link href="/admin/dashboard">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <ArrowLeft className="mr-2 h-4 w-4"/>
                 Volver al Dashboard
               </Link>
             </Button>

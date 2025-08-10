@@ -1,12 +1,12 @@
 "use client"
 
-import {useSession} from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { signOutCompletely } from "@/lib/auth-utils"
-import {useEffect} from "react"
-import {useRouter} from "next/navigation"
-import {LoginButton} from "@/components/auth/login-button"
-import {LoadingSpinner} from "@/components/auth/loading-spinner"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { LoginButton } from "@/components/auth/login-button"
+import { LoadingSpinner } from "@/components/auth/loading-spinner"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
@@ -24,16 +24,16 @@ export default function HomePage() {
         signOutCompletely()
       }
     }
-  }, [session, status, router])
+  }, [ session, status, router ])
 
   // Mostrar loading mientras verifica la sesión
   if (status === "loading") {
-    return <LoadingSpinner />
+    return <LoadingSpinner/>
   }
 
   // Si está autenticado, mostrar loading mientras redirecciona
   if (status === "authenticated") {
-    return <LoadingSpinner />
+    return <LoadingSpinner/>
   }
 
   // Si no está autenticado, mostrar página de login
@@ -54,7 +54,7 @@ export default function HomePage() {
               Para acceder al sistema, inicia sesión con tus credenciales de Keycloak.
             </p>
           </div>
-          <LoginButton className="w-full" />
+          <LoginButton className="w-full"/>
         </CardContent>
       </Card>
     </div>

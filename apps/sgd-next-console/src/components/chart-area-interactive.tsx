@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import {Area, AreaChart, CartesianGrid, XAxis} from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
-import {useIsMobile} from "@/hooks/use-mobile"
-import {Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select"
-import {ToggleGroup, ToggleGroupItem,} from "@/components/ui/toggle-group"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, } from "@/components/ui/chart"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select"
+import { ToggleGroup, ToggleGroupItem, } from "@/components/ui/toggle-group"
 
 export const description = "An interactive area chart"
 
@@ -121,13 +121,13 @@ const chartConfig = {
 
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("90d")
+  const [ timeRange, setTimeRange ] = React.useState("90d")
 
   React.useEffect(() => {
     if (isMobile) {
       setTimeRange("7d")
     }
-  }, [isMobile])
+  }, [ isMobile ])
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
@@ -171,7 +171,7 @@ export function ChartAreaInteractive() {
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder="Last 3 months" />
+              <SelectValue placeholder="Last 3 months"/>
             </SelectTrigger>
             <SelectContent className="rounded-xl">
               <SelectItem value="90d" className="rounded-lg">
@@ -219,7 +219,7 @@ export function ChartAreaInteractive() {
                 />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false}/>
             <XAxis
               dataKey="date"
               tickLine={false}

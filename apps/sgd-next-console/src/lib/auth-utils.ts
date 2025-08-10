@@ -20,7 +20,7 @@ export function hasRole(userRoles: string[], role: string): boolean {
  */
 export function getPrimaryRole(roles: string[]): string {
   if (roles.includes(ROLES.ADMIN_GENERAL)) return "Admin General"
-  if (roles.includes(ROLES.ADMIN_CLUB)) return "Admin Club"  
+  if (roles.includes(ROLES.ADMIN_CLUB)) return "Admin Club"
   if (roles.includes(ROLES.PROFESOR)) return "Profesor"
   return "Usuario"
 }

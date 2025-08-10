@@ -1,9 +1,9 @@
-import {AppSidebar} from "@/components/app-sidebar"
-import {SiteHeader} from "@/components/site-header"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
-import {ArrowLeft, UserCheck} from "lucide-react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
+import { ArrowLeft, UserCheck } from "lucide-react"
 import Link from "next/link"
 
 interface GuardianDetailPageProps {
@@ -21,14 +21,14 @@ export default async function GuardianDetailPage({ params }: GuardianDetailPageP
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset"/>
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader/>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild>
               <Link href="/admin/guardians">
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4"/>
               </Link>
             </Button>
             <div>
@@ -38,12 +38,12 @@ export default async function GuardianDetailPage({ params }: GuardianDetailPageP
               </p>
             </div>
           </div>
-          
+
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <UserCheck className="h-5 w-5" />
+                  <UserCheck className="h-5 w-5"/>
                   Información del Tutor
                 </CardTitle>
               </CardHeader>

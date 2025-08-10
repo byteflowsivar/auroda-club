@@ -1,21 +1,21 @@
 "use client"
 
-import {IconDotsVertical, IconLogout, IconShield, IconUserCircle,} from "@tabler/icons-react"
-import {useSession} from "next-auth/react"
-import { signOutCompletely, getPrimaryRole, getInitials } from "@/lib/auth-utils"
+import { IconDotsVertical, IconLogout, IconShield, IconUserCircle, } from "@tabler/icons-react"
+import { useSession } from "next-auth/react"
+import { getInitials, getPrimaryRole, signOutCompletely } from "@/lib/auth-utils"
 
-import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/components/ui/sidebar"
-import {Badge} from "@/components/ui/badge"
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from "@/components/ui/sidebar"
+import { Badge } from "@/components/ui/badge"
 
 export function NavUser() {
   const { data: session, status } = useSession()
@@ -40,7 +40,7 @@ export function NavUser() {
   }
 
   const user = session.user
-  
+
   // Las funciones getInitials y getPrimaryRole están ahora importadas de auth-utils
 
   const handleLogout = () => {
@@ -57,7 +57,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.image || ""} alt={user.name || "Usuario"} />
+                <AvatarImage src={user.image || ""} alt={user.name || "Usuario"}/>
                 <AvatarFallback className="rounded-lg">
                   {user.name ? getInitials(user.name) : "U"}
                 </AvatarFallback>
@@ -70,7 +70,7 @@ export function NavUser() {
                   {user.email || "Sin email"}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              <IconDotsVertical className="ml-auto size-4"/>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -82,7 +82,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.image || ""} alt={user.name || "Usuario"} />
+                  <AvatarImage src={user.image || ""} alt={user.name || "Usuario"}/>
                   <AvatarFallback className="rounded-lg">
                     {user.name ? getInitials(user.name) : "U"}
                   </AvatarFallback>
@@ -97,8 +97,8 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            
+            <DropdownMenuSeparator/>
+
             {/* Información de roles */}
             {user.roles && user.roles.length > 0 && (
               <>
@@ -107,26 +107,26 @@ export function NavUser() {
                 </DropdownMenuLabel>
                 <DropdownMenuGroup>
                   <DropdownMenuItem className="cursor-default">
-                    <IconShield className="mr-2 h-4 w-4" />
+                    <IconShield className="mr-2 h-4 w-4"/>
                     <span>{getPrimaryRole(user.roles)}</span>
                     <Badge variant="secondary" className="ml-auto text-xs">
                       {user.roles.length > 1 ? `+${user.roles.length - 1}` : ''}
                     </Badge>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator/>
               </>
             )}
 
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <IconUserCircle className="mr-2 h-4 w-4" />
+                <IconUserCircle className="mr-2 h-4 w-4"/>
                 Mi Perfil
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator/>
             <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50">
-              <IconLogout className="mr-2 h-4 w-4" />
+              <IconLogout className="mr-2 h-4 w-4"/>
               Cerrar Sesión
             </DropdownMenuItem>
           </DropdownMenuContent>

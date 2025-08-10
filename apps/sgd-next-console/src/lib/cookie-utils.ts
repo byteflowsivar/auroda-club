@@ -46,13 +46,17 @@ export function getClearCookieSettings(): CookieSetting[] {
  * Aplica configuración de cookies a una respuesta NextResponse
  */
 export function applyCookieSettings(
-  response: { cookies: { set: (name: string, value: string, options: {
-    expires?: Date
-    path?: string
-    httpOnly?: boolean
-    secure?: boolean
-    sameSite?: 'lax' | 'strict' | 'none'
-  }) => void } },
+  response: {
+    cookies: {
+      set: (name: string, value: string, options: {
+        expires?: Date
+        path?: string
+        httpOnly?: boolean
+        secure?: boolean
+        sameSite?: 'lax' | 'strict' | 'none'
+      }) => void
+    }
+  },
   cookieSettings: CookieSetting[]
 ): void {
   cookieSettings.forEach(cookie => {

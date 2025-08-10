@@ -1,7 +1,7 @@
 "use client"
 
-import {signOut} from "next-auth/react"
-import {Button} from "@/components/ui/button"
+import { signOut } from "next-auth/react"
+import { Button } from "@/components/ui/button"
 
 interface LogoutButtonProps {
   className?: string
@@ -9,13 +9,13 @@ interface LogoutButtonProps {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
 }
 
-export function LogoutButton({ 
-  className, 
-  children, 
-  variant = "outline" 
-}: LogoutButtonProps) {
+export function LogoutButton({
+                               className,
+                               children,
+                               variant = "outline"
+                             }: LogoutButtonProps) {
   return (
-    <Button 
+    <Button
       onClick={() => signOut()}
       variant={variant}
       className={className}

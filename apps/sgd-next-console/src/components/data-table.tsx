@@ -2,81 +2,81 @@
 
 import * as React from "react"
 import {
-    closestCenter,
-    DndContext,
-    type DragEndEvent,
-    KeyboardSensor,
-    MouseSensor,
-    TouchSensor,
-    type UniqueIdentifier,
-    useSensor,
-    useSensors,
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  type UniqueIdentifier,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core"
-import {restrictToVerticalAxis} from "@dnd-kit/modifiers"
-import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy,} from "@dnd-kit/sortable"
-import {CSS} from "@dnd-kit/utilities"
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy, } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import {
-    IconChevronDown,
-    IconChevronLeft,
-    IconChevronRight,
-    IconChevronsLeft,
-    IconChevronsRight,
-    IconCircleCheckFilled,
-    IconDotsVertical,
-    IconGripVertical,
-    IconLayoutColumns,
-    IconLoader,
-    IconPlus,
-    IconTrendingUp,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconCircleCheckFilled,
+  IconDotsVertical,
+  IconGripVertical,
+  IconLayoutColumns,
+  IconLoader,
+  IconPlus,
+  IconTrendingUp,
 } from "@tabler/icons-react"
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    flexRender,
-    getCoreRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    Row,
-    SortingState,
-    useReactTable,
-    VisibilityState,
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  Row,
+  SortingState,
+  useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table"
-import {Area, AreaChart, CartesianGrid, XAxis} from "recharts"
-import {toast} from "sonner"
-import {z} from "zod"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { toast } from "sonner"
+import { z } from "zod"
 
-import {useIsMobile} from "@/hooks/use-mobile"
-import {Badge} from "@/components/ui/badge"
-import {Button} from "@/components/ui/button"
-import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import {Checkbox} from "@/components/ui/checkbox"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, } from "@/components/ui/chart"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer"
 import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select"
-import {Separator} from "@/components/ui/separator"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
-import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/ui/tabs"
 
 export const schema = z.object({
   id: z.number(),
@@ -102,7 +102,7 @@ function DragHandle({ id }: { id: number }) {
       size="icon"
       className="text-muted-foreground size-7 hover:bg-transparent"
     >
-      <IconGripVertical className="text-muted-foreground size-3" />
+      <IconGripVertical className="text-muted-foreground size-3"/>
       <span className="sr-only">Drag to reorder</span>
     </Button>
   )
@@ -112,7 +112,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "drag",
     header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
+    cell: ({ row }) => <DragHandle id={row.original.id}/>,
   },
   {
     id: "select",
@@ -144,7 +144,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "header",
     header: "Header",
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />
+      return <TableCellViewer item={row.original}/>
     },
     enableHiding: false,
   },
@@ -165,9 +165,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
         {row.original.status === "Done" ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400"/>
         ) : (
-          <IconLoader />
+          <IconLoader/>
         )}
         {row.original.status}
       </Badge>
@@ -244,7 +244,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
               size="sm"
               id={`${row.original.id}-reviewer`}
             >
-              <SelectValue placeholder="Assign reviewer" />
+              <SelectValue placeholder="Assign reviewer"/>
             </SelectTrigger>
             <SelectContent align="end">
               <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
@@ -267,7 +267,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
             size="icon"
           >
-            <IconDotsVertical />
+            <IconDotsVertical/>
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -275,7 +275,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           <DropdownMenuItem>Edit</DropdownMenuItem>
           <DropdownMenuItem>Make a copy</DropdownMenuItem>
           <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator/>
           <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -309,19 +309,19 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 }
 
 export function DataTable({
-  data: initialData,
-}: {
+                            data: initialData,
+                          }: {
   data: z.infer<typeof schema>[]
 }) {
-  const [data, setData] = React.useState(() => initialData)
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] =
+  const [ data, setData ] = React.useState(() => initialData)
+  const [ rowSelection, setRowSelection ] = React.useState({})
+  const [ columnVisibility, setColumnVisibility ] =
     React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const [ columnFilters, setColumnFilters ] = React.useState<ColumnFiltersState>(
     []
   )
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [pagination, setPagination] = React.useState({
+  const [ sorting, setSorting ] = React.useState<SortingState>([])
+  const [ pagination, setPagination ] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   })
@@ -334,7 +334,7 @@ export function DataTable({
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
-    [data]
+    [ data ]
   )
 
   const table = useReactTable({
@@ -388,7 +388,7 @@ export function DataTable({
             size="sm"
             id="view-selector"
           >
-            <SelectValue placeholder="Select a view" />
+            <SelectValue placeholder="Select a view"/>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="outline">Outline</SelectItem>
@@ -397,7 +397,8 @@ export function DataTable({
             <SelectItem value="focus-documents">Focus Documents</SelectItem>
           </SelectContent>
         </Select>
-        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+        <TabsList
+          className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="outline">Outline</TabsTrigger>
           <TabsTrigger value="past-performance">
             Past Performance <Badge variant="secondary">3</Badge>
@@ -411,10 +412,10 @@ export function DataTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <IconLayoutColumns />
+                <IconLayoutColumns/>
                 <span className="hidden lg:inline">Customize Columns</span>
                 <span className="lg:hidden">Columns</span>
-                <IconChevronDown />
+                <IconChevronDown/>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -442,7 +443,7 @@ export function DataTable({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="outline" size="sm">
-            <IconPlus />
+            <IconPlus/>
             <span className="hidden lg:inline">Add Section</span>
           </Button>
         </div>
@@ -454,7 +455,7 @@ export function DataTable({
         <div className="overflow-hidden rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
+            modifiers={[ restrictToVerticalAxis ]}
             onDragEnd={handleDragEnd}
             sensors={sensors}
             id={sortableId}
@@ -469,9 +470,9 @@ export function DataTable({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       )
                     })}
@@ -485,7 +486,7 @@ export function DataTable({
                     strategy={verticalListSortingStrategy}
                   >
                     {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
+                      <DraggableRow key={row.id} row={row}/>
                     ))}
                   </SortableContext>
                 ) : (
@@ -524,7 +525,7 @@ export function DataTable({
                   />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                  {[ 10, 20, 30, 40, 50 ].map((pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
                       {pageSize}
                     </SelectItem>
@@ -544,7 +545,7 @@ export function DataTable({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
-                <IconChevronsLeft />
+                <IconChevronsLeft/>
               </Button>
               <Button
                 variant="outline"
@@ -554,7 +555,7 @@ export function DataTable({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
-                <IconChevronLeft />
+                <IconChevronLeft/>
               </Button>
               <Button
                 variant="outline"
@@ -564,7 +565,7 @@ export function DataTable({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
-                <IconChevronRight />
+                <IconChevronRight/>
               </Button>
               <Button
                 variant="outline"
@@ -574,7 +575,7 @@ export function DataTable({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to last page</span>
-                <IconChevronsRight />
+                <IconChevronsRight/>
               </Button>
             </div>
           </div>
@@ -648,7 +649,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                     right: 10,
                   }}
                 >
-                  <CartesianGrid vertical={false} />
+                  <CartesianGrid vertical={false}/>
                   <XAxis
                     dataKey="month"
                     tickLine={false}
@@ -659,7 +660,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   />
                   <ChartTooltip
                     cursor={false}
-                    content={<ChartTooltipContent indicator="dot" />}
+                    content={<ChartTooltipContent indicator="dot"/>}
                   />
                   <Area
                     dataKey="mobile"
@@ -679,11 +680,11 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   />
                 </AreaChart>
               </ChartContainer>
-              <Separator />
+              <Separator/>
               <div className="grid gap-2">
                 <div className="flex gap-2 leading-none font-medium">
                   Trending up by 5.2% this month{" "}
-                  <IconTrendingUp className="size-4" />
+                  <IconTrendingUp className="size-4"/>
                 </div>
                 <div className="text-muted-foreground">
                   Showing total visitors for the last 6 months. This is just
@@ -691,20 +692,20 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   and should wrap around.
                 </div>
               </div>
-              <Separator />
+              <Separator/>
             </>
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={item.header} />
+              <Input id="header" defaultValue={item.header}/>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="type">Type</Label>
                 <Select defaultValue={item.type}>
                   <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
+                    <SelectValue placeholder="Select a type"/>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Table of Contents">
@@ -730,7 +731,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 <Label htmlFor="status">Status</Label>
                 <Select defaultValue={item.status}>
                   <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
+                    <SelectValue placeholder="Select a status"/>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Done">Done</SelectItem>
@@ -743,18 +744,18 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={item.target} />
+                <Input id="target" defaultValue={item.target}/>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={item.limit} />
+                <Input id="limit" defaultValue={item.limit}/>
               </div>
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="reviewer">Reviewer</Label>
               <Select defaultValue={item.reviewer}>
                 <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
+                  <SelectValue placeholder="Select a reviewer"/>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>

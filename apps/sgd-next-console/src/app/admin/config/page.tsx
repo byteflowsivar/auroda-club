@@ -1,18 +1,18 @@
 "use client"
 
-import {AppSidebar} from "@/components/app-sidebar"
-import {SiteHeader} from "@/components/site-header"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
-import {AuthGuard} from "@/components/auth/auth-guard"
-import {MapPin, Settings, Trophy, Users} from "lucide-react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
+import { AuthGuard } from "@/components/auth/auth-guard"
+import { MapPin, Settings, Trophy, Users } from "lucide-react"
 import { ROLES } from "@/lib/constants"
 import Link from "next/link"
 
 export default function ConfigPage() {
   return (
-    <AuthGuard requiredRoles={[ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB]}>
+    <AuthGuard requiredRoles={[ ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB ]}>
       <SidebarProvider
         style={
           {
@@ -21,9 +21,9 @@ export default function ConfigPage() {
           } as React.CSSProperties
         }
       >
-        <AppSidebar variant="inset" />
+        <AppSidebar variant="inset"/>
         <SidebarInset>
-          <SiteHeader />
+          <SiteHeader/>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
@@ -31,12 +31,12 @@ export default function ConfigPage() {
                 Administra la configuración del sistema
               </p>
             </div>
-            
+
             <div className="grid gap-4 md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5" />
+                    <Trophy className="h-5 w-5"/>
                     Deportes y Categorías
                   </CardTitle>
                   <CardDescription>
@@ -46,7 +46,7 @@ export default function ConfigPage() {
                 <CardContent>
                   <Button asChild className="w-full">
                     <Link href="/admin/config/sports">
-                      <Trophy className="mr-2 h-4 w-4" />
+                      <Trophy className="mr-2 h-4 w-4"/>
                       Gestionar Deportes
                     </Link>
                   </Button>
@@ -56,7 +56,7 @@ export default function ConfigPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
+                    <MapPin className="h-5 w-5"/>
                     Sedes
                   </CardTitle>
                   <CardDescription>
@@ -66,7 +66,7 @@ export default function ConfigPage() {
                 <CardContent>
                   <Button asChild className="w-full">
                     <Link href="/admin/config/venues">
-                      <MapPin className="mr-2 h-4 w-4" />
+                      <MapPin className="mr-2 h-4 w-4"/>
                       Gestionar Sedes
                     </Link>
                   </Button>
@@ -76,7 +76,7 @@ export default function ConfigPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5" />
+                    <Users className="h-5 w-5"/>
                     Usuarios
                   </CardTitle>
                   <CardDescription>
@@ -94,7 +94,7 @@ export default function ConfigPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
+                    <Settings className="h-5 w-5"/>
                     Sistema
                   </CardTitle>
                   <CardDescription>

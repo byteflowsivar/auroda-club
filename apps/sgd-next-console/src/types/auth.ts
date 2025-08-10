@@ -35,6 +35,7 @@ declare module "next-auth" {
     user: SGDUser
     id_token?: string
   }
+
   interface User {
     id: string
     email?: string | null
@@ -65,7 +66,7 @@ export type Role = typeof ROLES[keyof typeof ROLES]
 
 export const ROLES = {
   ADMIN_GENERAL: "ADMIN_GENERAL",
-  ADMIN_CLUB: "ADMIN_CLUB", 
+  ADMIN_CLUB: "ADMIN_CLUB",
   PROFESOR: "PROFESOR",
 } as const
 

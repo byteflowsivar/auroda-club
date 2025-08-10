@@ -3,7 +3,7 @@
 // Roles del sistema
 export const ROLES = {
   ADMIN_GENERAL: "ADMIN_GENERAL",
-  ADMIN_CLUB: "ADMIN_CLUB", 
+  ADMIN_CLUB: "ADMIN_CLUB",
   PROFESOR: "PROFESOR",
 } as const
 
@@ -12,11 +12,11 @@ export const ROUTES = {
   HOME: "/",
   DASHBOARD: "/admin/dashboard",
   ATHLETES: "/admin/athletes",
-  GUARDIANS: "/admin/guardians", 
+  GUARDIANS: "/admin/guardians",
   CONFIG: "/admin/config",
   AUTH_ERROR: "/auth/error",
   UNAUTHORIZED: "/unauthorized",
-  
+
   // API Routes
   API: {
     LOGOUT_KEYCLOAK: "/api/auth/logout-keycloak",
@@ -37,7 +37,7 @@ export const COOKIE_CONFIG = {
   NAMES: {
     SESSION_TOKEN: "next-auth.session-token",
     SECURE_SESSION_TOKEN: "__Secure-next-auth.session-token",
-    CSRF_TOKEN: "next-auth.csrf-token", 
+    CSRF_TOKEN: "next-auth.csrf-token",
     SECURE_CSRF_TOKEN: "__Secure-next-auth.csrf-token",
     CALLBACK_URL: "next-auth.callback-url",
     SECURE_CALLBACK_URL: "__Secure-next-auth.callback-url",
@@ -47,7 +47,7 @@ export const COOKIE_CONFIG = {
 // Mensajes de error comunes
 export const ERROR_MESSAGES = {
   REFRESH_TOKEN_ERROR: "RefreshAccessTokenError",
-  SESSION_EXPIRED: "Session expired naturally - user needs to re-authenticate", 
+  SESSION_EXPIRED: "Session expired naturally - user needs to re-authenticate",
   INVALID_CLIENT: "CONFIGURATION ERROR - Check Keycloak client credentials",
   SESSION_NOT_ACTIVE: "Session not active",
   NO_REFRESH_TOKEN: "No refresh token available",

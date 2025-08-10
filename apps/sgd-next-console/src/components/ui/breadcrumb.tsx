@@ -1,8 +1,8 @@
 import * as React from "react"
-import {Slot} from "@radix-ui/react-slot"
-import {ChevronRight, MoreHorizontal} from "lucide-react"
+import { Slot } from "@radix-ui/react-slot"
+import { ChevronRight, MoreHorizontal } from "lucide-react"
 
-import {cn} from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
@@ -32,10 +32,10 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 function BreadcrumbLink({
-  asChild,
-  className,
-  ...props
-}: React.ComponentProps<"a"> & {
+                          asChild,
+                          className,
+                          ...props
+                        }: React.ComponentProps<"a"> & {
   asChild?: boolean
 }) {
   const Comp = asChild ? Slot : "a"
@@ -63,10 +63,10 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
 }
 
 function BreadcrumbSeparator({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"li">) {
+                               children,
+                               className,
+                               ...props
+                             }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-separator"
@@ -75,15 +75,15 @@ function BreadcrumbSeparator({
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <ChevronRight />}
+      {children ?? <ChevronRight/>}
     </li>
   )
 }
 
 function BreadcrumbEllipsis({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+                              className,
+                              ...props
+                            }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="breadcrumb-ellipsis"
@@ -92,7 +92,7 @@ function BreadcrumbEllipsis({
       className={cn("flex size-9 items-center justify-center", className)}
       {...props}
     >
-      <MoreHorizontal className="size-4" />
+      <MoreHorizontal className="size-4"/>
       <span className="sr-only">More</span>
     </span>
   )

@@ -1,9 +1,9 @@
-import {AppSidebar} from "@/components/app-sidebar"
-import {SiteHeader} from "@/components/site-header"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
-import {ArrowLeft, Edit} from "lucide-react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
+import { ArrowLeft, Edit } from "lucide-react"
 import Link from "next/link"
 
 interface EditAthletePageProps {
@@ -21,14 +21,14 @@ export default async function EditAthletePage({ params }: EditAthletePageProps) 
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset"/>
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader/>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild>
               <Link href={`/admin/athletes/${id}`}>
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4"/>
               </Link>
             </Button>
             <div>
@@ -38,11 +38,11 @@ export default async function EditAthletePage({ params }: EditAthletePageProps) 
               </p>
             </div>
           </div>
-          
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Edit className="h-5 w-5" />
+                <Edit className="h-5 w-5"/>
                 Formulario de Edición
               </CardTitle>
               <CardDescription>
@@ -51,7 +51,7 @@ export default async function EditAthletePage({ params }: EditAthletePageProps) 
             </CardHeader>
             <CardContent>
               <div className="text-center py-12 text-muted-foreground">
-                <Edit className="mx-auto h-16 w-16 mb-4 opacity-50" />
+                <Edit className="mx-auto h-16 w-16 mb-4 opacity-50"/>
                 <h3 className="text-lg font-semibold mb-2">Componente AthleteForm (edit mode) pendiente</h3>
                 <div className="text-sm space-y-1">
                   <p>• Formulario precargado con datos actuales</p>

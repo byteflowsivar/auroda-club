@@ -1,7 +1,7 @@
 "use client"
 
-import {signIn} from "next-auth/react"
-import {Button} from "@/components/ui/button"
+import { signIn } from "next-auth/react"
+import { Button } from "@/components/ui/button"
 
 interface LoginButtonProps {
   className?: string
@@ -10,7 +10,7 @@ interface LoginButtonProps {
 
 export function LoginButton({ className, children }: LoginButtonProps) {
   return (
-    <Button 
+    <Button
       onClick={() => signIn("keycloak")}
       className={className}
     >

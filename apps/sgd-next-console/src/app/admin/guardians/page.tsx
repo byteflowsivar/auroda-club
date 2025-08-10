@@ -1,8 +1,8 @@
-import {AppSidebar} from "@/components/app-sidebar"
-import {SiteHeader} from "@/components/site-header"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
-import {UserCheck} from "lucide-react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
+import { UserCheck } from "lucide-react"
 
 export default function GuardiansPage() {
   return (
@@ -14,9 +14,9 @@ export default function GuardiansPage() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset"/>
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader/>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Tutores</h1>
@@ -24,11 +24,11 @@ export default function GuardiansPage() {
               Gestiona la información de los tutores de atletas menores
             </p>
           </div>
-          
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <UserCheck className="h-5 w-5" />
+                <UserCheck className="h-5 w-5"/>
                 Lista de Tutores
               </CardTitle>
               <CardDescription>
@@ -37,7 +37,7 @@ export default function GuardiansPage() {
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                <UserCheck className="mx-auto h-12 w-12 mb-4 opacity-50" />
+                <UserCheck className="mx-auto h-12 w-12 mb-4 opacity-50"/>
                 <p>Componente GuardianTable pendiente de implementación</p>
                 <p className="text-sm mt-2">
                   Incluirá: tabla de tutores, relación con atletas, información de contacto
