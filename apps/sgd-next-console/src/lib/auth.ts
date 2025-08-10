@@ -1,47 +1,9 @@
-import {NextAuthOptions} from "next-auth"
-import {JWT} from "next-auth/jwt"
+import { NextAuthOptions } from "next-auth"
+import { JWT } from "next-auth/jwt"
 import KeycloakProvider from "next-auth/providers/keycloak"
+import { SESSION_CONFIG, ROUTES } from './constants'
 
-// Extender los tipos de NextAuth para incluir nuestros campos personalizados
-declare module "next-auth" {
-    interface Session {
-        user: {
-            id: string
-            email?: string | null
-            name?: string | null
-            image?: string | null
-            roles: string[]
-            clubId?: string | null
-            venueIds?: string[] | null
-            sportIds?: string[] | null
-        }
-        id_token?: string
-    }
-
-    interface User {
-        id: string
-        email?: string | null
-        name?: string | null
-        roles: string[]
-        clubId?: string | null
-        venueIds?: string[] | null
-        sportIds?: string[] | null
-    }
-}
-
-declare module "next-auth/jwt" {
-    interface JWT {
-        id: string
-        roles: string[]
-        clubId?: string | null
-        venueIds?: string[] | null
-        sportIds?: string[] | null
-        accessToken?: string
-        refreshToken?: string
-        accessTokenExpires?: number
-        idToken?: string
-    }
-}
+// Los tipos están definidos en /types/auth.ts
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -148,24 +110,24 @@ export const authOptions: NextAuthOptions = {
         },
         async redirect({ url, baseUrl }) {
             // Si el usuario se autentica exitosamente, redirigir al dashboard
-            if (url === baseUrl || url === baseUrl + "/") {
-                return baseUrl + "/admin/dashboard"
+            if (url === baseUrl || url === baseUrl + ROUTES.HOME) {
+                return baseUrl + ROUTES.DASHBOARD
             }
             // Si la URL está en el mismo dominio, permitir la redirección
             if (url.startsWith(baseUrl)) {
                 return url
             }
             // Para URLs externas, redirigir al dashboard por seguridad
-            return baseUrl + "/admin/dashboard"
+            return baseUrl + ROUTES.DASHBOARD
         },
     },
     pages: {
         // No definir signIn para usar Keycloak hosted login directamente
-        error: "/auth/error", // Página de error
+        error: ROUTES.AUTH_ERROR, // Página de error
     },
     session: {
-        strategy: "jwt",
-        maxAge: 1 * 24 * 60 * 60, // 1 día
+        strategy: SESSION_CONFIG.STRATEGY,
+        maxAge: SESSION_CONFIG.MAX_AGE,
     },
     cookies: {
         sessionToken: {
@@ -265,48 +227,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     }
 }
 
-/**
- * Función helper para verificar si el usuario tiene alguno de los roles especificados
- */
-export function hasAnyRole(userRoles: string[], allowedRoles: string[]): boolean {
-    return allowedRoles.some(role => userRoles.includes(role))
-}
-
-/**
- * Función helper para verificar si el usuario tiene un rol específico
- */
-export function hasRole(userRoles: string[], role: string): boolean {
-    return userRoles.includes(role)
-}
-
-/**
- * Función helper para logout completo (NextAuth + Keycloak)
- */
-export function signOutCompletely(): void {
-    if (typeof window !== 'undefined') {
-        // Redirigir directamente al endpoint que manejará limpieza de cookies y logout de Keycloak
-        window.location.href = '/api/auth/logout-keycloak'
-    }
-}
-
-/**
- * Función helper para logout local únicamente (sin Keycloak)
- * Útil cuando hay problemas de conectividad con Keycloak
- */
-export function signOutLocalOnly(): void {
-    if (typeof window !== 'undefined') {
-        // Redirigir al endpoint de logout local únicamente
-        window.location.href = '/api/auth/logout-local'
-    }
-}
-
-/**
- * Tipos de roles del sistema
- */
-export const ROLES = {
-    ADMIN_GENERAL: "ADMIN_GENERAL",
-    ADMIN_CLUB: "ADMIN_CLUB",
-    PROFESOR: "PROFESOR",
-} as const
-
-export type Role = typeof ROLES[keyof typeof ROLES]
+// Las funciones helper y constantes están ahora en:
+// - /lib/auth-utils.ts (funciones de utilidad)
+// - /lib/constants.ts (constantes y tipos)
+// - /types/auth.ts (interfaces y tipos TypeScript)

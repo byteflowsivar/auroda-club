@@ -1,55 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { cookies } from 'next/headers'
+import { getClearCookieSettings, applyCookieSettings } from '@/lib/cookie-utils'
 
 export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url)
     const forceLocal = requestUrl.searchParams.get('force_local') === 'true'
     
     // SIEMPRE limpiar la sesión local primero (principio fail-safe)
-    const clearLocalSession = () => {
-        console.log('Clearing local session cookies')
-        const cookieNames = [
-            'next-auth.session-token',
-            '__Secure-next-auth.session-token',
-            'next-auth.csrf-token', 
-            '__Secure-next-auth.csrf-token',
-            'next-auth.callback-url',
-            '__Secure-next-auth.callback-url',
-            // También cookies chunked
-            'next-auth.session-token.0',
-            'next-auth.session-token.1',
-            'next-auth.session-token.2',
-            '__Secure-next-auth.session-token.0',
-            '__Secure-next-auth.session-token.1',
-            '__Secure-next-auth.session-token.2',
-        ]
-        
-        return cookieNames.map(cookieName => ({
-            name: cookieName,
-            value: '',
-            expires: new Date(0),
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax' as const,
-        }))
-    }
+    // Utilidad centralizada para configuración de cookies
     
     // Si se fuerza logout local únicamente
     if (forceLocal) {
         console.log('Forced local logout - skipping Keycloak')
         const response = NextResponse.redirect(new URL('/', request.url))
-        const cookieSettings = clearLocalSession()
-        cookieSettings.forEach(cookie => {
-            response.cookies.set(cookie.name, cookie.value, {
-                expires: cookie.expires,
-                path: cookie.path,
-                httpOnly: cookie.httpOnly,
-                secure: cookie.secure,
-                sameSite: cookie.sameSite,
-            })
-        })
+        const cookieSettings = getClearCookieSettings()
+        applyCookieSettings(response, cookieSettings)
         return response
     }
     
@@ -90,17 +55,9 @@ export async function GET(request: NextRequest) {
         // Crear respuesta de redirección a Keycloak con limpieza garantizada de cookies
         const response = NextResponse.redirect(keycloakLogoutUrl)
         
-        // Aplicar limpieza de cookies SIEMPRE
-        const cookieSettings = clearLocalSession()
-        cookieSettings.forEach(cookie => {
-            response.cookies.set(cookie.name, cookie.value, {
-                expires: cookie.expires,
-                path: cookie.path,
-                httpOnly: cookie.httpOnly,
-                secure: cookie.secure,
-                sameSite: cookie.sameSite,
-            })
-        })
+        // Aplicar limpieza de cookies SIEMPRE usando utilidad centralizada
+        const cookieSettings = getClearCookieSettings()
+        applyCookieSettings(response, cookieSettings)
         
         console.log('Local session cleared, redirecting to Keycloak logout')
         return response

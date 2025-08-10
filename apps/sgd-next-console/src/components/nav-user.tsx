@@ -2,7 +2,7 @@
 
 import {IconDotsVertical, IconLogout, IconShield, IconUserCircle,} from "@tabler/icons-react"
 import {useSession} from "next-auth/react"
-import {signOutCompletely} from "@/lib/auth"
+import { signOutCompletely, getPrimaryRole, getInitials } from "@/lib/auth-utils"
 
 import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
 import {
@@ -41,23 +41,7 @@ export function NavUser() {
 
   const user = session.user
   
-  // Generar iniciales del nombre para avatar fallback
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
-  // Obtener rol principal para mostrar
-  const getPrimaryRole = (roles: string[]) => {
-    if (roles.includes("ADMIN_GENERAL")) return "Admin General"
-    if (roles.includes("ADMIN_CLUB")) return "Admin Club"
-    if (roles.includes("PROFESOR")) return "Profesor"
-    return "Usuario"
-  }
+  // Las funciones getInitials y getPrimaryRole están ahora importadas de auth-utils
 
   const handleLogout = () => {
     signOutCompletely()

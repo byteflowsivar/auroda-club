@@ -1,7 +1,7 @@
 "use client"
 
 import {useSession} from "next-auth/react"
-import {signOutCompletely} from "@/lib/auth"
+import { signOutCompletely } from "@/lib/auth-utils"
 import {useEffect} from "react"
 import {useRouter} from "next/navigation"
 import {LoginButton} from "@/components/auth/login-button"

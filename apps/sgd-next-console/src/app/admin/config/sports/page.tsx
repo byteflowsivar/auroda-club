@@ -7,7 +7,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {SidebarInset, SidebarProvider,} from "@/components/ui/sidebar"
 import {AuthGuard} from "@/components/auth/auth-guard"
 import {ArrowLeft, Plus, Trophy} from "lucide-react"
-import {ROLES} from "@/lib/auth"
+import { ROLES } from "@/lib/constants"
 import Link from "next/link"
 
 export default function SportsConfigPage() {

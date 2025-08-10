@@ -1,11 +1,10 @@
 "use client"
 
 import {useSession} from "next-auth/react"
-import {signOutCompletely} from "@/lib/auth"
-import {useRouter} from "next/navigation"
-import {useEffect} from "react"
-import {LoadingSpinner} from "./loading-spinner"
-import {hasAnyRole} from "@/lib/auth"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { LoadingSpinner } from "./loading-spinner"
+import { signOutCompletely, hasAnyRole } from "@/lib/auth-utils"
 
 interface AuthGuardProps {
     children: React.ReactNode
