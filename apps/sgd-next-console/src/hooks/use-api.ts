@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useErrorHandler } from '@/lib/error-handler';
+import type { PaginationInfo } from '@/types';
 
 // Estado para operaciones async
 interface AsyncState<T> {
@@ -93,12 +94,13 @@ export function useApi<T>() {
 }
 
 // Hook específico para operaciones CRUD
-export function useCrudApi<T, CreateRequest = any, UpdateRequest = any>() {
+export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>() {
   const createApi = useApi<T>();
   const updateApi = useApi<T>();
   const deleteApi = useApi<void>();
   const fetchApi = useApi<T>();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { showSuccess } = useErrorHandler();
 
   const create = useCallback(async (
@@ -180,7 +182,7 @@ export function useCrudApi<T, CreateRequest = any, UpdateRequest = any>() {
 }
 
 // Hook para listas con paginación
-export function useListApi<T, TFilters = any>() {
+export function useListApi<T, TFilters = Record<string, unknown>>() {
   const [filters, setFilters] = useState<TFilters>({} as TFilters);
   const [pagination, setPagination] = useState({
     page: 0,
@@ -189,10 +191,10 @@ export function useListApi<T, TFilters = any>() {
     totalPages: 0,
   });
 
-  const listApi = useApi<{ content: T[]; pagination: any }>();
+  const listApi = useApi<{ content: T[]; pagination: PaginationInfo }>();
 
   const fetchList = useCallback(async (
-    apiCall: (params: TFilters & { page: number; size: number }) => Promise<{ content: T[]; pagination: any }>,
+    apiCall: (params: TFilters & { page: number; size: number }) => Promise<{ content: T[]; pagination: PaginationInfo }>,
     newFilters?: Partial<TFilters>,
     resetPage = false
   ) => {

@@ -15,7 +15,7 @@ interface ErrorLogData {
   timestamp: string;
   userAgent: string;
   url: string;
-  additionalData?: Record<string, any>;
+  additionalData?: Record<string, unknown>;
 }
 
 // Configuración de manejo de errores
@@ -98,7 +98,8 @@ export class ErrorHandler {
   /**
    * Maneja errores de autenticación
    */
-  private handleAuthenticationError(error: AuthenticationError): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private handleAuthenticationError(_error: AuthenticationError): void {
     toast.error('Sesión Expirada', {
       description: 'Tu sesión ha expirado. Serás redirigido al login.',
       duration: 6000,
@@ -113,7 +114,8 @@ export class ErrorHandler {
   /**
    * Maneja errores de autorización
    */
-  private handleAuthorizationError(error: AuthorizationError): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private handleAuthorizationError(_error: AuthorizationError): void {
     toast.error('Acceso Denegado', {
       description: 'No tienes permisos para realizar esta acción.',
       duration: 5000,
@@ -123,7 +125,8 @@ export class ErrorHandler {
   /**
    * Maneja errores de red
    */
-  private handleNetworkError(error: NetworkError): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private handleNetworkError(_error: NetworkError): void {
     toast.error('Error de Conexión', {
       description: 'No se pudo conectar con el servidor. Verifica tu conexión.',
       duration: 6000,
@@ -216,7 +219,8 @@ export class ErrorHandler {
    * Registra errores para debugging/monitoring
    */
   private logError(error: Error, context: string): void {
-    const logData: ErrorLogData = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _logData: ErrorLogData = {
       error: {
         name: error.name,
         message: error.message,
@@ -235,8 +239,8 @@ export class ErrorHandler {
       console.table({
         Type: error.constructor.name,
         Message: error.message,
-        Status: (error as any).status || 'N/A',
-        Code: (error as any).code || 'N/A',
+        Status: (error as { status?: number }).status || 'N/A',
+        Code: (error as { code?: string }).code || 'N/A',
       });
       console.groupEnd();
     }
@@ -251,7 +255,8 @@ export class ErrorHandler {
   /**
    * Maneja errores de componentes React (para Error Boundaries)
    */
-  handleComponentError(error: Error, errorInfo: any): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleComponentError(error: Error, _errorInfo: unknown): void {
     this.logError(error, 'Component Error');
     
     toast.error('Error de la Aplicación', {
@@ -298,7 +303,7 @@ export function useErrorHandler() {
 }
 
 // Wrapper para funciones async que maneja errores automáticamente
-export function withErrorHandling<T extends any[], R>(
+export function withErrorHandling<T extends unknown[], R>(
   fn: (...args: T) => Promise<R>,
   context: string = 'Operation'
 ) {
@@ -317,9 +322,10 @@ export function handleFormError(error: Error): Record<string, string> {
   if (error instanceof ValidationError && error.details) {
     const fieldErrors: Record<string, string> = {};
     
-    error.details.forEach((validationError: any) => {
-      if (validationError.field) {
-        fieldErrors[validationError.field] = validationError.message;
+    (error.details as unknown[]).forEach((validationError: unknown) => {
+      const valError = validationError as { field?: string; message?: string };
+      if (valError.field) {
+        fieldErrors[valError.field] = valError.message || 'Invalid value';
       }
     });
     

@@ -348,7 +348,7 @@ export interface ApiError {
 export interface ValidationError {
   field: string;
   message: string;
-  rejectedValue?: any;
+  rejectedValue?: unknown;
 }
 
 export interface ValidationErrorResponse {

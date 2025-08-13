@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth';
 
 const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:8080/api';
 
-async function getBackendHeaders(session: any) {
+async function getBackendHeaders(session: { accessToken?: string }) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

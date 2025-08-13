@@ -1,7 +1,4 @@
-import { getSession } from 'next-auth/react';
 import type {
-  ApiError,
-  ValidationErrorResponse,
   AthleteResponse,
   AthleteCreateRequest,
   AthleteUpdateRequest,
@@ -14,7 +11,6 @@ import type {
   GuardianListParams,
   GuardianAssociationRequest,
   GuardianAssociationResponse,
-  GuardianOperationResponse,
   SportResponse,
   SportListParams,
   CategoryResponse,
@@ -35,7 +31,7 @@ export class ApiClientError extends Error {
     message: string,
     public status: number,
     public code?: string,
-    public details?: any
+    public details?: unknown
   ) {
     super(message);
     this.name = 'ApiClientError';
@@ -57,7 +53,7 @@ export class AuthorizationError extends ApiClientError {
 }
 
 export class ValidationError extends ApiClientError {
-  constructor(message: string, public errors: any[]) {
+  constructor(message: string, public errors: unknown[]) {
     super(message, 400, 'VALIDATION_ERROR', errors);
     this.name = 'ValidationError';
   }
@@ -108,7 +104,7 @@ export class ApiClient {
   /**
    * Construye URL con query parameters
    */
-  private buildURL(endpoint: string, params?: Record<string, any>): string {
+  private buildURL(endpoint: string, params?: Record<string, unknown>): string {
     const url = new URL(endpoint, this.baseURL);
     
     if (params) {
@@ -126,7 +122,7 @@ export class ApiClient {
    * Maneja errores de respuesta HTTP
    */
   private async handleErrorResponse(response: Response): Promise<never> {
-    let errorData: any;
+    let errorData: unknown;
     
     try {
       errorData = await response.json();
@@ -173,8 +169,8 @@ export class ApiClient {
   private async request<T>(
     method: string,
     endpoint: string,
-    data?: any,
-    params?: Record<string, any>,
+    data?: unknown,
+    params?: Record<string, unknown>,
     customHeaders?: Record<string, string>
   ): Promise<T> {
     const url = this.buildURL(endpoint, params);
@@ -230,19 +226,19 @@ export class ApiClient {
   // MÉTODOS PÚBLICOS GENÉRICOS
   // =============================================================================
 
-  async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
+  async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
     return this.request<T>('GET', endpoint, undefined, params);
   }
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
+  async post<T>(endpoint: string, data: unknown): Promise<T> {
     return this.request<T>('POST', endpoint, data);
   }
 
-  async put<T>(endpoint: string, data: any): Promise<T> {
+  async put<T>(endpoint: string, data: unknown): Promise<T> {
     return this.request<T>('PUT', endpoint, data);
   }
 
-  async patch<T>(endpoint: string, data: any): Promise<T> {
+  async patch<T>(endpoint: string, data: unknown): Promise<T> {
     return this.request<T>('PATCH', endpoint, data);
   }
 
