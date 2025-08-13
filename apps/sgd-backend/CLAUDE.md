@@ -146,7 +146,7 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/sgd_main
 quarkus.http.cors.origins=http://localhost:3000
 ```
 
-### 📊 **ESTADO ACTUAL DEL DESARROLLO - 40% COMPLETADO**
+### 📊 **ESTADO ACTUAL DEL DESARROLLO - 70% COMPLETADO**
 
 #### ✅ **Módulo Athletes - COMPLETADO (100%)**
 - ✅ **Resource**: AthleteResource.java - Todos los endpoints implementados
@@ -155,13 +155,19 @@ quarkus.http.cors.origins=http://localhost:3000
 - ✅ **Entities**: Athlete y AthleteGuardian completados
 - ✅ **Repository**: AthleteRepository y AthleteGuardianRepository implementados
 - ✅ **Tests**: AthleteResourceTest y AthleteServiceTest existentes
+- ✅ **Compilación**: Sin errores ✓
+- ✅ **Pruebas API**: Endpoints funcionando correctamente ✓
 
-#### 🟡 **Módulo Guardians - 30% COMPLETADO**
-- ❌ **PENDIENTE**: GuardianResource.java - **FALTA IMPLEMENTAR**
-- ❌ **PENDIENTE**: GuardianService.java - **FALTA IMPLEMENTAR**  
-- ❌ **PENDIENTE**: DTOs (GuardianCreateRequest, GuardianResponse, etc.) - **FALTA IMPLEMENTAR**
+#### ✅ **Módulo Guardians - COMPLETADO (100%)**
+- ✅ **Resource**: GuardianResource.java - **IMPLEMENTADO** - Todos los endpoints
+- ✅ **Service**: GuardianService.java - **IMPLEMENTADO** - Lógica completa con validaciones
+- ✅ **DTOs**: 4 de 4 completados (CreateRequest, UpdateRequest, Response, Filters)
+- ✅ **Mapper**: GuardianMapper.java - **IMPLEMENTADO** - Conversión entidades/DTOs
 - ✅ **Entity**: Guardian.java - OK
-- ✅ **Repository**: GuardianRepository.java - OK
+- ✅ **Repository**: GuardianRepository.java - OK (con métodos adicionales)
+- ✅ **Compilación**: Sin errores ✓
+- ✅ **Pruebas API**: Endpoints funcionando con autenticación JWT ✓
+- ✅ **Seguridad**: Control de acceso por roles implementado ✓
 
 #### 🟡 **Módulo Club - 20% COMPLETADO**
 - ❌ **PENDIENTE**: ClubResource.java - **FALTA IMPLEMENTAR**
@@ -180,37 +186,51 @@ quarkus.http.cors.origins=http://localhost:3000
 ### 🎯 Prioridades de Desarrollo ACTUALIZADAS
 1. **✅ Fase 1**: Módulo athletes (CRUD básico) - **COMPLETADO**
 2. **✅ Fase 2**: Integración Keycloak + autorización - **COMPLETADO**  
-3. **🔄 Fase 3**: Módulo guardians + relaciones - **EN PROCESO (30%)**
-4. **⏳ Fase 4**: Configuraciones (sports, categories, venues) - **PENDIENTE**
+3. **✅ Fase 3**: Módulo guardians + relaciones - **COMPLETADO**
+4. **🔄 Fase 4**: Configuraciones (sports, categories, venues) - **EN PROCESO**
 5. **⏳ Fase 5**: Reportes y consultas avanzadas - **PENDIENTE**
 
-### 🚧 **TAREAS INMEDIATAS POR COMPLETAR**
+### 🚧 **PRÓXIMAS TAREAS**
 
-#### **ALTA PRIORIDAD (Siguiente Sprint)**
-1. **Implementar GuardianResource completo** con todos los endpoints
-2. **Crear GuardianService** con lógica de negocio y validaciones
-3. **Definir DTOs del módulo Guardian** (Create, Update, Response)
-4. **Implementar tests para módulo Guardians**
+#### **ALTA PRIORIDAD (Configuration Module)**
+1. **Implementar SportResource** - Endpoints para deportes y categorías
+2. **Crear SportService** - Lógica de negocio para deportes
+3. **Implementar ClubResource** - Endpoints para clubes y sedes
+4. **Crear ClubService** - Lógica de negocio para clubes/sedes
+5. **Definir DTOs de Configuration** (SportResponse, CategoryResponse, ClubResponse, VenueResponse)
 
 #### **MEDIA PRIORIDAD**  
-5. **Configuration Resources** - SportResource, ClubResource con endpoints básicos
 6. **Verificar migraciones de DB** existentes (V001, V002)
-7. **Implementar Services para Configuration** módulos
+7. **Implementar tests para Configuration** módulos
+8. **Optimización de consultas** y performance
 
 #### **ENDPOINTS CRÍTICOS FALTANTES**
 ```java
-// Guardians Module - ALTA PRIORIDAD
-GET    /api/guardians              # Listar tutores
-POST   /api/guardians              # Crear tutor
-GET    /api/guardians/{id}         # Obtener tutor específico  
-PUT    /api/guardians/{id}         # Actualizar tutor
-GET    /api/guardians/{id}/athletes # Atletas del tutor
-
-// Configuration Module - MEDIA PRIORIDAD
+// Configuration Module - ALTA PRIORIDAD
 GET    /api/sports                 # Listar deportes
 GET    /api/sports/{id}/categories # Categorías por deporte
 GET    /api/venues                # Sedes del club  
 GET    /api/clubs                 # Información de clubes
+```
+
+### ✅ **ENDPOINTS YA IMPLEMENTADOS Y FUNCIONANDO**
+```java
+// Athletes Module - COMPLETADO ✓
+GET    /api/athletes              # Listar atletas (con filtros)
+POST   /api/athletes              # Crear atleta
+GET    /api/athletes/{id}         # Obtener atleta específico  
+PUT    /api/athletes/{id}         # Actualizar atleta
+DELETE /api/athletes/{id}         # Soft delete atleta
+GET    /api/athletes/{id}/guardians # Tutores del atleta
+POST   /api/athletes/{id}/guardians # Asociar tutor
+
+// Guardians Module - COMPLETADO ✓
+GET    /api/guardians             # Listar tutores
+POST   /api/guardians             # Crear tutor
+GET    /api/guardians/{id}        # Obtener tutor específico
+PUT    /api/guardians/{id}        # Actualizar tutor
+DELETE /api/guardians/{id}        # Soft delete tutor (ADMIN_GENERAL)
+GET    /api/guardians/{id}/athletes # Atletas del tutor
 ```
 
 ### 📁 Documentación Relacionada
