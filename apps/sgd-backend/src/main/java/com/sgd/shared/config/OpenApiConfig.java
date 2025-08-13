@@ -33,7 +33,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
     ),
     servers = {
         @Server(
-            url = "http://localhost:8080/api",
+            url = "http://localhost:8080",
             description = "Servidor de desarrollo"
         ),
         @Server(

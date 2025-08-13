@@ -158,6 +158,13 @@ public class SecurityContext {
     }
 
     /**
+     * Alias for isGeneralAdmin() for Guardian service compatibility.
+     */
+    public boolean isAdminGeneral() {
+        return isGeneralAdmin();
+    }
+
+    /**
      * Check if current user is ADMIN_CLUB.
      */
     public boolean isClubAdmin() {
@@ -182,6 +189,13 @@ public class SecurityContext {
      * Check if current user can delete athletes data.
      */
     public boolean canDeleteAthletes() {
+        return isGeneralAdmin();
+    }
+
+    /**
+     * Check if current user can delete guardians data.
+     */
+    public boolean canDeleteGuardians() {
         return isGeneralAdmin();
     }
 

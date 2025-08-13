@@ -73,6 +73,14 @@ public abstract class BaseEntity {
         this.active = false;
     }
 
+    /**
+     * Check if entity can be deleted (default implementation).
+     * Subclasses should override this method to implement specific business rules.
+     */
+    public boolean canBeDeleted() {
+        return true; // Default: allow deletion
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
