@@ -215,12 +215,16 @@ const ConfigPage = lazy(() => import('../pages/config'));
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-secret-here
 
-KEYCLOAK_ISSUER=http://localhost:8080/realms/SGD
+KEYCLOAK_ISSUER=http://localhost:8089/realms/SGD
 KEYCLOAK_CLIENT_ID=sgd-frontend
 KEYCLOAK_CLIENT_SECRET=your-frontend-secret
 
-API_URL=http://localhost:8081/api
+API_URL=http://localhost:8080/api
 ```
+
+### Integración con API Backend
+- **Base URL**: `http://localhost:8080/api`
+- **OpenAPI**: `http://localhost:8080/api/q/openapi?format=json`
 
 ---
 
@@ -524,8 +528,282 @@ Usuario → "Cerrar Sesión" → signOutCompletely() → /api/auth/logout-keyclo
 - ✅ Cookie de sesión reducida significativamente  
 - ✅ Limpieza garantizada de cookies chunked en logout
 
-### 🚀 **PRÓXIMA FASE: Implementación de Componentes de Negocio**
-Con la base sólida implementada, ahora se puede proceder con:
-1. Formularios (AthleteForm, GuardianForm) 
-2. Tablas de datos (AthleteTable, GuardianTable)
-3. Lógica de negocio específica del dominio deportivo
+## 🔗 **INTEGRACIÓN CON API BACKEND**
+
+### **API Backend Disponible**
+- **Base URL**: `http://localhost:8080/api`
+- **OpenAPI Spec**: `http://localhost:8080/api/q/openapi?format=json`
+- **Autenticación**: JWT Bearer Token via Keycloak
+- **Roles**: `ADMIN_GENERAL`, `ADMIN_CLUB`, `PROFESOR`
+
+### **Endpoints Principales Identificados**
+
+#### **👤 Athletes Management**
+```typescript
+// Listar atletas con filtros y paginación
+GET /api/athletes
+- Params: page, size, search, sportId, venueId, categoryId, ageMin, ageMax, active
+- Response: AthletePageResponse { content: AthleteResponse[], pagination: PaginationInfo }
+
+// Crear nuevo atleta
+POST /api/athletes
+- Body: AthleteCreateRequest (fullName, birthDate, venueId, sportId, categoryId, guardians[])
+- Response: AthleteResponse
+
+// Obtener atleta específico
+GET /api/athletes/{id}
+- Response: AthleteResponse (incluye club, venue, sport, category, guardians)
+
+// Actualizar atleta
+PUT /api/athletes/{id}
+- Body: AthleteUpdateRequest
+- Response: AthleteResponse
+
+// Eliminar atleta (soft delete)
+DELETE /api/athletes/{id}
+- Response: 204 No Content
+
+// Gestión de tutores del atleta
+GET /api/athletes/{id}/guardians
+POST /api/athletes/{id}/guardians (asociar tutor existente)
+```
+
+#### **👨‍👩‍👧‍👦 Guardians Management**
+```typescript
+// Listar tutores con filtros
+GET /api/guardians
+- Params: page, size, search, active, hasAthletes
+- Response: GuardianPageResponse
+
+// Crear tutor
+POST /api/guardians
+- Body: GuardianCreateRequest
+- Response: GuardianResponse
+
+// Obtener tutor específico
+GET /api/guardians/{id}
+- Response: GuardianResponse (incluye atletas asociados)
+
+// Actualizar/Eliminar tutor
+PUT /api/guardians/{id}
+DELETE /api/guardians/{id}
+
+// Obtener atletas del tutor
+GET /api/guardians/{id}/athletes
+```
+
+#### **⚽ Sports & Categories**
+```typescript
+// Listar deportes activos
+GET /api/sports
+- Params: includeCategories=true
+- Response: SportResponse[] (incluye categorías)
+
+// Obtener deporte específico
+GET /api/sports/{id}
+- Response: SportResponse
+
+// Categorías por deporte y edad
+GET /api/sports/{id}/categories?age={age}
+GET /api/categories/by-age/{age}
+```
+
+#### **🏢 Clubs & Venues**
+```typescript
+// Listar clubes accesibles
+GET /api/clubs
+- Response: ClubResponse[]
+
+// Obtener club específico
+GET /api/clubs/{id}
+- Response: ClubResponse (incluye venues)
+
+// Sedes del club
+GET /api/clubs/{id}/venues
+- Response: VenueResponse[]
+
+// Listar sedes accesibles
+GET /api/venues
+- Response: VenueResponse[]
+```
+
+### **🔧 Tipos TypeScript Requeridos**
+
+#### **Core Response Types**
+```typescript
+// Athlete Types
+interface AthleteResponse {
+  id: number;
+  fullName: string;
+  birthDate: string; // LocalDate
+  age: number;
+  gender?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  identificationNumber?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  medicalNotes?: string;
+  registrationDate: string;
+  active: boolean;
+  club: ClubInfo;
+  venue: VenueInfo;
+  sport: SportInfo;
+  category: CategoryInfo;
+  guardians: GuardianInfo[];
+  createdAt: string; // LocalDateTime
+  updatedAt: string;
+}
+
+interface AthleteCreateRequest {
+  fullName: string; // required
+  birthDate: string; // required
+  gender?: string;
+  email?: string;
+  phone?: string; // pattern: "+503 1234-5678"
+  address?: string;
+  identificationNumber?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  medicalNotes?: string;
+  venueId: number; // required
+  sportId: number; // required
+  categoryId: number; // required
+  guardians?: GuardianAssociation[];
+}
+
+// Guardian Types
+interface GuardianResponse {
+  id: number;
+  fullName: string;
+  email?: string;
+  phone?: string;
+  secondaryPhone?: string;
+  address?: string;
+  identificationNumber?: string;
+  active: boolean;
+  athletes: AthleteInfo[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface GuardianAssociation {
+  guardianId: number; // required
+  relationship: string; // required, "Padre", "Madre", "Tutor"
+  isPrimary?: boolean;
+}
+
+// Pagination
+interface PaginationInfo {
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+interface AthletePageResponse {
+  content: AthleteResponse[];
+  pagination: PaginationInfo;
+}
+```
+
+### **🚀 TODO: IMPLEMENTACIÓN DE INTEGRACIÓN API**
+
+#### **✅ COMPLETADO - Fundación**
+- ✅ Configuración de entorno y autenticación Keycloak
+- ✅ Estructura de rutas protegidas /admin/*
+- ✅ Componentes de autenticación (AuthGuard, SessionProvider)
+- ✅ Layouts con protección por roles
+
+#### **🚧 FASE ACTUAL: Integración API y Componentes de Negocio**
+
+**PRIORIDAD 1: Base de la Integración**
+1. **Definiciones TypeScript** - Crear interfaces para todos los tipos de la API
+2. **Cliente API** - HTTP client centralizado con autenticación JWT automática
+3. **Manejo de Errores** - Sistema global de manejo de errores con toasts
+
+**PRIORIDAD 2: Gestión de Atletas (Core)**
+4. **AthleteTable** - Tabla con paginación, filtros (deporte, sede, edad), búsqueda
+5. **AthleteForm (Create)** - Formulario completo con validación Zod y CategorySelector
+6. **AthleteForm (Edit)** - Formulario de edición en `/admin/athletes/{id}/edit`
+7. **Athlete Detail** - Página de detalle con información completa y tutores
+8. **Guardian Association** - Componente para asociar/desasociar tutores
+
+**PRIORIDAD 3: Gestión de Tutores**
+9. **GuardianTable** - Lista paginada con filtros
+10. **GuardianForm** - Formularios crear/editar tutores
+11. **Guardian Detail** - Página detalle con atletas asociados
+
+**PRIORIDAD 4: Configuración (Admin Only)**
+12. **Sports Config** - Gestión de deportes en `/admin/config/sports`
+13. **Venues Config** - Gestión de sedes en `/admin/config/venues`
+14. **CategorySelector** - Selector inteligente por deporte y edad
+
+**PRIORIDAD 5: Dashboard y UX**
+15. **Dashboard Stats** - Widgets con métricas usando datos agregados
+16. **Error Boundaries** - Manejo graceful de errores de componentes
+17. **Loading States** - Estados de carga para todas las operaciones async
+
+### **🎯 Componentes Críticos por Implementar**
+
+#### **1. API Client (`/src/lib/api-client.ts`)**
+```typescript
+class ApiClient {
+  private baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+  
+  async get<T>(endpoint: string, params?: Record<string, any>): Promise<T>
+  async post<T>(endpoint: string, data: any): Promise<T>
+  async put<T>(endpoint: string, data: any): Promise<T>
+  async delete<T>(endpoint: string): Promise<T>
+  
+  // Automático: JWT token injection, error handling, retry logic
+}
+```
+
+#### **2. AthleteTable (`/src/components/athletes/athlete-table.tsx`)**
+- Integración con `GET /api/athletes`
+- Filtros: deporte, sede, categoría, edad, estado activo
+- Búsqueda en tiempo real (debounced)
+- Paginación server-side
+- Acciones: Ver, Editar, Eliminar (según rol)
+
+#### **3. AthleteForm (`/src/components/athletes/athlete-form.tsx`)**
+- Validación Zod basada en `AthleteCreateRequest`
+- CategorySelector dinámico por deporte y edad
+- GuardianSelector para atletas menores de 18
+- Validación de teléfonos formato salvadoreño
+- Auto-cálculo de edad desde fecha nacimiento
+
+#### **4. Dashboard Widgets (`/src/components/dashboard/stats-widgets.tsx`)**
+- Total de atletas por sede/deporte
+- Distribución por categorías de edad
+- Atletas activos vs inactivos
+- Métricas de nuevos registros
+
+### **📋 Validaciones Importantes a Implementar**
+
+#### **Reglas de Negocio Críticas**
+1. **Atletas menores de 18** → Requieren al menos 1 tutor asociado
+2. **Teléfonos** → Formato: `+503 1234-5678` (El Salvador)
+3. **Categorías** → Auto-validación por edad y deporte
+4. **Permisos** → Usuarios solo ven/editan atletas de sus sedes asignadas
+5. **Tutores primarios** → Solo uno por atleta
+6. **Campos obligatorios** → fullName, birthDate, venueId, sportId, categoryId
+
+### **🔐 Consideraciones de Seguridad**
+- **JWT Refresh** → Manejo automático de tokens expirados
+- **Role-based access** → Filtrado de datos por permisos de usuario
+- **Input validation** → Validación client + server side
+- **Error sanitization** → No exponer información sensible en errores
+
+### **🚀 **PRÓXIMA FASE: Implementación de Componentes de Negocio**
+Con la base sólida implementada y API mapeada, ahora se puede proceder con:
+1. **Tipos TypeScript** (api-types) - Base para toda la integración
+2. **Cliente API** (api-client) - Comunicación centralizada con backend 
+3. **AthleteTable** (athletes-table) - Componente core de gestión
+4. **Formularios** (athlete-form-create, guardian-form) - CRUD completo
