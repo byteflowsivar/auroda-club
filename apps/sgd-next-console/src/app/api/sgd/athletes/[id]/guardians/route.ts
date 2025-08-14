@@ -22,9 +22,10 @@ async function getBackendHeaders(session: { accessToken?: string }) {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const session = await getServerSession(authOptions);
     
     if (!session) {
@@ -36,7 +37,7 @@ export async function GET(
 
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_URL}/athletes/${params.id}/guardians`, {
+    const response = await fetch(`${BACKEND_URL}/athletes/${resolvedParams.id}/guardians`, {
       method: 'GET',
       headers,
     });
@@ -53,7 +54,7 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`Error proxying athlete guardians GET ${params.id}:`, error);
+    console.error(`Error proxying athlete guardians GET:`, error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
@@ -66,9 +67,10 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const session = await getServerSession(authOptions);
     
     if (!session) {
@@ -81,7 +83,7 @@ export async function POST(
     const body = await request.json();
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_URL}/athletes/${params.id}/guardians`, {
+    const response = await fetch(`${BACKEND_URL}/athletes/${resolvedParams.id}/guardians`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
@@ -99,7 +101,7 @@ export async function POST(
     return NextResponse.json(data, { status: 201 });
 
   } catch (error) {
-    console.error(`Error proxying athlete guardians POST ${params.id}:`, error);
+    console.error(`Error proxying athlete guardians POST:`, error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

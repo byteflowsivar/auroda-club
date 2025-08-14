@@ -5,7 +5,7 @@ import {
   AuthorizationError,
   ValidationError,
   NetworkError
-} from './api-client';
+} from './api';
 
 // Tipos para logging
 interface ErrorLogData {
@@ -319,13 +319,12 @@ export function withErrorHandling<T extends unknown[], R>(
 
 // Utility para manejar errores en formularios
 export function handleFormError(error: Error): Record<string, string> {
-  if (error instanceof ValidationError && error.details) {
+  if (error instanceof ValidationError && error.validationErrors) {
     const fieldErrors: Record<string, string> = {};
     
-    (error.details as unknown[]).forEach((validationError: unknown) => {
-      const valError = validationError as { field?: string; message?: string };
-      if (valError.field) {
-        fieldErrors[valError.field] = valError.message || 'Invalid value';
+    error.validationErrors.forEach((validationError) => {
+      if (validationError.field) {
+        fieldErrors[validationError.field] = validationError.message || 'Invalid value';
       }
     });
     

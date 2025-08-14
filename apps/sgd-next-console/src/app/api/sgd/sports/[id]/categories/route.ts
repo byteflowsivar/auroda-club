@@ -22,9 +22,10 @@ async function getBackendHeaders(session: { accessToken?: string }) {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const session = await getServerSession(authOptions);
     
     if (!session) {
@@ -35,7 +36,7 @@ export async function GET(
     }
 
     const { searchParams } = new URL(request.url);
-    const backendUrl = new URL(`${BACKEND_URL}/sports/${params.id}/categories`);
+    const backendUrl = new URL(`${BACKEND_URL}/sports/${resolvedParams.id}/categories`);
     
     searchParams.forEach((value, key) => {
       backendUrl.searchParams.append(key, value);
@@ -60,7 +61,7 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`Error proxying sport categories GET ${params.id}:`, error);
+    console.error(`Error proxying sport categories GET:`, error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

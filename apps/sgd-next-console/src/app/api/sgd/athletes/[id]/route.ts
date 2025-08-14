@@ -22,9 +22,10 @@ async function getBackendHeaders(session: { accessToken?: string }) {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const session = await getServerSession(authOptions);
     
     if (!session) {
@@ -36,7 +37,7 @@ export async function GET(
 
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_URL}/athletes/${params.id}`, {
+    const response = await fetch(`${BACKEND_URL}/athletes/${resolvedParams.id}`, {
       method: 'GET',
       headers,
     });
@@ -53,7 +54,7 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`Error proxying athlete GET ${params.id}:`, error);
+    console.error(`Error proxying athlete GET:`, error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
@@ -66,9 +67,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const session = await getServerSession(authOptions);
     
     if (!session) {
@@ -81,7 +83,7 @@ export async function PUT(
     const body = await request.json();
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_URL}/athletes/${params.id}`, {
+    const response = await fetch(`${BACKEND_URL}/athletes/${resolvedParams.id}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(body),
@@ -99,7 +101,7 @@ export async function PUT(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`Error proxying athlete PUT ${params.id}:`, error);
+    console.error(`Error proxying athlete PUT:`, error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
@@ -112,9 +114,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const session = await getServerSession(authOptions);
     
     if (!session) {
@@ -126,7 +129,7 @@ export async function DELETE(
 
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_URL}/athletes/${params.id}`, {
+    const response = await fetch(`${BACKEND_URL}/athletes/${resolvedParams.id}`, {
       method: 'DELETE',
       headers,
     });
@@ -143,7 +146,7 @@ export async function DELETE(
     return new NextResponse(null, { status: 204 });
 
   } catch (error) {
-    console.error(`Error proxying athlete DELETE ${params.id}:`, error);
+    console.error(`Error proxying athlete DELETE:`, error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

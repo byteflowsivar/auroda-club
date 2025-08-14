@@ -62,7 +62,7 @@ import {
   MapPin,
   Calendar
 } from 'lucide-react';
-import { apiClient } from '@/lib/api-client';
+import { apiClient } from '@/lib/api';
 import { useListApi } from '@/hooks/use-api';
 import { useErrorHandler } from '@/lib/error-handler';
 import type { 
@@ -122,7 +122,6 @@ export function AthleteTable({
     items: athletes,
     pagination,
     loading,
-    error,
     fetchList,
     changePage,
     changePageSize,
@@ -139,10 +138,12 @@ export function AthleteTable({
       ]);
       
       // Extraer categorías de todos los deportes
-      const allCategories = sportsData.flatMap(sport => 
+      const allCategories: CategoryResponse[] = sportsData.flatMap(sport => 
         sport.categories.map(cat => ({
           ...cat,
-          sport: { id: sport.id, name: sport.name, description: sport.description, active: sport.active }
+          sport: { id: sport.id, name: sport.name, description: sport.description, active: sport.active },
+          createdAt: new Date().toISOString(), // Valor por defecto
+          updatedAt: new Date().toISOString()  // Valor por defecto
         }))
       );
 
@@ -188,7 +189,6 @@ export function AthleteTable({
   // Efectos
   useEffect(() => {
     loadFilterOptions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Solo cargar opciones una vez al montar
 
   useEffect(() => {
@@ -564,7 +564,7 @@ export function AthleteTable({
                     variant="outline"
                     size="sm"
                     onClick={() => changePage(pagination.page - 1)}
-                    disabled={!pagination.hasPrevious || loading}
+                    disabled={pagination.page === 0 || loading}
                   >
                     Anterior
                   </Button>
@@ -575,7 +575,7 @@ export function AthleteTable({
                     variant="outline"
                     size="sm"
                     onClick={() => changePage(pagination.page + 1)}
-                    disabled={!pagination.hasNext || loading}
+                    disabled={pagination.page >= pagination.totalPages - 1 || loading}
                   >
                     Siguiente
                   </Button>
