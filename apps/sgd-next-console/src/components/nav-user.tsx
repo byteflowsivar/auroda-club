@@ -108,7 +108,7 @@ export function NavUser() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem className="cursor-default">
                     <IconShield className="mr-2 h-4 w-4"/>
-                    <span>{getPrimaryRole(user.roles)}</span>
+                    <span>{getPrimaryRole({ roles: user.roles })}</span>
                     <Badge variant="secondary" className="ml-auto text-xs">
                       {user.roles.length > 1 ? `+${user.roles.length - 1}` : ''}
                     </Badge>

@@ -4,7 +4,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { errorHandler } from '@/lib/error-handler';
+import { logError } from '@/lib/error-handler';
 
 interface Props {
   children: ReactNode;
@@ -37,7 +37,10 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     // Manejar el error con nuestro sistema centralizado
-    errorHandler.handleComponentError(error, errorInfo);
+    logError(error, 'Component Error', {
+      componentStack: errorInfo.componentStack,
+      errorBoundary: true,
+    });
   }
 
   handleRetry = () => {

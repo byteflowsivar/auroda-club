@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { LoadingSpinner } from "./loading-spinner"
-import { hasAnyRole, signOutCompletely } from "@/lib/auth-utils"
+import { hasAnyRoleLegacy, signOutCompletely } from "@/lib/auth-utils"
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -47,7 +47,7 @@ export function AuthGuard({
     // Si está autenticado pero no tiene los roles requeridos
     if (session && requiredRoles.length > 0) {
       const userRoles = session.user.roles || []
-      if (!hasAnyRole(userRoles, requiredRoles)) {
+      if (!hasAnyRoleLegacy(userRoles, requiredRoles)) {
         console.log("User doesn't have required roles, redirecting to unauthorized")
         router.push("/unauthorized")
         return
@@ -68,7 +68,7 @@ export function AuthGuard({
   // Si no tiene roles requeridos, mostrar fallback o spinner
   if (session && requiredRoles.length > 0) {
     const userRoles = session.user.roles || []
-    if (!hasAnyRole(userRoles, requiredRoles)) {
+    if (!hasAnyRoleLegacy(userRoles, requiredRoles)) {
       return fallback || <LoadingSpinner/>
     }
   }
