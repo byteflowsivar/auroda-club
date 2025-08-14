@@ -105,6 +105,7 @@ export const authOptions: NextAuthOptions = {
           venueIds: token.venueIds,
           sportIds: token.sportIds,
         },
+        accessToken: token.accessToken, // Necesario para server-side API routes
         // NO incluir id_token en la sesión del cliente para evitar cookies grandes
       }
     },

@@ -34,6 +34,7 @@ declare module "next-auth" {
   interface Session {
     user: SGDUser
     id_token?: string
+    accessToken?: string
   }
 
   interface User {
