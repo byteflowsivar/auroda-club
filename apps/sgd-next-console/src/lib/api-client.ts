@@ -25,6 +25,9 @@ import type {
 const API_BASE_URL = '/api/sgd'; // Rutas internas que proxean al backend
 const DEFAULT_TIMEOUT = 30000; // 30 segundos
 
+// NOTA: Este cliente usa las rutas internas de Next.js (/api/sgd/*) 
+// que manejan automáticamente la autenticación JWT con el backend Quarkus
+
 // Errores personalizados
 export class ApiClientError extends Error {
   constructor(
@@ -77,17 +80,9 @@ export class ApiClient {
   }
 
   /**
-   * No necesitamos manejar tokens manualmente - Next.js server-side los maneja
-   * Las cookies de sesión se envían automáticamente
-   */
-  private async getAuthToken(): Promise<string | null> {
-    // En cliente, las cookies de sesión se envían automáticamente
-    // El servidor manejará la autenticación con el backend externo
-    return null;
-  }
-
-  /**
-   * Construye headers HTTP - sin autenticación manual
+   * Las cookies de sesión NextAuth se envían automáticamente al hacer fetch
+   * Las rutas /api/sgd/* extraen el accessToken de la sesión server-side
+   * y lo incluyen en el Authorization header al backend Quarkus
    */
   private async buildHeaders(customHeaders: Record<string, string> = {}): Promise<Record<string, string>> {
     const headers: Record<string, string> = {
@@ -96,8 +91,8 @@ export class ApiClient {
       ...customHeaders,
     };
 
-    // Las cookies de sesión se envían automáticamente por el navegador
-    // El servidor Next.js manejará la autenticación con el backend externo
+    // Las cookies de sesión NextAuth se envían automáticamente
+    // Las rutas API server-side manejan la autenticación JWT
     return headers;
   }
 
@@ -105,17 +100,26 @@ export class ApiClient {
    * Construye URL con query parameters
    */
   private buildURL(endpoint: string, params?: Record<string, unknown>): string {
-    const url = new URL(endpoint, this.baseURL);
+    // Construir la URL base
+    let url = `${this.baseURL}${endpoint}`;
     
+    // Agregar query parameters si existen
     if (params) {
+      const searchParams = new URLSearchParams();
+      
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          url.searchParams.append(key, String(value));
+          searchParams.append(key, String(value));
         }
       });
+      
+      const queryString = searchParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
     }
     
-    return url.toString();
+    return url;
   }
 
   /**
