@@ -1,16 +1,18 @@
-"use client"
-
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import { Button } from "@/components/ui/button"
 import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
 import { AuthGuard } from "@/components/auth/auth-guard"
-import { SportsTable } from "@/components/sports/sports-table"
-import { ArrowLeft } from "lucide-react"
+import { SportsDetail } from "@/components/sports/sports-detail"
 import { ROLES } from "@/lib/constants"
-import Link from "next/link"
 
-export default function SportsConfigPage() {
+interface SportDetailPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function SportDetailPage({ params }: SportDetailPageProps) {
+  const { id } = await params
+  const sportId = parseInt(id)
+
   return (
     <AuthGuard requiredRoles={[ ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB ]}>
       <SidebarProvider
@@ -25,21 +27,7 @@ export default function SportsConfigPage() {
         <SidebarInset>
           <SiteHeader/>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" asChild>
-                <Link href="/admin/config">
-                  <ArrowLeft className="h-4 w-4"/>
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Gestión de Deportes</h1>
-                <p className="text-muted-foreground">
-                  Configura deportes disponibles y sus categorías
-                </p>
-              </div>
-            </div>
-
-            <SportsTable />
+            <SportsDetail sportId={sportId} />
           </div>
         </SidebarInset>
       </SidebarProvider>
