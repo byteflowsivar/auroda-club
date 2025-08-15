@@ -344,6 +344,10 @@ export class ApiClient {
     return this.get<CategoryResponse>(`/categories/${id}`);
   }
 
+  async getCategoriesBySport(sportId: number): Promise<CategoryResponse[]> {
+    return this.getSportCategories(sportId);
+  }
+
   // =============================================================================
   // MÉTODOS ESPECÍFICOS PARA CLUBES Y SEDES
   // =============================================================================

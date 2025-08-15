@@ -167,10 +167,20 @@ export function useErrorHandler(defaultContext?: string) {
     }
   };
 
+  const showError = (message: string) => {
+    // Importar toast dinámicamente para evitar dependencias en server-side
+    if (typeof window !== 'undefined') {
+      import('sonner').then(({ toast }) => {
+        toast.error(message);
+      });
+    }
+  };
+
   return {
     handleError: handleErrorWithContext,
     handleApiError: handleApiErrorWithContext,
     handleFormError: handleFormErrorWithContext,
     showSuccess,
+    showError,
   };
 }

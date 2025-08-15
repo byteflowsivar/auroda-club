@@ -1,16 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { AthleteDetail } from "@/components/athletes/athlete-detail"
+import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
+import { GuardianForm } from "@/components/guardians/guardian-form"
 
-interface AthleteDetailPageProps {
-  params: Promise<{ id: string }>
-}
-
-export default async function AthleteDetailPage({ params }: AthleteDetailPageProps) {
-  const { id } = await params
-  const athleteId = parseInt(id)
-
+export default function NewGuardianPage() {
   return (
     <SidebarProvider
       style={
@@ -24,7 +17,7 @@ export default async function AthleteDetailPage({ params }: AthleteDetailPagePro
       <SidebarInset>
         <SiteHeader/>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <AthleteDetail athleteId={athleteId} />
+          <GuardianForm />
         </div>
       </SidebarInset>
     </SidebarProvider>
