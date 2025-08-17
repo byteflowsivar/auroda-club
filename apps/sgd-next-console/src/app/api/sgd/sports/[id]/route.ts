@@ -62,3 +62,76 @@ export async function GET(request: NextRequest, context: RouteContext) {
     );
   }
 }
+
+/**
+ * PUT /api/sgd/sports/[id] - Actualizar deporte
+ * NOTA: Endpoint preparado para cuando el backend implemente UPDATE operations
+ */
+export async function PUT(request: NextRequest, context: RouteContext) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json(
+        { message: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await context.params;
+
+    // FUTURO: Cuando el backend implemente PUT /api/sports/{id}
+    return NextResponse.json(
+      { 
+        message: 'Funcionalidad en desarrollo',
+        details: `La actualización del deporte ${id} estará disponible cuando el backend implemente esta operación.`,
+        sportId: parseInt(id)
+      },
+      { status: 501 }
+    );
+
+  } catch (error) {
+    console.error('Error in sport PUT preparation:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/sgd/sports/[id] - Eliminar deporte
+ * NOTA: Endpoint preparado para cuando el backend implemente DELETE operations
+ */
+export async function DELETE(request: NextRequest, context: RouteContext) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json(
+        { message: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await context.params;
+
+    // FUTURO: Verificar atletas asociados antes de eliminar
+    // FUTURO: Cuando el backend implemente DELETE /api/sports/{id}
+    return NextResponse.json(
+      { 
+        message: 'Funcionalidad en desarrollo',
+        details: `La eliminación del deporte ${id} estará disponible cuando el backend implemente esta operación. Se incluirá validación de atletas asociados.`,
+        sportId: parseInt(id)
+      },
+      { status: 501 }
+    );
+
+  } catch (error) {
+    console.error('Error in sport DELETE preparation:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
