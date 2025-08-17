@@ -57,7 +57,6 @@ const categoryFormSchema = z.object({
     .min(1, 'El rango de edad es requerido')
     .max(50, 'El rango de edad no puede exceder 50 caracteres'),
   
-  active: z.boolean().default(true),
 }).refine((data) => data.maxAge >= data.minAge, {
   message: 'La edad máxima debe ser mayor o igual a la edad mínima',
   path: ['maxAge'],
@@ -72,6 +71,9 @@ interface CategoryFormProps {
   /** ID del deporte (requerido para crear categoría) */
   sportId?: number;
   
+  /** Nombre del deporte (opcional, para mostrar cuando sportId está presente) */
+  sportName?: string;
+
   /** Callback al guardar exitosamente */
   onSave?: (category: CategoryResponse) => void;
   
@@ -84,7 +86,8 @@ interface CategoryFormProps {
 
 export function CategoryForm({ 
   categoryId, 
-  sportId, 
+  sportId,
+  sportName,
   onSave, 
   onCancel,
   mode = categoryId ? 'edit' : 'create'
@@ -105,7 +108,6 @@ export function CategoryForm({
       minAge: 6,
       maxAge: 18,
       ageRange: '',
-      active: true,
     },
   });
 
@@ -124,6 +126,11 @@ export function CategoryForm({
   // Cargar deportes disponibles
   useEffect(() => {
     const loadSports = async () => {
+      // No cargar deportes si ya tenemos un sportId
+      if (sportId) {
+        setLoadingSports(false);
+        return;
+      }
       try {
         setLoadingSports(true);
         const sportsData = await apiClient.getSports({ includeCategories: false });
@@ -138,7 +145,7 @@ export function CategoryForm({
 
     loadSports();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sportId]);
 
   // Cargar datos de la categoría si está en modo edición
   useEffect(() => {
@@ -155,7 +162,6 @@ export function CategoryForm({
           minAge: category.minAge,
           maxAge: category.maxAge,
           ageRange: category.ageRange,
-          active: category.active,
         });
       } catch (error) {
         console.error('Error loading category:', error);
@@ -182,18 +188,17 @@ export function CategoryForm({
           sportId: data.sportId,
           minAge: data.minAge,
           maxAge: data.maxAge,
-          ageRange: data.ageRange,
-          active: data.active,
+          ageRange: data.ageRange
         };
         result = await apiClient.createCategory(createData);
         showSuccess('Categoría creada exitosamente');
       } else {
         const updateData: CategoryUpdateRequest = {
           name: data.name,
+          sportId: data.sportId,
           minAge: data.minAge,
           maxAge: data.maxAge,
-          ageRange: data.ageRange,
-          active: data.active,
+          ageRange: data.ageRange
         };
         result = await apiClient.updateCategory(categoryId!, updateData);
         showSuccess('Categoría actualizada exitosamente');
@@ -274,39 +279,58 @@ export function CategoryForm({
 
 
             {/* Deporte */}
-            <FormField
-              control={form.control}
-              name="sportId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Deporte <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    value={field.value?.toString()}
-                    disabled={mode === 'edit' || !!sportId}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar deporte" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sports.map((sport) => (
-                        <SelectItem key={sport.id} value={sport.id.toString()}>
-                          {sport.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    {mode === 'edit' || sportId ? 'El deporte no se puede cambiar en edición' : 'Selecciona el deporte para esta categoría'}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {sportId ? (
+              <FormItem>
+                <FormLabel>Deporte</FormLabel>
+                <FormControl>
+                  <Input 
+                    value={sportName || `ID: ${sportId}`} 
+                    disabled 
+                    className="bg-muted"
+                  />
+                </FormControl>
+                <FormDescription>
+                  {mode === 'edit' 
+                    ? 'El deporte de una categoría no se puede cambiar.'
+                    : 'Creando categoría para este deporte.'
+                  }
+                </FormDescription>
+              </FormItem>
+            ) : (
+              <FormField
+                control={form.control}
+                name="sportId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Deporte <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Select 
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      value={field.value?.toString()}
+                      disabled={mode === 'edit'}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar deporte" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {sports.map((sport) => (
+                          <SelectItem key={sport.id} value={sport.id.toString()}>
+                            {sport.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Selecciona el deporte para esta categoría
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Edades mínima y máxima */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,29 +412,7 @@ export function CategoryForm({
               )}
             />
 
-            {/* Estado activo */}
-            <FormField
-              control={form.control}
-              name="active"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Categoría Activa
-                    </FormLabel>
-                    <FormDescription>
-                      Las categorías inactivas no estarán disponibles para nuevos atletas
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            
 
             {/* Botones de acción */}
             <div className="flex justify-end gap-4 pt-4">

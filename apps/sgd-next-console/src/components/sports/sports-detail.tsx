@@ -630,6 +630,7 @@ Creado: ${formatDate(sport.createdAt)}
           <CategoryForm
             categoryId={editingCategory?.id}
             sportId={sport.id}
+            sportName={sport.name}
             mode={editingCategory ? 'edit' : 'create'}
             onSave={handleCategorySaved}
             onCancel={() => {
