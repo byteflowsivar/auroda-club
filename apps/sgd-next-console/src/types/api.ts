@@ -479,6 +479,27 @@ export interface ClubResponse {
 // ============================================================================
 
 /**
+ * Schema: VenueCreateRequest
+ */
+export interface VenueCreateRequest {
+  clubId: number;
+  name: string;
+  code: string;
+  address?: string;
+  phone?: string;
+}
+
+/**
+ * Schema: VenueUpdateRequest
+ */
+export interface VenueUpdateRequest {
+  name: string;
+  address?: string;
+  phone?: string;
+  active?: boolean;
+}
+
+/**
  * Schema: VenueResponse
  */
 export interface VenueResponse {
@@ -595,24 +616,6 @@ export interface ValidationErrorResponse {
   timestamp: string;
   path: string;
   errors: ValidationError[];
-}
-
-// ============================================================================
-// TYPE GUARDS (básicos)
-// ============================================================================
-
-export function isAthleteResponse(obj: unknown): obj is AthleteResponse {
-  return obj && typeof obj === 'object' && 
-         typeof obj.id === 'number' && 
-         typeof obj.fullName === 'string' &&
-         typeof obj.birthDate === 'string' &&
-         typeof obj.age === 'number';
-}
-
-export function isGuardianResponse(obj: unknown): obj is GuardianResponse {
-  return obj && typeof obj === 'object' && 
-         typeof obj.id === 'number' && 
-         typeof obj.fullName === 'string';
 }
 
 // ============================================================================

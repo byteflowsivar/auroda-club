@@ -866,6 +866,40 @@
           }
         }
       },
+      "VenueCreateRequest": {
+        "type": "object",
+        "required": [
+          "clubId",
+          "name",
+          "code"
+        ],
+        "properties": {
+          "clubId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "\\S"
+          },
+          "address": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 50
+          }
+        }
+      },
       "VenueInfo": {
         "type": "object",
         "properties": {
@@ -938,6 +972,30 @@
           },
           "updatedAt": {
             "$ref": "#/components/schemas/LocalDateTime"
+          }
+        }
+      },
+      "VenueUpdateRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
+          },
+          "address": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "active": {
+            "type": "boolean"
           }
         }
       }
@@ -2037,9 +2095,291 @@
         ]
       }
     },
-    "/api/guardians/{id}": {},
-    "/api/guardians/{id}/athletes": {},
-    "/api/sports": {},
+    "/api/guardians/{id}": {
+      "put": {
+        "summary": "Actualizar tutor existente",
+        "description": "Actualiza los datos de un tutor existente. Debe mantener al menos un método de contacto válido.",
+        "tags": [
+          "Guardians"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del tutor",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuardianUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tutor actualizado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuardianResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "403": {
+            "description": "Sin permisos para actualizar este tutor"
+          },
+          "404": {
+            "description": "Tutor no encontrado"
+          },
+          "409": {
+            "description": "Conflicto con datos existentes"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Obtener tutor específico",
+        "description": "Obtiene los detalles completos de un tutor incluyendo información de atletas asociados.",
+        "tags": [
+          "Guardians"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del tutor",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tutor encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuardianResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver este tutor"
+          },
+          "404": {
+            "description": "Tutor no encontrado o sin acceso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Eliminar tutor (soft delete)",
+        "description": "Marca un tutor como inactivo preservando los datos históricos. Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Guardians"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del tutor",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Tutor eliminado exitosamente"
+          },
+          "403": {
+            "description": "Sin permisos para eliminar tutores"
+          },
+          "404": {
+            "description": "Tutor no encontrado"
+          },
+          "409": {
+            "description": "No se puede eliminar - tutor tiene atletas asociados activos"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guardians/{id}/athletes": {
+      "get": {
+        "summary": "Obtener atletas del tutor",
+        "description": "Lista todos los atletas activos bajo la tutela de este guardian con información de relación.",
+        "tags": [
+          "Guardians"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del tutor",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de atletas del tutor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AthleteInfo"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver atletas de este tutor"
+          },
+          "404": {
+            "description": "Tutor no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/sports": {
+      "get": {
+        "summary": "Obtener deportes",
+        "description": "Lista todos los deportes activos con sus categorías. Los usuarios ven deportes según sus asignaciones.",
+        "tags": [
+          "Sports"
+        ],
+        "parameters": [
+          {
+            "description": "Incluir categorías en la respuesta",
+            "schema": {
+              "type": "boolean",
+              "default": "true"
+            },
+            "name": "includeCategories",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de deportes recuperada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SportResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a deportes"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Crear nuevo deporte",
+        "description": "Crea un nuevo deporte en el sistema. Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Sports"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SportCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Deporte creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SportResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para crear deportes"
+          },
+          "409": {
+            "description": "Ya existe un deporte con ese nombre"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/sports/{id}": {
       "put": {
         "summary": "Actualizar deporte existente",
@@ -2192,8 +2532,288 @@
         ]
       }
     },
-    "/api/sports/{id}/categories": {},
-    "/api/venues": {},
-    "/api/venues/{id}": {}
+    "/api/sports/{id}/categories": {
+      "get": {
+        "summary": "Obtener categorías del deporte",
+        "description": "Lista todas las categorías activas del deporte. Opcionalmente filtradas por edad específica.",
+        "tags": [
+          "Sports"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del deporte",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "description": "Edad para filtrar categorías válidas",
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 0
+            },
+            "name": "age",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de categorías del deporte",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Edad inválida"
+          },
+          "404": {
+            "description": "Deporte no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/venues": {
+      "get": {
+        "summary": "Obtener sedes",
+        "description": "Lista sedes accesibles según el rol del usuario. ADMIN_GENERAL ve todas, ADMIN_CLUB ve las de su club, PROFESOR solo las asignadas.",
+        "tags": [
+          "Venues"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de sedes recuperada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VenueResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a sedes"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Crear una nueva sede",
+        "description": "Crea una nueva sede asociada a un club.",
+        "tags": [
+          "Venues"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VenueCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Sede creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de solicitud inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para crear sedes"
+          },
+          "404": {
+            "description": "Club no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/venues/{id}": {
+      "put": {
+        "summary": "Actualizar una sede",
+        "description": "Actualiza los detalles de una sede existente.",
+        "tags": [
+          "Venues"
+        ],
+        "parameters": [
+          {
+            "description": "ID único de la sede",
+            "required": true,
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VenueUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sede actualizada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de solicitud inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para modificar esta sede"
+          },
+          "404": {
+            "description": "Sede no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Obtener sede específica",
+        "description": "Obtiene los detalles completos de una sede incluyendo información del club.",
+        "tags": [
+          "Venues"
+        ],
+        "parameters": [
+          {
+            "description": "ID único de la sede",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sede encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver esta sede"
+          },
+          "404": {
+            "description": "Sede no encontrada o sin acceso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Eliminar una sede",
+        "description": "Marca una sede como inactiva (soft delete).",
+        "tags": [
+          "Venues"
+        ],
+        "parameters": [
+          {
+            "description": "ID único de la sede",
+            "required": true,
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sede eliminada exitosamente"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para eliminar esta sede"
+          },
+          "404": {
+            "description": "Sede no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
   }
 }

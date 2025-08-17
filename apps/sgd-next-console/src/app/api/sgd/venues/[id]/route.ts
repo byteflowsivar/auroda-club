@@ -18,8 +18,9 @@ async function getBackendHeaders(session: { accessToken?: string } | null) {
   return headers;
 }
 
-// GET /api/sgd/venues - List all venues
-export async function GET(req: NextRequest) {
+// GET /api/sgd/venues/[id] - Get a single venue
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
 
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_API_URL}/venues`, {
+    const response = await fetch(`${BACKEND_API_URL}/venues/${id}`, {
       method: 'GET',
       headers,
     });
@@ -42,13 +43,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error('Error fetching venues:', error);
+    console.error(`Error fetching venue ${id}:`, error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-// POST /api/sgd/venues - Create a new venue
-export async function POST(req: NextRequest) {
+// PUT /api/sgd/venues/[id] - Update a venue
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -58,8 +60,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const headers = await getBackendHeaders(session);
 
-    const response = await fetch(`${BACKEND_API_URL}/venues`, {
-      method: 'POST',
+    const response = await fetch(`${BACKEND_API_URL}/venues/${id}`, {
+      method: 'PUT',
       headers,
       body: JSON.stringify(body),
     });
@@ -68,14 +70,47 @@ export async function POST(req: NextRequest) {
       const errorData = await response.json().catch(() => ({}));
       return NextResponse.json(errorData, { status: response.status });
     }
-    
+
     revalidateTag('venues');
+    revalidateTag(`venue:${id}`);
 
     const data = await response.json();
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json(data);
 
   } catch (error) {
-    console.error('Error creating venue:', error);
+    console.error(`Error updating venue ${id}:`, error);
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+// DELETE /api/sgd/venues/[id] - Delete a venue
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const headers = await getBackendHeaders(session);
+
+    const response = await fetch(`${BACKEND_API_URL}/venues/${id}`, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!response.ok) {
+        const textError = await response.text();
+        return NextResponse.json({ message: textError || 'Failed to delete venue' }, { status: response.status });
+    }
+
+    revalidateTag('venues');
+    revalidateTag(`venue:${id}`);
+
+    return new NextResponse(null, { status: 204 });
+
+  } catch (error) {
+    console.error(`Error deleting venue ${id}:`, error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

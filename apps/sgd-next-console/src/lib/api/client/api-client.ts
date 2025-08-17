@@ -21,6 +21,8 @@ import type {
   CategoryListParams,
   ClubResponse,
   VenueResponse,
+  VenueCreateRequest,
+  VenueUpdateRequest,
   GuardianInfo,
   AthleteInfo
 } from '@/types/api';
@@ -398,5 +400,17 @@ export class ApiClient {
 
   async getVenue(id: number): Promise<VenueResponse> {
     return this.get<VenueResponse>(`/venues/${id}`);
+  }
+
+  async createVenue(data: VenueCreateRequest): Promise<VenueResponse> {
+    return this.post<VenueResponse>('/venues', data);
+  }
+
+  async updateVenue(id: number, data: VenueUpdateRequest): Promise<VenueResponse> {
+    return this.put<VenueResponse>(`/venues/${id}`, data);
+  }
+
+  async deleteVenue(id: number): Promise<void> {
+    return this.delete<void>(`/venues/${id}`);
   }
 }

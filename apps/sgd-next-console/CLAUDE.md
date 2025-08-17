@@ -219,7 +219,7 @@ KEYCLOAK_ISSUER=http://localhost:8089/realms/SGD
 KEYCLOAK_CLIENT_ID=sgd-frontend
 KEYCLOAK_CLIENT_SECRET=your-frontend-secret
 
-API_URL=http://localhost:8080/api
+BACKEND_API_URL=http://localhost:8080/api
 ```
 
 ### Integración con API Backend
