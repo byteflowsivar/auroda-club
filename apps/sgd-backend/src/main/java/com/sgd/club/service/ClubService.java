@@ -1,7 +1,9 @@
 package com.sgd.club.service;
 
 import com.sgd.club.dto.ClubResponse;
+import com.sgd.club.dto.VenueCreateRequest;
 import com.sgd.club.dto.VenueResponse;
+import com.sgd.club.dto.VenueUpdateRequest;
 import com.sgd.club.entity.Club;
 import com.sgd.club.entity.Venue;
 import com.sgd.club.repository.ClubRepository;
@@ -10,6 +12,7 @@ import com.sgd.shared.exception.BusinessException;
 import com.sgd.shared.security.SecurityContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -251,5 +254,65 @@ public class ClubService {
             
             return venueRepository.findByIds(allowedVenueIds);
         }
+    }
+
+    @Transactional
+    public VenueResponse createVenue(VenueCreateRequest request) {
+        // Validate access
+        if (!securityContext.isGeneralAdmin() && !securityContext.isClubAdmin()) {
+            throw new BusinessException("FORBIDDEN", "No tiene permisos para crear sedes.");
+        }
+
+        Long clubId = request.getClubId();
+        Club club = clubRepository.findActiveById(clubId)
+                .orElseThrow(() -> new BusinessException("CLUB_NOT_FOUND", "Club con ID " + clubId + " no encontrado"));
+
+        // Club admin can only add to their own club
+        if (securityContext.isClubAdmin()) {
+            validateClubAccess(club);
+        }
+
+        // Validate unique code
+        if (venueRepository.existsByCodeAndNotId(request.getCode(), null)) {
+            throw new BusinessException("VENUE_CODE_EXISTS", "El código de sede '" + request.getCode() + "' ya está en uso.");
+        }
+
+        Venue venue = clubMapper.fromRequest(request);
+        venue.setClub(club);
+        venueRepository.persist(venue);
+
+        return clubMapper.toVenueResponse(venue);
+    }
+
+    @Transactional
+    public VenueResponse updateVenue(Long venueId, VenueUpdateRequest request) {
+        Venue venue = venueRepository.findByIdWithClub(venueId)
+                .orElseThrow(() -> new BusinessException("VENUE_NOT_FOUND", "Sede con ID " + venueId + " no encontrada"));
+
+        // Validate access
+        validateVenueAccess(venue);
+        if (!securityContext.isGeneralAdmin() && !securityContext.isClubAdmin()) {
+             throw new BusinessException("FORBIDDEN", "No tiene permisos para modificar esta sede.");
+        }
+
+        clubMapper.updateFromRequest(venue, request);
+        venueRepository.persist(venue);
+
+        return clubMapper.toVenueResponse(venue);
+    }
+
+    @Transactional
+    public void deleteVenue(Long venueId) {
+        Venue venue = venueRepository.findActiveById(venueId)
+                .orElseThrow(() -> new BusinessException("VENUE_NOT_FOUND", "Sede con ID " + venueId + " no encontrada"));
+
+        // Validate access
+        validateVenueAccess(venue);
+        if (!securityContext.isGeneralAdmin() && !securityContext.isClubAdmin()) {
+            throw new BusinessException("FORBIDDEN", "No tiene permisos para eliminar esta sede.");
+        }
+
+        venue.setActive(false);
+        venueRepository.persist(venue);
     }
 }

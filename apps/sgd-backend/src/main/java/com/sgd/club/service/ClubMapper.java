@@ -191,4 +191,34 @@ public class ClubMapper {
                 .map(this::toSimpleVenueResponse)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Create Venue entity from create request.
+     */
+    public Venue fromRequest(com.sgd.club.dto.VenueCreateRequest request) {
+        if (request == null) {
+            return null;
+        }
+        Venue venue = new Venue();
+        venue.setName(request.getName());
+        venue.setCode(request.getCode());
+        venue.setAddress(request.getAddress());
+        venue.setPhone(request.getPhone());
+        return venue;
+    }
+
+    /**
+     * Update Venue entity from update request.
+     */
+    public void updateFromRequest(Venue venue, com.sgd.club.dto.VenueUpdateRequest request) {
+        if (request == null || venue == null) {
+            return;
+        }
+        venue.setName(request.getName());
+        venue.setAddress(request.getAddress());
+        venue.setPhone(request.getPhone());
+        if (request.getActive() != null) {
+            venue.setActive(request.getActive());
+        }
+    }
 }
