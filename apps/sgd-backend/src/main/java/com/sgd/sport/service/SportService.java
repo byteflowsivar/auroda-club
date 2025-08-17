@@ -290,7 +290,7 @@ public class SportService {
                 request.getSportId(), request.getMinAge(), request.getMaxAge(), null);
         if (!overlapping.isEmpty()) {
             throw new IllegalArgumentException("El rango de edad " + request.getAgeRange() + 
-                    " se superpone con la categoría existente: " + overlapping.get(0).getName());
+                    " se superpone con la categoría existente: " + overlapping.getFirst().getName());
         }
 
         // Create and save category
