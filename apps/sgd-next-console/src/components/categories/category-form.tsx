@@ -43,17 +43,17 @@ const categoryFormSchema = z.object({
     .or(z.literal('')),
   
   sportId: z.number({
-    required_error: 'Debe seleccionar un deporte',
+    error: 'Debe seleccionar un deporte',
   }).int().positive('ID de deporte inválido'),
   
   minAge: z.number({
-    required_error: 'La edad mínima es requerida',
+    error: 'La edad mínima es requerida',
   }).int()
     .min(4, 'La edad mínima debe ser al menos 4 años')
     .max(65, 'La edad mínima no puede exceder 65 años'),
   
   maxAge: z.number({
-    required_error: 'La edad máxima es requerida',
+    error: 'La edad máxima es requerida',
   }).int()
     .min(4, 'La edad máxima debe ser al menos 4 años')
     .max(65, 'La edad máxima no puede exceder 65 años'),
@@ -143,7 +143,8 @@ export function CategoryForm({
     };
 
     loadSports();
-  }, [showError]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Cargar datos de la categoría si está en modo edición
   useEffect(() => {
@@ -172,7 +173,8 @@ export function CategoryForm({
     };
 
     loadCategory();
-  }, [categoryId, form, showError]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId]);
 
   // Manejar envío del formulario
   const handleSubmit = async (data: CategoryFormData) => {

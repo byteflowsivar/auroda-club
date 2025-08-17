@@ -182,7 +182,6 @@ Creado: ${formatDate(sport.createdAt)}
       // Recargar datos del deporte
       const updatedSport = await apiClient.getSport(sportId);
       setSport(updatedSport);
-      setDeletingCategory(null);
     } catch (error) {
       console.error('Error deleting category:', error);
     }
@@ -509,7 +508,6 @@ Creado: ${formatDate(sport.createdAt)}
                               variant="outline"
                               size="sm"
                               className="text-red-600 hover:text-red-700"
-onClick={() => {}}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
