@@ -85,7 +85,7 @@ public class ClubService {
         
         if (securityContext.isGeneralAdmin()) {
             // Admin general can see all venues
-            venues = venueRepository.findAllActive();
+            venues = venueRepository.findAll().list();
         } else if (securityContext.isClubAdmin()) {
             // Club admin can see all venues of their club
             Long userClubId = securityContext.getCurrentUserClubId()

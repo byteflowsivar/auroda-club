@@ -59,7 +59,7 @@ public class VenueRepository implements PanacheRepository<Venue> {
      * Find venue by ID with club loaded.
      */
     public Optional<Venue> findByIdWithClub(Long id) {
-        return find("SELECT v FROM Venue v JOIN FETCH v.club WHERE v.id = ?1 AND v.active = true", id)
+        return find("SELECT v FROM Venue v JOIN FETCH v.club WHERE v.id = ?1", id)
                 .firstResultOptional();
     }
 
