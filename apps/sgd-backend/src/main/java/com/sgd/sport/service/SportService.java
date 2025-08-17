@@ -1,14 +1,19 @@
 package com.sgd.sport.service;
 
 import com.sgd.shared.security.SecurityContext;
+import com.sgd.sport.dto.CategoryCreateRequest;
 import com.sgd.sport.dto.CategoryResponse;
+import com.sgd.sport.dto.CategoryUpdateRequest;
+import com.sgd.sport.dto.SportCreateRequest;
 import com.sgd.sport.dto.SportResponse;
+import com.sgd.sport.dto.SportUpdateRequest;
 import com.sgd.sport.entity.Category;
 import com.sgd.sport.entity.Sport;
 import com.sgd.sport.repository.CategoryRepository;
 import com.sgd.sport.repository.SportRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -198,6 +203,205 @@ public class SportService {
         } else {
             // Filter sports by user access
             return sportRepository.findByIds(userSportIds);
+        }
+    }
+
+    // ===== CRUD OPERATIONS =====
+
+    /**
+     * Create new sport.
+     */
+    @Transactional
+    public SportResponse createSport(SportCreateRequest request) {
+        // Validate business rules
+        validateSportCreateRequest(request);
+
+        // Check if sport name already exists
+        if (sportRepository.existsByNameAndNotId(request.getName(), null)) {
+            throw new IllegalArgumentException("Ya existe un deporte con el nombre: " + request.getName());
+        }
+
+        // Create and save sport
+        Sport sport = sportMapper.toEntity(request);
+        sportRepository.persist(sport);
+
+        return sportMapper.toResponse(sport);
+    }
+
+    /**
+     * Update existing sport.
+     */
+    @Transactional
+    public SportResponse updateSport(Long sportId, SportUpdateRequest request) {
+        // Validate business rules
+        validateSportUpdateRequest(request);
+
+        // Find existing sport
+        Sport sport = sportRepository.findActiveById(sportId)
+                .orElseThrow(() -> new RuntimeException("Sport con ID " + sportId + " no encontrado"));
+
+        // Check if sport name already exists (excluding current sport)
+        if (sportRepository.existsByNameAndNotId(request.getName(), sportId)) {
+            throw new IllegalArgumentException("Ya existe un deporte con el nombre: " + request.getName());
+        }
+
+        // Update sport
+        sportMapper.updateEntity(sport, request);
+        sportRepository.persist(sport);
+
+        return sportMapper.toResponse(sport);
+    }
+
+    /**
+     * Delete sport (soft delete).
+     * Only allowed if sport has no active categories.
+     */
+    @Transactional
+    public void deleteSport(Long sportId) {
+        Sport sport = sportRepository.findActiveById(sportId)
+                .orElseThrow(() -> new RuntimeException("Sport con ID " + sportId + " no encontrado"));
+
+        // Check if sport has active categories
+        long activeCategoriesCount = categoryRepository.countBySport(sportId);
+        if (activeCategoriesCount > 0) {
+            throw new IllegalArgumentException("No se puede eliminar el deporte porque tiene " + 
+                    activeCategoriesCount + " categorías activas asociadas");
+        }
+
+        // Soft delete
+        sport.setActive(false);
+        sportRepository.persist(sport);
+    }
+
+    /**
+     * Create new category.
+     */
+    @Transactional
+    public CategoryResponse createCategory(CategoryCreateRequest request) {
+        // Validate business rules
+        validateCategoryCreateRequest(request);
+
+        // Find sport
+        Sport sport = sportRepository.findActiveById(request.getSportId())
+                .orElseThrow(() -> new RuntimeException("Sport con ID " + request.getSportId() + " no encontrado"));
+
+        // Check for overlapping age ranges
+        List<Category> overlapping = categoryRepository.findOverlapping(
+                request.getSportId(), request.getMinAge(), request.getMaxAge(), null);
+        if (!overlapping.isEmpty()) {
+            throw new IllegalArgumentException("El rango de edad " + request.getAgeRange() + 
+                    " se superpone con la categoría existente: " + overlapping.get(0).getName());
+        }
+
+        // Create and save category
+        Category category = sportMapper.toEntity(request);
+        category.setSport(sport);
+        categoryRepository.persist(category);
+
+        return sportMapper.toCategoryResponse(category);
+    }
+
+    /**
+     * Update existing category.
+     */
+    @Transactional
+    public CategoryResponse updateCategory(Long categoryId, CategoryUpdateRequest request) {
+        // Validate business rules
+        validateCategoryUpdateRequest(request);
+
+        // Find existing category
+        Category category = categoryRepository.findActiveById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category con ID " + categoryId + " no encontrada"));
+
+        // Find sport (can be changed)
+        Sport sport = sportRepository.findActiveById(request.getSportId())
+                .orElseThrow(() -> new RuntimeException("Sport con ID " + request.getSportId() + " no encontrado"));
+
+        // Check for overlapping age ranges (excluding current category)
+        List<Category> overlapping = categoryRepository.findOverlapping(
+                request.getSportId(), request.getMinAge(), request.getMaxAge(), categoryId);
+        if (!overlapping.isEmpty()) {
+            throw new IllegalArgumentException("El rango de edad " + request.getAgeRange() + 
+                    " se superpone con la categoría existente: " + overlapping.get(0).getName());
+        }
+
+        // Update category
+        sportMapper.updateEntity(category, request);
+        category.setSport(sport);
+        categoryRepository.persist(category);
+
+        return sportMapper.toCategoryResponse(category);
+    }
+
+    /**
+     * Delete category (soft delete).
+     */
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        Category category = categoryRepository.findActiveById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category con ID " + categoryId + " no encontrada"));
+
+        // TODO: Check if category has associated athletes when that module is implemented
+        // For now, allow deletion without checking
+
+        // Soft delete
+        category.setActive(false);
+        categoryRepository.persist(category);
+    }
+
+    // ===== VALIDATION METHODS =====
+
+    private void validateSportCreateRequest(SportCreateRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Los datos del deporte son obligatorios");
+        }
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del deporte es obligatorio");
+        }
+    }
+
+    private void validateSportUpdateRequest(SportUpdateRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Los datos del deporte son obligatorios");
+        }
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del deporte es obligatorio");
+        }
+    }
+
+    private void validateCategoryCreateRequest(CategoryCreateRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Los datos de la categoría son obligatorios");
+        }
+        if (request.getSportId() == null) {
+            throw new IllegalArgumentException("El ID del deporte es obligatorio");
+        }
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
+        }
+        if (request.getMinAge() == null || request.getMaxAge() == null) {
+            throw new IllegalArgumentException("Las edades mínima y máxima son obligatorias");
+        }
+        if (!request.isAgeRangeValid()) {
+            throw new IllegalArgumentException("La edad mínima debe ser menor o igual a la edad máxima");
+        }
+    }
+
+    private void validateCategoryUpdateRequest(CategoryUpdateRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Los datos de la categoría son obligatorios");
+        }
+        if (request.getSportId() == null) {
+            throw new IllegalArgumentException("El ID del deporte es obligatorio");
+        }
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
+        }
+        if (request.getMinAge() == null || request.getMaxAge() == null) {
+            throw new IllegalArgumentException("Las edades mínima y máxima son obligatorias");
+        }
+        if (!request.isAgeRangeValid()) {
+            throw new IllegalArgumentException("La edad mínima debe ser menor o igual a la edad máxima");
         }
     }
 }

@@ -1,7 +1,11 @@
 package com.sgd.sport.service;
 
+import com.sgd.sport.dto.CategoryCreateRequest;
 import com.sgd.sport.dto.CategoryResponse;
+import com.sgd.sport.dto.CategoryUpdateRequest;
+import com.sgd.sport.dto.SportCreateRequest;
 import com.sgd.sport.dto.SportResponse;
+import com.sgd.sport.dto.SportUpdateRequest;
 import com.sgd.sport.entity.Category;
 import com.sgd.sport.entity.Sport;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -193,5 +197,67 @@ public class SportMapper {
         return categories.stream()
                 .map(this::toSimpleCategoryResponse)
                 .collect(Collectors.toList());
+    }
+
+    // ===== CREATE/UPDATE MAPPERS =====
+
+    /**
+     * Convert SportCreateRequest to Sport entity.
+     */
+    public Sport toEntity(SportCreateRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        Sport sport = new Sport();
+        sport.setName(request.getName());
+        sport.setDescription(request.getDescription());
+        sport.setActive(true); // New sports are active by default
+
+        return sport;
+    }
+
+    /**
+     * Update Sport entity from SportUpdateRequest.
+     */
+    public void updateEntity(Sport sport, SportUpdateRequest request) {
+        if (sport == null || request == null) {
+            return;
+        }
+
+        sport.setName(request.getName());
+        sport.setDescription(request.getDescription());
+    }
+
+    /**
+     * Convert CategoryCreateRequest to Category entity.
+     * Note: Sport must be set separately via service.
+     */
+    public Category toEntity(CategoryCreateRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setMinAge(request.getMinAge());
+        category.setMaxAge(request.getMaxAge());
+        category.setActive(true); // New categories are active by default
+
+        return category;
+    }
+
+    /**
+     * Update Category entity from CategoryUpdateRequest.
+     * Note: Sport relationship must be handled separately via service.
+     */
+    public void updateEntity(Category category, CategoryUpdateRequest request) {
+        if (category == null || request == null) {
+            return;
+        }
+
+        category.setName(request.getName());
+        category.setMinAge(request.getMinAge());
+        category.setMaxAge(request.getMaxAge());
     }
 }

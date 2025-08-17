@@ -1,1998 +1,2199 @@
 {
-  "openapi" : "3.1.0",
-  "components" : {
-    "schemas" : {
-      "AthleteCreateRequest" : {
-        "type" : "object",
-        "required" : [ "fullName", "birthDate", "venueId", "sportId", "categoryId" ],
-        "properties" : {
-          "fullName" : {
-            "type" : "string",
-            "minLength" : 2,
-            "maxLength" : 255,
-            "pattern" : "\\S"
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "AthleteCreateRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "birthDate",
+          "venueId",
+          "sportId",
+          "categoryId"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "birthDate" : {
-            "$ref" : "#/components/schemas/LocalDate"
+          "birthDate": {
+            "$ref": "#/components/schemas/LocalDate"
           },
-          "gender" : {
-            "type" : "string",
-            "maxLength" : 10
+          "gender": {
+            "type": "string",
+            "maxLength": 10
           },
-          "email" : {
-            "type" : "string",
-            "maxLength" : 255
+          "email": {
+            "type": "string",
+            "maxLength": 255
           },
-          "phone" : {
-            "type" : "string",
-            "maxLength" : 50,
-            "pattern" : "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
+          "phone": {
+            "type": "string",
+            "maxLength": 50,
+            "pattern": "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
           },
-          "address" : {
-            "type" : "string",
-            "maxLength" : 1000
+          "address": {
+            "type": "string",
+            "maxLength": 1000
           },
-          "identificationNumber" : {
-            "type" : "string",
-            "maxLength" : 50
+          "identificationNumber": {
+            "type": "string",
+            "maxLength": 50
           },
-          "emergencyContact" : {
-            "type" : "string",
-            "maxLength" : 255
+          "emergencyContact": {
+            "type": "string",
+            "maxLength": 255
           },
-          "emergencyPhone" : {
-            "type" : "string",
-            "maxLength" : 50,
-            "pattern" : "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
+          "emergencyPhone": {
+            "type": "string",
+            "maxLength": 50,
+            "pattern": "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
           },
-          "medicalNotes" : {
-            "type" : "string",
-            "maxLength" : 2000
+          "medicalNotes": {
+            "type": "string",
+            "maxLength": 2000
           },
-          "venueId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+          "venueId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "sportId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+          "sportId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "categoryId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+          "categoryId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "guardians" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/GuardianAssociation"
+          "guardians": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuardianAssociation"
             }
           }
         }
       },
-      "AthleteInfo" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "AthleteInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "fullName" : {
-            "type" : "string"
+          "fullName": {
+            "type": "string"
           },
-          "age" : {
-            "type" : "integer",
-            "format" : "int32"
+          "age": {
+            "type": "integer",
+            "format": "int32"
           },
-          "sport" : {
-            "type" : "string"
+          "sport": {
+            "type": "string"
           },
-          "venue" : {
-            "type" : "string"
+          "venue": {
+            "type": "string"
           },
-          "relationship" : {
-            "type" : "string"
+          "relationship": {
+            "type": "string"
           },
-          "isPrimary" : {
-            "type" : "boolean"
+          "isPrimary": {
+            "type": "boolean"
           },
-          "active" : {
-            "type" : "boolean"
+          "active": {
+            "type": "boolean"
           }
         }
       },
-      "AthletePageResponse" : {
-        "type" : "object",
-        "description" : "Respuesta paginada de atletas",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/AthleteResponse"
+      "AthletePageResponse": {
+        "type": "object",
+        "description": "Respuesta paginada de atletas",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AthleteResponse"
             }
           },
-          "pagination" : {
-            "$ref" : "#/components/schemas/PaginationInfo"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
           }
         }
       },
-      "AthleteResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "AthleteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "fullName" : {
-            "type" : "string"
+          "fullName": {
+            "type": "string"
           },
-          "birthDate" : {
-            "$ref" : "#/components/schemas/LocalDate"
+          "birthDate": {
+            "$ref": "#/components/schemas/LocalDate"
           },
-          "age" : {
-            "type" : "integer",
-            "format" : "int32"
+          "age": {
+            "type": "integer",
+            "format": "int32"
           },
-          "gender" : {
-            "type" : "string"
+          "gender": {
+            "type": "string"
           },
-          "email" : {
-            "type" : "string"
+          "email": {
+            "type": "string"
           },
-          "phone" : {
-            "type" : "string"
+          "phone": {
+            "type": "string"
           },
-          "address" : {
-            "type" : "string"
+          "address": {
+            "type": "string"
           },
-          "identificationNumber" : {
-            "type" : "string"
+          "identificationNumber": {
+            "type": "string"
           },
-          "emergencyContact" : {
-            "type" : "string"
+          "emergencyContact": {
+            "type": "string"
           },
-          "emergencyPhone" : {
-            "type" : "string"
+          "emergencyPhone": {
+            "type": "string"
           },
-          "medicalNotes" : {
-            "type" : "string"
+          "medicalNotes": {
+            "type": "string"
           },
-          "registrationDate" : {
-            "$ref" : "#/components/schemas/LocalDate"
+          "registrationDate": {
+            "$ref": "#/components/schemas/LocalDate"
           },
-          "active" : {
-            "type" : "boolean"
+          "active": {
+            "type": "boolean"
           },
-          "club" : {
-            "$ref" : "#/components/schemas/ClubInfo"
+          "club": {
+            "$ref": "#/components/schemas/ClubInfo"
           },
-          "venue" : {
-            "$ref" : "#/components/schemas/VenueInfo"
+          "venue": {
+            "$ref": "#/components/schemas/VenueInfo"
           },
-          "sport" : {
-            "$ref" : "#/components/schemas/SportInfo"
+          "sport": {
+            "$ref": "#/components/schemas/SportInfo"
           },
-          "category" : {
-            "$ref" : "#/components/schemas/CategoryInfo"
+          "category": {
+            "$ref": "#/components/schemas/CategoryInfo"
           },
-          "guardians" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/GuardianInfo"
+          "guardians": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuardianInfo"
             }
           },
-          "createdAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "createdAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           },
-          "updatedAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "updatedAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           }
         }
       },
-      "AthleteUpdateRequest" : {
-        "type" : "object",
-        "required" : [ "fullName" ],
-        "properties" : {
-          "fullName" : {
-            "type" : "string",
-            "minLength" : 2,
-            "maxLength" : 255,
-            "pattern" : "\\S"
+      "AthleteUpdateRequest": {
+        "type": "object",
+        "required": [
+          "fullName"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "email" : {
-            "type" : "string",
-            "maxLength" : 255
+          "email": {
+            "type": "string",
+            "maxLength": 255
           },
-          "phone" : {
-            "type" : "string",
-            "maxLength" : 50,
-            "pattern" : "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
+          "phone": {
+            "type": "string",
+            "maxLength": 50,
+            "pattern": "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
           },
-          "address" : {
-            "type" : "string",
-            "maxLength" : 1000
+          "address": {
+            "type": "string",
+            "maxLength": 1000
           },
-          "emergencyContact" : {
-            "type" : "string",
-            "maxLength" : 255
+          "emergencyContact": {
+            "type": "string",
+            "maxLength": 255
           },
-          "emergencyPhone" : {
-            "type" : "string",
-            "maxLength" : 50,
-            "pattern" : "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
+          "emergencyPhone": {
+            "type": "string",
+            "maxLength": 50,
+            "pattern": "^\\+503\\s[0-9]{4}-[0-9]{4}$|^$"
           },
-          "medicalNotes" : {
-            "type" : "string",
-            "maxLength" : 2000
+          "medicalNotes": {
+            "type": "string",
+            "maxLength": 2000
           },
-          "venueId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+          "venueId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "categoryId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+          "categoryId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           }
         }
       },
-      "CategoryInfo" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "CategoryCreateRequest": {
+        "type": "object",
+        "required": [
+          "sportId",
+          "name",
+          "minAge",
+          "maxAge"
+        ],
+        "properties": {
+          "sportId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "minAge" : {
-            "type" : "integer",
-            "format" : "int32"
+          "minAge": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 0
           },
-          "maxAge" : {
-            "type" : "integer",
-            "format" : "int32"
+          "maxAge": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 0
           },
-          "sport" : {
-            "type" : "string"
+          "ageRangeValid": {
+            "type": "boolean"
+          },
+          "ageRange": {
+            "type": "string"
           }
         }
       },
-      "CategoryInfo1" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "CategoryInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "minAge" : {
-            "type" : "integer",
-            "format" : "int32"
+          "minAge": {
+            "type": "integer",
+            "format": "int32"
           },
-          "maxAge" : {
-            "type" : "integer",
-            "format" : "int32"
+          "maxAge": {
+            "type": "integer",
+            "format": "int32"
           },
-          "ageRange" : {
-            "type" : "string"
-          },
-          "active" : {
-            "type" : "boolean"
+          "sport": {
+            "type": "string"
           }
         }
       },
-      "CategoryResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "CategoryInfo1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "minAge" : {
-            "type" : "integer",
-            "format" : "int32"
+          "minAge": {
+            "type": "integer",
+            "format": "int32"
           },
-          "maxAge" : {
-            "type" : "integer",
-            "format" : "int32"
+          "maxAge": {
+            "type": "integer",
+            "format": "int32"
           },
-          "ageRange" : {
-            "type" : "string"
+          "ageRange": {
+            "type": "string"
           },
-          "active" : {
-            "type" : "boolean"
-          },
-          "sport" : {
-            "$ref" : "#/components/schemas/SportInfo1"
-          },
-          "createdAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
-          },
-          "updatedAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "active": {
+            "type": "boolean"
           }
         }
       },
-      "ClubInfo" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "CategoryResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "email" : {
-            "type" : "string"
+          "minAge": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxAge": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ageRange": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "sport": {
+            "$ref": "#/components/schemas/SportInfo1"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           }
         }
       },
-      "ClubInfo1" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "CategoryUpdateRequest": {
+        "type": "object",
+        "required": [
+          "sportId",
+          "name",
+          "minAge",
+          "maxAge"
+        ],
+        "properties": {
+          "sportId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "email" : {
-            "type" : "string"
+          "minAge": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 0
           },
-          "phone" : {
-            "type" : "string"
+          "maxAge": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 0
           },
-          "active" : {
-            "type" : "boolean"
+          "ageRangeValid": {
+            "type": "boolean"
+          },
+          "ageRange": {
+            "type": "string"
           }
         }
       },
-      "ClubResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "ClubInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "description" : {
-            "type" : "string"
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "ClubInfo1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "email" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "phone" : {
-            "type" : "string"
+          "email": {
+            "type": "string"
           },
-          "address" : {
-            "type" : "string"
+          "phone": {
+            "type": "string"
           },
-          "active" : {
-            "type" : "boolean"
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ClubResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "venues" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/VenueInfo1"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "venues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VenueInfo1"
             }
           },
-          "createdAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "createdAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           },
-          "updatedAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "updatedAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           }
         }
       },
-      "GuardianAssociation" : {
-        "type" : "object",
-        "required" : [ "guardianId", "relationship" ],
-        "properties" : {
-          "guardianId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+      "GuardianAssociation": {
+        "type": "object",
+        "required": [
+          "guardianId",
+          "relationship"
+        ],
+        "properties": {
+          "guardianId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "relationship" : {
-            "type" : "string",
-            "minLength" : 2,
-            "maxLength" : 50,
-            "pattern" : "\\S"
+          "relationship": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "pattern": "\\S"
           },
-          "isPrimary" : {
-            "type" : "boolean"
+          "isPrimary": {
+            "type": "boolean"
           }
         }
       },
-      "GuardianAssociationRequest" : {
-        "type" : "object",
-        "required" : [ "guardianId", "relationship" ],
-        "properties" : {
-          "guardianId" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0,
-            "format" : "int64"
+      "GuardianAssociationRequest": {
+        "type": "object",
+        "required": [
+          "guardianId",
+          "relationship"
+        ],
+        "properties": {
+          "guardianId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "format": "int64"
           },
-          "relationship" : {
-            "type" : "string",
-            "minLength" : 2,
-            "maxLength" : 50,
-            "pattern" : "\\S"
+          "relationship": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "pattern": "\\S"
           },
-          "isPrimary" : {
-            "type" : "boolean"
+          "isPrimary": {
+            "type": "boolean"
           }
         }
       },
-      "GuardianAssociationResponse" : {
-        "type" : "object",
-        "description" : "Respuesta de asociación de tutor",
-        "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "Mensaje de confirmación"
+      "GuardianAssociationResponse": {
+        "type": "object",
+        "description": "Respuesta de asociación de tutor",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Mensaje de confirmación"
           },
-          "athleteId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "description" : "ID del atleta"
+          "athleteId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del atleta"
           },
-          "guardianId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "description" : "ID del tutor"
+          "guardianId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del tutor"
           },
-          "relationship" : {
-            "type" : "string",
-            "description" : "Tipo de parentesco"
+          "relationship": {
+            "type": "string",
+            "description": "Tipo de parentesco"
           }
         }
       },
-      "GuardianCreateRequest" : {
-        "type" : "object",
-        "required" : [ "fullName" ],
-        "properties" : {
-          "fullName" : {
-            "type" : "string",
-            "minLength" : 2,
-            "maxLength" : 255,
-            "pattern" : "\\S"
+      "GuardianCreateRequest": {
+        "type": "object",
+        "required": [
+          "fullName"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "email" : {
-            "type" : "string",
-            "maxLength" : 255
+          "email": {
+            "type": "string",
+            "maxLength": 255
           },
-          "phone" : {
-            "type" : "string",
-            "maxLength" : 50
+          "phone": {
+            "type": "string",
+            "maxLength": 50
           },
-          "secondaryPhone" : {
-            "type" : "string",
-            "maxLength" : 50
+          "secondaryPhone": {
+            "type": "string",
+            "maxLength": 50
           },
-          "address" : {
-            "type" : "string",
-            "maxLength" : 1000
+          "address": {
+            "type": "string",
+            "maxLength": 1000
           },
-          "identificationNumber" : {
-            "type" : "string",
-            "maxLength" : 50
+          "identificationNumber": {
+            "type": "string",
+            "maxLength": 50
           }
         }
       },
-      "GuardianInfo" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "GuardianInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "fullName" : {
-            "type" : "string"
+          "fullName": {
+            "type": "string"
           },
-          "email" : {
-            "type" : "string"
+          "email": {
+            "type": "string"
           },
-          "phone" : {
-            "type" : "string"
+          "phone": {
+            "type": "string"
           },
-          "relationship" : {
-            "type" : "string"
+          "relationship": {
+            "type": "string"
           },
-          "isPrimary" : {
-            "type" : "boolean"
+          "isPrimary": {
+            "type": "boolean"
           }
         }
       },
-      "GuardianOperationResponse" : {
-        "type" : "object",
-        "description" : "Respuesta de operación de tutor",
-        "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "Mensaje de confirmación"
+      "GuardianOperationResponse": {
+        "type": "object",
+        "description": "Respuesta de operación de tutor",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Mensaje de confirmación"
           },
-          "guardianId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "description" : "ID del tutor"
+          "guardianId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del tutor"
           },
-          "details" : {
-            "type" : "string",
-            "description" : "Detalles adicionales"
+          "details": {
+            "type": "string",
+            "description": "Detalles adicionales"
           }
         }
       },
-      "GuardianPageResponse" : {
-        "type" : "object",
-        "description" : "Respuesta paginada de tutores",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/GuardianResponse"
+      "GuardianPageResponse": {
+        "type": "object",
+        "description": "Respuesta paginada de tutores",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuardianResponse"
             }
           },
-          "pagination" : {
-            "$ref" : "#/components/schemas/PaginationInfo"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
           }
         }
       },
-      "GuardianResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "GuardianResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "fullName" : {
-            "type" : "string"
+          "fullName": {
+            "type": "string"
           },
-          "email" : {
-            "type" : "string"
+          "email": {
+            "type": "string"
           },
-          "phone" : {
-            "type" : "string"
+          "phone": {
+            "type": "string"
           },
-          "secondaryPhone" : {
-            "type" : "string"
+          "secondaryPhone": {
+            "type": "string"
           },
-          "address" : {
-            "type" : "string"
+          "address": {
+            "type": "string"
           },
-          "identificationNumber" : {
-            "type" : "string"
+          "identificationNumber": {
+            "type": "string"
           },
-          "active" : {
-            "type" : "boolean"
+          "active": {
+            "type": "boolean"
           },
-          "athletes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/AthleteInfo"
+          "athletes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AthleteInfo"
             }
           },
-          "createdAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "createdAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           },
-          "updatedAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "updatedAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           }
         }
       },
-      "GuardianUpdateRequest" : {
-        "type" : "object",
-        "properties" : {
-          "fullName" : {
-            "type" : "string",
-            "minLength" : 2,
-            "maxLength" : 255
+      "GuardianUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255
           },
-          "email" : {
-            "type" : "string",
-            "maxLength" : 255
+          "email": {
+            "type": "string",
+            "maxLength": 255
           },
-          "phone" : {
-            "type" : "string",
-            "maxLength" : 50
+          "phone": {
+            "type": "string",
+            "maxLength": 50
           },
-          "secondaryPhone" : {
-            "type" : "string",
-            "maxLength" : 50
+          "secondaryPhone": {
+            "type": "string",
+            "maxLength": 50
           },
-          "address" : {
-            "type" : "string",
-            "maxLength" : 1000
+          "address": {
+            "type": "string",
+            "maxLength": 1000
           },
-          "identificationNumber" : {
-            "type" : "string",
-            "maxLength" : 50
+          "identificationNumber": {
+            "type": "string",
+            "maxLength": 50
           }
         }
       },
-      "LocalDate" : {
-        "type" : "string",
-        "format" : "date",
-        "examples" : [ "2022-03-10" ]
+      "LocalDate": {
+        "type": "string",
+        "format": "date",
+        "examples": [
+          "2022-03-10"
+        ]
       },
-      "LocalDateTime" : {
-        "type" : "string",
-        "format" : "date-time",
-        "examples" : [ "2022-03-10T12:15:50" ]
+      "LocalDateTime": {
+        "type": "string",
+        "format": "date-time",
+        "examples": [
+          "2022-03-10T12:15:50"
+        ]
       },
-      "PaginationInfo" : {
-        "type" : "object",
-        "properties" : {
-          "page" : {
-            "type" : "integer",
-            "format" : "int32"
+      "PaginationInfo": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
           },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
+          "size": {
+            "type": "integer",
+            "format": "int32"
           },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
           },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           },
-          "first" : {
-            "type" : "boolean"
+          "first": {
+            "type": "boolean"
           },
-          "last" : {
-            "type" : "boolean"
+          "last": {
+            "type": "boolean"
           },
-          "hasNext" : {
-            "type" : "boolean"
+          "hasNext": {
+            "type": "boolean"
           },
-          "hasPrevious" : {
-            "type" : "boolean"
+          "hasPrevious": {
+            "type": "boolean"
           }
         }
       },
-      "SportInfo" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "SportCreateRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "name" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : "string"
+          "description": {
+            "type": "string",
+            "maxLength": 1000
           }
         }
       },
-      "SportInfo1" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "SportInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "description" : {
-            "type" : "string"
-          },
-          "active" : {
-            "type" : "boolean"
+          "description": {
+            "type": "string"
           }
         }
       },
-      "SportResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "SportInfo1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "description" : {
-            "type" : "string"
+          "description": {
+            "type": "string"
           },
-          "active" : {
-            "type" : "boolean"
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SportResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "categories" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CategoryInfo1"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryInfo1"
             }
           },
-          "createdAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "createdAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           },
-          "updatedAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "updatedAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           }
         }
       },
-      "VenueInfo" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "SportUpdateRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255,
+            "pattern": "\\S"
           },
-          "name" : {
-            "type" : "string"
-          },
-          "code" : {
-            "type" : "string"
-          },
-          "address" : {
-            "type" : "string"
+          "description": {
+            "type": "string",
+            "maxLength": 1000
           }
         }
       },
-      "VenueInfo1" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "VenueInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "code" : {
-            "type" : "string"
+          "code": {
+            "type": "string"
           },
-          "address" : {
-            "type" : "string"
-          },
-          "phone" : {
-            "type" : "string"
-          },
-          "active" : {
-            "type" : "boolean"
+          "address": {
+            "type": "string"
           }
         }
       },
-      "VenueResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
+      "VenueInfo1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "code" : {
-            "type" : "string"
+          "code": {
+            "type": "string"
           },
-          "address" : {
-            "type" : "string"
+          "address": {
+            "type": "string"
           },
-          "phone" : {
-            "type" : "string"
+          "phone": {
+            "type": "string"
           },
-          "active" : {
-            "type" : "boolean"
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VenueResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "club" : {
-            "$ref" : "#/components/schemas/ClubInfo1"
+          "name": {
+            "type": "string"
           },
-          "createdAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "code": {
+            "type": "string"
           },
-          "updatedAt" : {
-            "$ref" : "#/components/schemas/LocalDateTime"
+          "address": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "club": {
+            "$ref": "#/components/schemas/ClubInfo1"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/LocalDateTime"
           }
         }
       }
     },
-    "securitySchemes" : {
-      "bearerAuth" : {
-        "type" : "http",
-        "description" : "JWT token obtenido a través de Keycloak. El token debe incluir los roles necesarios (ADMIN_GENERAL, ADMIN_CLUB, PROFESOR) y los claims personalizados (club_id, venue_ids, sport_ids).",
-        "scheme" : "bearer",
-        "bearerFormat" : "JWT"
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "JWT token obtenido a través de Keycloak. El token debe incluir los roles necesarios (ADMIN_GENERAL, ADMIN_CLUB, PROFESOR) y los claims personalizados (club_id, venue_ids, sport_ids).",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       },
-      "SecurityScheme" : {
-        "type" : "openIdConnect",
-        "openIdConnectUrl" : "http://localhost:8089/realms/SGD/.well-known/openid-configuration",
-        "description" : "Authentication"
-      }
-    }
-  },
-  "info" : {
-    "contact" : {
-      "email" : "dev@sgd.com",
-      "name" : "SGD Development Team",
-      "url" : "https://sgd.com/support"
-    },
-    "description" : "Sistema de Gesti�n Deportiva - API Backend",
-    "license" : {
-      "name" : "Proprietary",
-      "url" : "https://sgd.com/license"
-    },
-    "title" : "SGD Backend API",
-    "version" : "1.0.0"
-  },
-  "tags" : [ {
-    "name" : "Athletes",
-    "description" : "Gestión de atletas deportivos"
-  }, {
-    "name" : "Guardians",
-    "description" : "Gestión de tutores y guardianes"
-  }, {
-    "name" : "Configuration",
-    "description" : "Configuraciones del sistema (deportes, categorías, sedes)"
-  }, {
-    "name" : "Health",
-    "description" : "Endpoints de estado y monitoreo"
-  }, {
-    "name" : "Clubs",
-    "description" : "Gestión de clubes y sedes deportivas"
-  }, {
-    "name" : "Venues",
-    "description" : "Gestión de sedes deportivas"
-  }, {
-    "name" : "Categories",
-    "description" : "Gestión de categorías deportivas"
-  }, {
-    "name" : "Sports",
-    "description" : "Gestión de deportes y categorías"
-  } ],
-  "servers" : [ {
-    "url" : "http://localhost:8080",
-    "description" : "Servidor de desarrollo"
-  }, {
-    "url" : "https://api.sgd.com",
-    "description" : "Servidor de producción"
-  } ],
-  "externalDocs" : {
-    "description" : "Documentación completa de la API",
-    "url" : "https://docs.sgd.com/api"
-  },
-  "paths" : {
-    "/api/athletes" : {
-      "get" : {
-        "summary" : "Listar atletas",
-        "description" : "Obtiene una lista paginada de atletas con filtros opcionales. Los usuarios solo ven atletas de sus sedes asignadas.",
-        "tags" : [ "Athletes" ],
-        "parameters" : [ {
-          "name" : "active",
-          "in" : "query",
-          "schema" : {
-            "type" : "boolean",
-            "default" : "true"
-          }
-        }, {
-          "name" : "ageMax",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "maximum" : 100,
-            "minimum" : 0
-          }
-        }, {
-          "name" : "ageMin",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "maximum" : 100,
-            "minimum" : 0
-          }
-        }, {
-          "name" : "categoryId",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "minimum" : 1
-          }
-        }, {
-          "name" : "direction",
-          "in" : "query",
-          "schema" : {
-            "type" : "string",
-            "default" : "ASC"
-          }
-        }, {
-          "name" : "page",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 0,
-            "minimum" : 0
-          }
-        }, {
-          "name" : "search",
-          "in" : "query",
-          "schema" : {
-            "type" : "string",
-            "maxLength" : 100
-          }
-        }, {
-          "name" : "size",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 20,
-            "maximum" : 50,
-            "minimum" : 1
-          }
-        }, {
-          "name" : "sort",
-          "in" : "query",
-          "schema" : {
-            "type" : "string",
-            "default" : "fullName"
-          }
-        }, {
-          "name" : "sportId",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "minimum" : 1
-          }
-        }, {
-          "name" : "venueId",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "minimum" : 1
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de atletas recuperada exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AthletePageResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Parámetros de consulta inválidos"
-          },
-          "401" : {
-            "description" : "Token de acceso inválido o expirado"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a atletas de estas sedes"
-          },
-          "500" : {
-            "description" : "Error interno del servidor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "post" : {
-        "summary" : "Crear nuevo atleta",
-        "description" : "Crea un nuevo atleta con validaciones automáticas de edad, categoría y tutores obligatorios para menores.",
-        "tags" : [ "Athletes" ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AthleteCreateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "Atleta creado exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AthleteResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Datos de entrada inválidos"
-          },
-          "401" : {
-            "description" : "Token inválido"
-          },
-          "403" : {
-            "description" : "Sin permisos para crear atletas en esta sede"
-          },
-          "409" : {
-            "description" : "Conflicto - atleta ya existe o email duplicado"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/athletes/{id}" : {
-      "put" : {
-        "summary" : "Actualizar atleta existente",
-        "description" : "Actualiza los datos de un atleta existente. Nota: fecha de nacimiento y club no pueden cambiarse.",
-        "tags" : [ "Athletes" ],
-        "parameters" : [ {
-          "description" : "ID único del atleta",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AthleteUpdateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Atleta actualizado exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AthleteResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Datos inválidos"
-          },
-          "404" : {
-            "description" : "Atleta no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para actualizar este atleta"
-          },
-          "409" : {
-            "description" : "Conflicto con datos existentes"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "get" : {
-        "summary" : "Obtener atleta específico",
-        "description" : "Obtiene los detalles completos de un atleta incluyendo información de tutores y relaciones.",
-        "tags" : [ "Athletes" ],
-        "parameters" : [ {
-          "description" : "ID único del atleta",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Atleta encontrado",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AthleteResponse"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Atleta no encontrado o sin acceso"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver este atleta"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "delete" : {
-        "summary" : "Eliminar atleta (soft delete)",
-        "description" : "Marca un atleta como inactivo preservando los datos históricos. Solo disponible para ADMIN_GENERAL.",
-        "tags" : [ "Athletes" ],
-        "parameters" : [ {
-          "description" : "ID único del atleta",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "Atleta eliminado exitosamente"
-          },
-          "404" : {
-            "description" : "Atleta no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para eliminar atletas"
-          },
-          "409" : {
-            "description" : "No se puede eliminar - atleta tiene dependencias activas"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/athletes/{id}/guardians" : {
-      "get" : {
-        "summary" : "Obtener tutores del atleta",
-        "description" : "Lista todos los tutores activos asociados al atleta con información de contacto y relación.",
-        "tags" : [ "Athletes" ],
-        "parameters" : [ {
-          "description" : "ID único del atleta",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de tutores del atleta",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/GuardianInfo"
-                  }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Atleta no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver tutores de este atleta"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "post" : {
-        "summary" : "Asociar tutor al atleta",
-        "description" : "Asocia un tutor existente al atleta especificando el tipo de parentesco. Solo un tutor puede ser primario.",
-        "tags" : [ "Athletes" ],
-        "parameters" : [ {
-          "description" : "ID único del atleta",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GuardianAssociationRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "Tutor asociado exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GuardianAssociationResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Datos inválidos o tutor ya asociado"
-          },
-          "404" : {
-            "description" : "Atleta o tutor no encontrado"
-          },
-          "409" : {
-            "description" : "Ya existe un tutor primario para este atleta"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/categories" : {
-      "get" : {
-        "summary" : "Obtener categorías",
-        "description" : "Lista categorías activas con filtros opcionales por deporte y/o edad.",
-        "tags" : [ "Categories" ],
-        "parameters" : [ {
-          "description" : "Edad para filtrar categorías válidas",
-          "schema" : {
-            "type" : "integer",
-            "maximum" : 100,
-            "minimum" : 0
-          },
-          "name" : "age",
-          "in" : "query"
-        }, {
-          "description" : "ID del deporte para filtrar",
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "sportId",
-          "in" : "query"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de categorías recuperada exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/CategoryResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Parámetros de consulta inválidos"
-          },
-          "401" : {
-            "description" : "Token de acceso inválido o expirado"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a categorías"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/categories/by-age/{age}" : {
-      "get" : {
-        "summary" : "Obtener categorías por edad",
-        "description" : "Lista todas las categorías válidas para una edad específica en todos los deportes.",
-        "tags" : [ "Categories" ],
-        "parameters" : [ {
-          "description" : "Edad del atleta",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "maximum" : 100,
-            "minimum" : 0
-          },
-          "name" : "age",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de categorías válidas para la edad",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/CategoryResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Edad inválida"
-          },
-          "401" : {
-            "description" : "Token de acceso inválido"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a categorías"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/categories/{id}" : {
-      "get" : {
-        "summary" : "Obtener categoría específica",
-        "description" : "Obtiene los detalles completos de una categoría incluyendo información del deporte.",
-        "tags" : [ "Categories" ],
-        "parameters" : [ {
-          "description" : "ID único de la categoría",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Categoría encontrada",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CategoryResponse"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Categoría no encontrada"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver esta categoría"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/clubs" : {
-      "get" : {
-        "summary" : "Obtener clubes",
-        "description" : "Lista clubes accesibles según el rol del usuario. ADMIN_GENERAL ve todos, otros solo su club asignado.",
-        "tags" : [ "Clubs" ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de clubes recuperada exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ClubResponse"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Token de acceso inválido o expirado"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a clubes"
-          },
-          "500" : {
-            "description" : "Error interno del servidor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/clubs/{id}" : {
-      "get" : {
-        "summary" : "Obtener club específico",
-        "description" : "Obtiene los detalles completos de un club incluyendo sus sedes activas.",
-        "tags" : [ "Clubs" ],
-        "parameters" : [ {
-          "description" : "ID único del club",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Club encontrado",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ClubResponse"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Club no encontrado o sin acceso"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver este club"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/clubs/{id}/venues" : {
-      "get" : {
-        "summary" : "Obtener sedes del club",
-        "description" : "Lista todas las sedes activas del club. Los profesores solo ven sus sedes asignadas.",
-        "tags" : [ "Clubs" ],
-        "parameters" : [ {
-          "description" : "ID único del club",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de sedes del club",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/VenueResponse"
-                  }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Club no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver sedes de este club"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/guardians" : {
-      "get" : {
-        "summary" : "Listar tutores",
-        "description" : "Obtiene una lista paginada de tutores con filtros opcionales. Incluye búsqueda por nombre y email.",
-        "tags" : [ "Guardians" ],
-        "parameters" : [ {
-          "name" : "active",
-          "in" : "query",
-          "schema" : {
-            "type" : "boolean",
-            "default" : "true"
-          }
-        }, {
-          "name" : "direction",
-          "in" : "query",
-          "schema" : {
-            "type" : "string",
-            "pattern" : "ASC|DESC",
-            "default" : "ASC"
-          }
-        }, {
-          "name" : "hasAthletes",
-          "in" : "query",
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
-          "name" : "page",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : "0",
-            "minimum" : 0
-          }
-        }, {
-          "name" : "search",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "size",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : "20",
-            "maximum" : 50,
-            "minimum" : 1
-          }
-        }, {
-          "name" : "sort",
-          "in" : "query",
-          "schema" : {
-            "type" : "string",
-            "pattern" : "fullName|email|createdAt",
-            "default" : "fullName"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de tutores recuperada exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GuardianPageResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Parámetros de consulta inválidos"
-          },
-          "401" : {
-            "description" : "Token de acceso inválido o expirado"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a tutores"
-          },
-          "500" : {
-            "description" : "Error interno del servidor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "post" : {
-        "summary" : "Crear nuevo tutor",
-        "description" : "Crea un nuevo tutor con validación de información de contacto obligatoria (email o teléfono).",
-        "tags" : [ "Guardians" ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GuardianCreateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "Tutor creado exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GuardianResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Datos de entrada inválidos"
-          },
-          "401" : {
-            "description" : "Token inválido"
-          },
-          "403" : {
-            "description" : "Sin permisos para crear tutores"
-          },
-          "409" : {
-            "description" : "Conflicto - email o documento duplicado"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/guardians/{id}" : {
-      "put" : {
-        "summary" : "Actualizar tutor existente",
-        "description" : "Actualiza los datos de un tutor existente. Debe mantener al menos un método de contacto válido.",
-        "tags" : [ "Guardians" ],
-        "parameters" : [ {
-          "description" : "ID único del tutor",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GuardianUpdateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Tutor actualizado exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GuardianResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Datos inválidos"
-          },
-          "404" : {
-            "description" : "Tutor no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para actualizar este tutor"
-          },
-          "409" : {
-            "description" : "Conflicto con datos existentes"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "get" : {
-        "summary" : "Obtener tutor específico",
-        "description" : "Obtiene los detalles completos de un tutor incluyendo información de atletas asociados.",
-        "tags" : [ "Guardians" ],
-        "parameters" : [ {
-          "description" : "ID único del tutor",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Tutor encontrado",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GuardianResponse"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Tutor no encontrado o sin acceso"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver este tutor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "delete" : {
-        "summary" : "Eliminar tutor (soft delete)",
-        "description" : "Marca un tutor como inactivo preservando los datos históricos. Solo disponible para ADMIN_GENERAL.",
-        "tags" : [ "Guardians" ],
-        "parameters" : [ {
-          "description" : "ID único del tutor",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "Tutor eliminado exitosamente"
-          },
-          "404" : {
-            "description" : "Tutor no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para eliminar tutores"
-          },
-          "409" : {
-            "description" : "No se puede eliminar - tutor tiene atletas asociados activos"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/guardians/{id}/athletes" : {
-      "get" : {
-        "summary" : "Obtener atletas del tutor",
-        "description" : "Lista todos los atletas activos bajo la tutela de este guardian con información de relación.",
-        "tags" : [ "Guardians" ],
-        "parameters" : [ {
-          "description" : "ID único del tutor",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de atletas del tutor",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/AthleteInfo"
-                  }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Tutor no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver atletas de este tutor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/sports" : {
-      "get" : {
-        "summary" : "Obtener deportes",
-        "description" : "Lista todos los deportes activos con sus categorías. Los usuarios ven deportes según sus asignaciones.",
-        "tags" : [ "Sports" ],
-        "parameters" : [ {
-          "description" : "Incluir categorías en la respuesta",
-          "schema" : {
-            "type" : "boolean",
-            "default" : "true"
-          },
-          "name" : "includeCategories",
-          "in" : "query"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de deportes recuperada exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/SportResponse"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Token de acceso inválido o expirado"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a deportes"
-          },
-          "500" : {
-            "description" : "Error interno del servidor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/sports/{id}" : {
-      "get" : {
-        "summary" : "Obtener deporte específico",
-        "description" : "Obtiene los detalles completos de un deporte incluyendo todas sus categorías activas.",
-        "tags" : [ "Sports" ],
-        "parameters" : [ {
-          "description" : "ID único del deporte",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Deporte encontrado",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SportResponse"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Deporte no encontrado"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver este deporte"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/sports/{id}/categories" : {
-      "get" : {
-        "summary" : "Obtener categorías del deporte",
-        "description" : "Lista todas las categorías activas del deporte. Opcionalmente filtradas por edad específica.",
-        "tags" : [ "Sports" ],
-        "parameters" : [ {
-          "description" : "ID único del deporte",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        }, {
-          "description" : "Edad para filtrar categorías válidas",
-          "schema" : {
-            "type" : "integer",
-            "maximum" : 100,
-            "minimum" : 0
-          },
-          "name" : "age",
-          "in" : "query"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de categorías del deporte",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/CategoryResponse"
-                  }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Deporte no encontrado"
-          },
-          "400" : {
-            "description" : "Edad inválida"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/venues" : {
-      "get" : {
-        "summary" : "Obtener sedes",
-        "description" : "Lista sedes accesibles según el rol del usuario. ADMIN_GENERAL ve todas, ADMIN_CLUB ve las de su club, PROFESOR solo las asignadas.",
-        "tags" : [ "Venues" ],
-        "responses" : {
-          "200" : {
-            "description" : "Lista de sedes recuperada exitosamente",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/VenueResponse"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Token de acceso inválido o expirado"
-          },
-          "403" : {
-            "description" : "Sin permisos para acceder a sedes"
-          },
-          "500" : {
-            "description" : "Error interno del servidor"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/api/venues/{id}" : {
-      "get" : {
-        "summary" : "Obtener sede específica",
-        "description" : "Obtiene los detalles completos de una sede incluyendo información del club.",
-        "tags" : [ "Venues" ],
-        "parameters" : [ {
-          "description" : "ID único de la sede",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exclusiveMinimum" : 0
-          },
-          "name" : "id",
-          "in" : "path"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Sede encontrada",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VenueResponse"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Sede no encontrada o sin acceso"
-          },
-          "403" : {
-            "description" : "Sin permisos para ver esta sede"
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+      "SecurityScheme": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "http://localhost:8089/realms/SGD/.well-known/openid-configuration",
+        "description": "Authentication"
       }
     }
+  },
+  "info": {
+    "contact": {
+      "email": "dev@sgd.com",
+      "name": "SGD Development Team",
+      "url": "https://sgd.com/support"
+    },
+    "description": "Sistema de Gesti�n Deportiva - API Backend",
+    "license": {
+      "name": "Proprietary",
+      "url": "https://sgd.com/license"
+    },
+    "title": "SGD Backend API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Athletes",
+      "description": "Gestión de atletas deportivos"
+    },
+    {
+      "name": "Guardians",
+      "description": "Gestión de tutores y guardianes"
+    },
+    {
+      "name": "Configuration",
+      "description": "Configuraciones del sistema (deportes, categorías, sedes)"
+    },
+    {
+      "name": "Health",
+      "description": "Endpoints de estado y monitoreo"
+    },
+    {
+      "name": "Clubs",
+      "description": "Gestión de clubes y sedes deportivas"
+    },
+    {
+      "name": "Venues",
+      "description": "Gestión de sedes deportivas"
+    },
+    {
+      "name": "Categories",
+      "description": "Gestión de categorías deportivas"
+    },
+    {
+      "name": "Sports",
+      "description": "Gestión de deportes y categorías"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Servidor de desarrollo"
+    },
+    {
+      "url": "https://api.sgd.com",
+      "description": "Servidor de producción"
+    }
+  ],
+  "externalDocs": {
+    "description": "Documentación completa de la API",
+    "url": "https://docs.sgd.com/api"
+  },
+  "paths": {
+    "/api/athletes": {
+      "get": {
+        "summary": "Listar atletas",
+        "description": "Obtiene una lista paginada de atletas con filtros opcionales. Los usuarios solo ven atletas de sus sedes asignadas.",
+        "tags": [
+          "Athletes"
+        ],
+        "parameters": [
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": "true"
+            }
+          },
+          {
+            "name": "ageMax",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "ageMin",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "ASC"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "fullName"
+            }
+          },
+          {
+            "name": "sportId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "venueId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de atletas recuperada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AthletePageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a atletas de estas sedes"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Crear nuevo atleta",
+        "description": "Crea un nuevo atleta con validaciones automáticas de edad, categoría y tutores obligatorios para menores.",
+        "tags": [
+          "Athletes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AthleteCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Atleta creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AthleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token inválido"
+          },
+          "403": {
+            "description": "Sin permisos para crear atletas en esta sede"
+          },
+          "409": {
+            "description": "Conflicto - atleta ya existe o email duplicado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/athletes/{id}": {
+      "put": {
+        "summary": "Actualizar atleta existente",
+        "description": "Actualiza los datos de un atleta existente. Nota: fecha de nacimiento y club no pueden cambiarse.",
+        "tags": [
+          "Athletes"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del atleta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AthleteUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Atleta actualizado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AthleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "403": {
+            "description": "Sin permisos para actualizar este atleta"
+          },
+          "404": {
+            "description": "Atleta no encontrado"
+          },
+          "409": {
+            "description": "Conflicto con datos existentes"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Obtener atleta específico",
+        "description": "Obtiene los detalles completos de un atleta incluyendo información de tutores y relaciones.",
+        "tags": [
+          "Athletes"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del atleta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Atleta encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AthleteResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver este atleta"
+          },
+          "404": {
+            "description": "Atleta no encontrado o sin acceso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Eliminar atleta (soft delete)",
+        "description": "Marca un atleta como inactivo preservando los datos históricos. Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Athletes"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del atleta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Atleta eliminado exitosamente"
+          },
+          "403": {
+            "description": "Sin permisos para eliminar atletas"
+          },
+          "404": {
+            "description": "Atleta no encontrado"
+          },
+          "409": {
+            "description": "No se puede eliminar - atleta tiene dependencias activas"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/athletes/{id}/guardians": {
+      "get": {
+        "summary": "Obtener tutores del atleta",
+        "description": "Lista todos los tutores activos asociados al atleta con información de contacto y relación.",
+        "tags": [
+          "Athletes"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del atleta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tutores del atleta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GuardianInfo"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver tutores de este atleta"
+          },
+          "404": {
+            "description": "Atleta no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Asociar tutor al atleta",
+        "description": "Asocia un tutor existente al atleta especificando el tipo de parentesco. Solo un tutor puede ser primario.",
+        "tags": [
+          "Athletes"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del atleta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuardianAssociationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Tutor asociado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuardianAssociationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos o tutor ya asociado"
+          },
+          "404": {
+            "description": "Atleta o tutor no encontrado"
+          },
+          "409": {
+            "description": "Ya existe un tutor primario para este atleta"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "summary": "Obtener categorías",
+        "description": "Lista categorías activas con filtros opcionales por deporte y/o edad.",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "description": "Edad para filtrar categorías válidas",
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 0
+            },
+            "name": "age",
+            "in": "query"
+          },
+          {
+            "description": "ID del deporte para filtrar",
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "sportId",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de categorías recuperada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a categorías"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Crear nueva categoría",
+        "description": "Crea una nueva categoría deportiva. Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Categoría creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para crear categorías"
+          },
+          "404": {
+            "description": "Deporte no encontrado"
+          },
+          "409": {
+            "description": "Rango de edad se superpone con categoría existente"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/categories/by-age/{age}": {
+      "get": {
+        "summary": "Obtener categorías por edad",
+        "description": "Lista todas las categorías válidas para una edad específica en todos los deportes.",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "description": "Edad del atleta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 0
+            },
+            "name": "age",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de categorías válidas para la edad",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Edad inválida"
+          },
+          "401": {
+            "description": "Token de acceso inválido"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a categorías"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/categories/{id}": {
+      "put": {
+        "summary": "Actualizar categoría existente",
+        "description": "Actualiza los datos de una categoría existente. Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "description": "ID único de la categoría",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Categoría actualizada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para actualizar categorías"
+          },
+          "404": {
+            "description": "Categoría o deporte no encontrado"
+          },
+          "409": {
+            "description": "Rango de edad se superpone con categoría existente"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Obtener categoría específica",
+        "description": "Obtiene los detalles completos de una categoría incluyendo información del deporte.",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "description": "ID único de la categoría",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categoría encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver esta categoría"
+          },
+          "404": {
+            "description": "Categoría no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Eliminar categoría",
+        "description": "Elimina una categoría del sistema (soft delete). Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "description": "ID único de la categoría",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Categoría eliminada exitosamente"
+          },
+          "400": {
+            "description": "No se puede eliminar la categoría (tiene atletas asociados)"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para eliminar categorías"
+          },
+          "404": {
+            "description": "Categoría no encontrada"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/clubs": {
+      "get": {
+        "summary": "Obtener clubes",
+        "description": "Lista clubes accesibles según el rol del usuario. ADMIN_GENERAL ve todos, otros solo su club asignado.",
+        "tags": [
+          "Clubs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de clubes recuperada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a clubes"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/clubs/{id}": {
+      "get": {
+        "summary": "Obtener club específico",
+        "description": "Obtiene los detalles completos de un club incluyendo sus sedes activas.",
+        "tags": [
+          "Clubs"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del club",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Club encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClubResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver este club"
+          },
+          "404": {
+            "description": "Club no encontrado o sin acceso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/clubs/{id}/venues": {
+      "get": {
+        "summary": "Obtener sedes del club",
+        "description": "Lista todas las sedes activas del club. Los profesores solo ven sus sedes asignadas.",
+        "tags": [
+          "Clubs"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del club",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de sedes del club",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VenueResponse"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver sedes de este club"
+          },
+          "404": {
+            "description": "Club no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guardians": {
+      "get": {
+        "summary": "Listar tutores",
+        "description": "Obtiene una lista paginada de tutores con filtros opcionales. Incluye búsqueda por nombre y email.",
+        "tags": [
+          "Guardians"
+        ],
+        "parameters": [
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": "true"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "ASC|DESC",
+              "default": "ASC"
+            }
+          },
+          {
+            "name": "hasAthletes",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": "0",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": "20",
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "fullName|email|createdAt",
+              "default": "fullName"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tutores recuperada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuardianPageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para acceder a tutores"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Crear nuevo tutor",
+        "description": "Crea un nuevo tutor con validación de información de contacto obligatoria (email o teléfono).",
+        "tags": [
+          "Guardians"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuardianCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Tutor creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuardianResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token inválido"
+          },
+          "403": {
+            "description": "Sin permisos para crear tutores"
+          },
+          "409": {
+            "description": "Conflicto - email o documento duplicado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guardians/{id}": {},
+    "/api/guardians/{id}/athletes": {},
+    "/api/sports": {},
+    "/api/sports/{id}": {
+      "put": {
+        "summary": "Actualizar deporte existente",
+        "description": "Actualiza los datos de un deporte existente. Solo disponible para ADMIN_GENERAL.",
+        "tags": [
+          "Sports"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del deporte",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SportUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Deporte actualizado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SportResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para actualizar deportes"
+          },
+          "404": {
+            "description": "Deporte no encontrado"
+          },
+          "409": {
+            "description": "Ya existe un deporte con ese nombre"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Obtener deporte específico",
+        "description": "Obtiene los detalles completos de un deporte incluyendo todas sus categorías activas.",
+        "tags": [
+          "Sports"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del deporte",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deporte encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SportResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos para ver este deporte"
+          },
+          "404": {
+            "description": "Deporte no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Eliminar deporte",
+        "description": "Elimina un deporte del sistema (soft delete). Solo disponible para ADMIN_GENERAL. No se puede eliminar si tiene categorías activas.",
+        "tags": [
+          "Sports"
+        ],
+        "parameters": [
+          {
+            "description": "ID único del deporte",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deporte eliminado exitosamente"
+          },
+          "400": {
+            "description": "No se puede eliminar el deporte (tiene categorías activas)"
+          },
+          "401": {
+            "description": "Token de acceso inválido o expirado"
+          },
+          "403": {
+            "description": "Sin permisos para eliminar deportes"
+          },
+          "404": {
+            "description": "Deporte no encontrado"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/sports/{id}/categories": {},
+    "/api/venues": {},
+    "/api/venues/{id}": {}
   }
 }
