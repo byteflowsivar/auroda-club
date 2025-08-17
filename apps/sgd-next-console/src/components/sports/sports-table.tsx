@@ -56,7 +56,6 @@ import {
   Trophy,
   RefreshCw,
   Plus,
-  Users,
   Target,
   Calendar
 } from 'lucide-react';
@@ -159,6 +158,7 @@ export function SportsTable({
   // Cargar datos al inicio y cambiar parámetros
   useEffect(() => {
     loadSports();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // Formatear fecha

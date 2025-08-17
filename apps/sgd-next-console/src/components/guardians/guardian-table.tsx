@@ -175,6 +175,7 @@ export function GuardianTable({
   // Cargar datos al cambiar parámetros
   useEffect(() => {
     loadGuardians();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // Obtener iniciales del nombre

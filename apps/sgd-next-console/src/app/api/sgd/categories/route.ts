@@ -1,0 +1,107 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:8080/api';
+
+async function getBackendHeaders(session: { accessToken?: string }) {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
+  if (session?.accessToken) {
+    headers['Authorization'] = `Bearer ${session.accessToken}`;
+  }
+
+  return headers;
+}
+
+/**
+ * GET /api/sgd/categories - Obtener todas las categorías
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json(
+        { message: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const headers = await getBackendHeaders(session);
+
+    // Forward query parameters to backend
+    const queryString = searchParams.toString();
+    const url = `${BACKEND_URL}/categories${queryString ? `?${queryString}` : ''}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        errorData,
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/sgd/categories - Crear nueva categoría
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json(
+        { message: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const headers = await getBackendHeaders(session);
+
+    const response = await fetch(`${BACKEND_URL}/categories`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        errorData,
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+
+  } catch (error) {
+    console.error('Error creating category:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

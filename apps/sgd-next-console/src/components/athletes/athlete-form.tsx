@@ -32,8 +32,6 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,10 +49,7 @@ import {
   User, 
   MapPin, 
   Phone, 
-  Mail, 
   FileText,
-  UserPlus,
-  Trash2,
   AlertTriangle,
   Users
 } from 'lucide-react';
@@ -307,14 +302,14 @@ export function AthleteForm({
     if (form.formState.isDirty) {
       setShowCancelDialog(true);
     } else {
-      onCancel?.() || router.back();
+      onCancel?.();
     }
   };
 
   // Handler para confirmar cancelación
   const handleConfirmCancel = () => {
     setShowCancelDialog(false);
-    onCancel?.() || router.back();
+    onCancel?.();
   };
 
   // Handler para selección de tutores

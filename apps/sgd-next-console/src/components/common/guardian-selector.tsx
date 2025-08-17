@@ -4,9 +4,6 @@ import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -90,8 +87,7 @@ export function GuardianSelector({
   selectedGuardians,
   guardianAssociations,
   onSelectionChange,
-  required = false,
-  title = "Tutores Responsables"
+  required = false
 }: GuardianSelectorProps) {
   const { showSuccess } = useErrorHandler();
   
@@ -147,6 +143,7 @@ export function GuardianSelector({
     }, 300);
 
     return () => clearTimeout(timeoutId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, showSearchDialog, selectedGuardians]);
 
   // Limpiar búsqueda al cerrar dialog

@@ -43,8 +43,7 @@ import {
   Mail,
   MapPin,
   FileText,
-  AlertTriangle,
-  CheckCircle
+  AlertTriangle
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
@@ -165,7 +164,7 @@ export function GuardianForm({ guardian, onSuccess, onCancel }: GuardianFormProp
 
   const performCancel = () => {
     setShowCancelDialog(false);
-    onCancel?.() || router.back();
+    onCancel?.();
   };
 
   // Validar formato de teléfonos mientras se escribe

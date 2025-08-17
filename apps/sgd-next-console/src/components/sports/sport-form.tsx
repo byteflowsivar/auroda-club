@@ -99,6 +99,7 @@ export function SportForm({
     if (isEditMode && sportId) {
       loadSport();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sportId, isEditMode]);
 
   const loadSport = async () => {

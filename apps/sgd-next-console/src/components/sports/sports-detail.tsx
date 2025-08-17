@@ -32,14 +32,34 @@ import {
   Activity,
   FileText,
   TrendingUp,
-  AlertCircle,
   Info,
   Edit,
-  Trash2
+  Trash2,
+  Plus,
+  Pencil
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
-import type { SportResponse } from '@/types/api';
+import { CategoryForm } from '@/components/categories/category-form';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import type { SportResponse, CategoryResponse } from '@/types/api';
 
 interface SportsDetailProps {
   /** ID del deporte */
@@ -54,6 +74,8 @@ export function SportsDetail({ sportId }: SportsDetailProps) {
   // Estados locales
   const [sport, setSport] = useState<SportResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<CategoryResponse | null>(null);
 
   // Cargar datos del deporte
   useEffect(() => {
@@ -126,6 +148,44 @@ Creado: ${formatDate(sport.createdAt)}
 
   const handleBack = () => {
     router.push('/admin/config/sports');
+  };
+
+  // Handlers para gestión de categorías
+  const handleCreateCategory = () => {
+    setEditingCategory(null);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleEditCategory = (category: CategoryResponse) => {
+    setEditingCategory(category);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleCategorySaved = async () => {
+    setCategoryDialogOpen(false);
+    setEditingCategory(null);
+    
+    // Recargar datos del deporte para actualizar categorías
+    try {
+      const updatedSport = await apiClient.getSport(sportId);
+      setSport(updatedSport);
+    } catch (error) {
+      console.error('Error reloading sport data:', error);
+    }
+  };
+
+  const handleDeleteCategory = async (category: CategoryResponse) => {
+    try {
+      await apiClient.deleteCategory(category.id);
+      showSuccess('Categoría eliminada exitosamente');
+      
+      // Recargar datos del deporte
+      const updatedSport = await apiClient.getSport(sportId);
+      setSport(updatedSport);
+      setDeletingCategory(null);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    }
   };
 
   if (loading) {
@@ -356,17 +416,28 @@ Creado: ${formatDate(sport.createdAt)}
         {/* Categorías */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              Categorías del Deporte
-              <Badge variant="secondary">{sport.categories?.length || 0}</Badge>
-            </CardTitle>
-            <CardDescription>
-              {sport.categories && sport.categories.length > 0 
-                ? `Categorías de edad definidas para ${sport.name}`
-                : 'Este deporte no tiene categorías definidas'
-              }
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Categorías del Deporte
+                  <Badge variant="secondary">{sport.categories?.length || 0}</Badge>
+                </CardTitle>
+                <CardDescription>
+                  {sport.categories && sport.categories.length > 0 
+                    ? `Categorías de edad definidas para ${sport.name}`
+                    : 'Este deporte no tiene categorías definidas'
+                  }
+                </CardDescription>
+              </div>
+              
+              {canEdit && (
+                <Button onClick={handleCreateCategory} size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nueva Categoría
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {!sport.categories || sport.categories.length === 0 ? (
@@ -375,9 +446,18 @@ Creado: ${formatDate(sport.createdAt)}
                 <p className="text-muted-foreground">
                   No hay categorías definidas para este deporte
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Las categorías se configuran desde el sistema administrativo
-                </p>
+                {canEdit ? (
+                  <div className="mt-4">
+                    <Button onClick={handleCreateCategory} variant="outline">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Crear Primera Categoría
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Las categorías se configuran desde el sistema administrativo
+                  </p>
+                )}
               </div>
             ) : (
               <div className="space-y-4">
@@ -405,8 +485,58 @@ Creado: ${formatDate(sport.createdAt)}
                         <div className="text-sm text-muted-foreground">
                           Rango: {category.ageRange}
                         </div>
+                        {category.description && (
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {category.description}
+                          </div>
+                        )}
                       </div>
                     </div>
+                    
+                    {canEdit && (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditCategory(category)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700"
+onClick={() => {}}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>¿Eliminar Categoría?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                ¿Está seguro de que desea eliminar la categoría &quot;{category.name}&quot;? 
+                                Esta acción no se puede deshacer.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>
+                                Cancelar
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteCategory(category)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Eliminar
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -483,6 +613,34 @@ Creado: ${formatDate(sport.createdAt)}
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog para crear/editar categorías */}
+      <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingCategory ? 'Editar Categoría' : 'Nueva Categoría'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingCategory 
+                ? `Modificar la categoría "${editingCategory.name}" del deporte ${sport.name}`
+                : `Crear una nueva categoría para el deporte ${sport.name}`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <CategoryForm
+            categoryId={editingCategory?.id}
+            sportId={sport.id}
+            mode={editingCategory ? 'edit' : 'create'}
+            onSave={handleCategorySaved}
+            onCancel={() => {
+              setCategoryDialogOpen(false);
+              setEditingCategory(null);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
