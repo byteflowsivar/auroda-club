@@ -99,10 +99,10 @@ export function SportsTable({
   const [deletingSport, setDeletingSport] = useState<SportResponse | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Verificar permisos (actualmente solo lectura desde backend)
-  const canCreate = false; // Backend no implementa POST /sports
-  const canEdit = false;   // Backend no implementa PUT /sports
-  const canDelete = false; // Backend no implementa DELETE /sports
+  // Verificar permisos basados en rol del usuario
+  const canCreate = session?.user?.roles?.includes('ADMIN_GENERAL') || false;
+  const canEdit = session?.user?.roles?.includes('ADMIN_GENERAL') || false;
+  const canDelete = session?.user?.roles?.includes('ADMIN_GENERAL') || false;
 
   // Construir parámetros de búsqueda
   const searchParams = useMemo((): SportListParams => {
@@ -183,9 +183,30 @@ export function SportsTable({
     router.push('/admin/config/sports/new');
   };
 
-  // Handler para eliminar (actualmente no disponible en backend)
+  // Handler para eliminar deporte
   const handleDelete = async (sport: SportResponse) => {
-    showError('La eliminación de deportes no está disponible actualmente');
+    if (!canDelete) {
+      showError('No tiene permisos para eliminar deportes');
+      return;
+    }
+
+    if (sport.categories && sport.categories.length > 0) {
+      showError('No se puede eliminar un deporte que tiene categorías asociadas');
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await apiClient.deleteSport(sport.id);
+      showSuccess(`Deporte "${sport.name}" eliminado exitosamente`);
+      await loadSports();
+    } catch (error) {
+      console.error('Error deleting sport:', error);
+      showError('Error al eliminar el deporte');
+    } finally {
+      setDeleting(false);
+      setDeletingSport(null);
+    }
   };
 
   // Handler de selección (modo selección)

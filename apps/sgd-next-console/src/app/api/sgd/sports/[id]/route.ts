@@ -65,7 +65,6 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
 /**
  * PUT /api/sgd/sports/[id] - Actualizar deporte
- * NOTA: Endpoint preparado para cuando el backend implemente UPDATE operations
  */
 export async function PUT(request: NextRequest, context: RouteContext) {
   try {
@@ -79,19 +78,28 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     }
 
     const { id } = await context.params;
+    const body = await request.json();
+    const headers = await getBackendHeaders(session);
 
-    // FUTURO: Cuando el backend implemente PUT /api/sports/{id}
-    return NextResponse.json(
-      { 
-        message: 'Funcionalidad en desarrollo',
-        details: `La actualización del deporte ${id} estará disponible cuando el backend implemente esta operación.`,
-        sportId: parseInt(id)
-      },
-      { status: 501 }
-    );
+    const response = await fetch(`${BACKEND_URL}/sports/${id}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        errorData,
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
 
   } catch (error) {
-    console.error('Error in sport PUT preparation:', error);
+    console.error('Error updating sport:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
@@ -101,7 +109,6 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
 /**
  * DELETE /api/sgd/sports/[id] - Eliminar deporte
- * NOTA: Endpoint preparado para cuando el backend implemente DELETE operations
  */
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
@@ -115,20 +122,31 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     }
 
     const { id } = await context.params;
+    const headers = await getBackendHeaders(session);
 
-    // FUTURO: Verificar atletas asociados antes de eliminar
-    // FUTURO: Cuando el backend implemente DELETE /api/sports/{id}
-    return NextResponse.json(
-      { 
-        message: 'Funcionalidad en desarrollo',
-        details: `La eliminación del deporte ${id} estará disponible cuando el backend implemente esta operación. Se incluirá validación de atletas asociados.`,
-        sportId: parseInt(id)
-      },
-      { status: 501 }
-    );
+    const response = await fetch(`${BACKEND_URL}/sports/${id}`, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        errorData,
+        { status: response.status }
+      );
+    }
+
+    // DELETE puede retornar 204 sin contenido
+    if (response.status === 204) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
 
   } catch (error) {
-    console.error('Error in sport DELETE preparation:', error);
+    console.error('Error deleting sport:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

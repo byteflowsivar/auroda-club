@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/sgd/sports - Crear nuevo deporte
- * NOTA: Endpoint preparado para cuando el backend implemente CREATE operations
  */
 export async function POST(request: NextRequest) {
   try {
@@ -80,16 +79,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // FUTURO: Cuando el backend implemente POST /api/sports
-    return NextResponse.json(
-      { 
-        message: 'Funcionalidad en desarrollo',
-        details: 'El backend aún no soporta la creación de deportes. Esta funcionalidad estará disponible en una futura actualización.'
-      },
-      { status: 501 }
-    );
-
-    /* CODIGO PREPARADO PARA EL FUTURO:
     const body = await request.json();
     const headers = await getBackendHeaders(session);
 
@@ -109,10 +98,9 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data, { status: 201 });
-    */
 
   } catch (error) {
-    console.error('Error in sport POST preparation:', error);
+    console.error('Error creating sport:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

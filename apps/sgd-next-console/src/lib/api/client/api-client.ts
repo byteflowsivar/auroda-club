@@ -12,8 +12,12 @@ import type {
   GuardianAssociationRequest,
   GuardianAssociationResponse,
   SportResponse,
+  SportCreateRequest,
+  SportUpdateRequest,
   SportListParams,
   CategoryResponse,
+  CategoryCreateRequest,
+  CategoryUpdateRequest,
   CategoryListParams,
   ClubResponse,
   VenueResponse,
@@ -327,6 +331,18 @@ export class ApiClient {
     return this.get<SportResponse>(`/sports/${id}`);
   }
 
+  async createSport(data: SportCreateRequest): Promise<SportResponse> {
+    return this.post<SportResponse>('/sports', data);
+  }
+
+  async updateSport(id: number, data: SportUpdateRequest): Promise<SportResponse> {
+    return this.put<SportResponse>(`/sports/${id}`, data);
+  }
+
+  async deleteSport(id: number): Promise<void> {
+    return this.delete<void>(`/sports/${id}`);
+  }
+
   async getSportCategories(id: number, age?: number): Promise<CategoryResponse[]> {
     const params = age ? { age } : undefined;
     return this.get<CategoryResponse[]>(`/sports/${id}/categories`, params as QueryParamsLike);
@@ -342,6 +358,18 @@ export class ApiClient {
 
   async getCategory(id: number): Promise<CategoryResponse> {
     return this.get<CategoryResponse>(`/categories/${id}`);
+  }
+
+  async createCategory(data: CategoryCreateRequest): Promise<CategoryResponse> {
+    return this.post<CategoryResponse>('/categories', data);
+  }
+
+  async updateCategory(id: number, data: CategoryUpdateRequest): Promise<CategoryResponse> {
+    return this.put<CategoryResponse>(`/categories/${id}`, data);
+  }
+
+  async deleteCategory(id: number): Promise<void> {
+    return this.delete<void>(`/categories/${id}`);
   }
 
   async getCategoriesBySport(sportId: number): Promise<CategoryResponse[]> {

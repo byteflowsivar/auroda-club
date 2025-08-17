@@ -33,7 +33,9 @@ import {
   FileText,
   TrendingUp,
   AlertCircle,
-  Info
+  Info,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
@@ -113,6 +115,19 @@ Creado: ${formatDate(sport.createdAt)}
 
   const stats = getStats();
 
+  // Verificar permisos
+  const canEdit = session?.user?.roles?.includes('ADMIN_GENERAL') || false;
+  const canDelete = session?.user?.roles?.includes('ADMIN_GENERAL') || false;
+
+  // Handlers de navegación
+  const handleEdit = () => {
+    router.push(`/admin/config/sports/${sportId}/edit`);
+  };
+
+  const handleBack = () => {
+    router.push('/admin/config/sports');
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -166,7 +181,7 @@ Creado: ${formatDate(sport.createdAt)}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={() => router.back()}>
+          <Button variant="outline" size="icon" onClick={handleBack}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
@@ -181,6 +196,12 @@ Creado: ${formatDate(sport.createdAt)}
         </div>
         
         <div className="flex items-center gap-2">
+          {canEdit && (
+            <Button onClick={handleEdit}>
+              <Edit className="h-4 w-4 mr-2" />
+              Editar
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
@@ -193,11 +214,24 @@ Creado: ${formatDate(sport.createdAt)}
                 <Copy className="h-4 w-4 mr-2" />
                 Copiar Información
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>
-                <Info className="h-4 w-4 mr-2" />
-                Editar (No disponible)
-              </DropdownMenuItem>
+              {canEdit && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar Deporte
+                  </DropdownMenuItem>
+                </>
+              )}
+              {canDelete && sport.categories?.length === 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Eliminar
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -406,23 +440,45 @@ Creado: ${formatDate(sport.createdAt)}
           </CardContent>
         </Card>
 
-        {/* Nota sobre edición */}
+        {/* Información sobre permisos */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-blue-600" />
-              Información
+              <Info className="h-5 w-5 text-blue-600" />
+              Permisos y Operaciones
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm text-muted-foreground space-y-2">
-              <p>
-                <strong>Modo de solo lectura:</strong> Los deportes y sus categorías se gestionan 
-                desde el sistema administrativo central.
-              </p>
-              <p>
-                Para modificaciones, contacte al administrador del sistema.
-              </p>
+              {canEdit ? (
+                <>
+                  <p>
+                    <strong>Permisos disponibles:</strong> Puede editar y gestionar este deporte.
+                  </p>
+                  <p>
+                    Las categorías del deporte se configuran desde el módulo de categorías.
+                  </p>
+                  {canDelete && sport.categories?.length === 0 && (
+                    <p className="text-red-600">
+                      <strong>Eliminar:</strong> Este deporte puede ser eliminado porque no tiene categorías asociadas.
+                    </p>
+                  )}
+                  {sport.categories && sport.categories.length > 0 && (
+                    <p className="text-amber-600">
+                      <strong>Nota:</strong> No se puede eliminar este deporte porque tiene categorías asociadas.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p>
+                    <strong>Modo de solo lectura:</strong> No tiene permisos para modificar este deporte.
+                  </p>
+                  <p>
+                    Para realizar cambios, contacte a un administrador del sistema.
+                  </p>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -370,6 +370,26 @@ export interface GuardianAssociationResponse {
 // ============================================================================
 
 /**
+ * Schema: SportCreateRequest
+ */
+export interface SportCreateRequest {
+  /** required, minLength: 2, maxLength: 255, pattern: \S */
+  name: string;
+  /** maxLength: 1000 */
+  description?: string;
+}
+
+/**
+ * Schema: SportUpdateRequest
+ */
+export interface SportUpdateRequest {
+  /** required, minLength: 2, maxLength: 255, pattern: \S */
+  name: string;
+  /** maxLength: 1000 */
+  description?: string;
+}
+
+/**
  * Schema: SportResponse
  */
 export interface SportResponse {
@@ -385,6 +405,38 @@ export interface SportResponse {
 // ============================================================================
 // CATEGORY TYPES (según OpenAPI exacto)
 // ============================================================================
+
+/**
+ * Schema: CategoryCreateRequest
+ */
+export interface CategoryCreateRequest {
+  /** required, exclusiveMinimum: 0 */
+  sportId: number;
+  /** required, minLength: 2, maxLength: 255, pattern: \S */
+  name: string;
+  /** required, minimum: 0, maximum: 100 */
+  minAge: number;
+  /** required, minimum: 0, maximum: 100 */
+  maxAge: number;
+  ageRangeValid?: boolean;
+  ageRange?: string;
+}
+
+/**
+ * Schema: CategoryUpdateRequest
+ */
+export interface CategoryUpdateRequest {
+  /** required, exclusiveMinimum: 0 */
+  sportId: number;
+  /** required, minLength: 2, maxLength: 255, pattern: \S */
+  name: string;
+  /** required, minimum: 0, maximum: 100 */
+  minAge: number;
+  /** required, minimum: 0, maximum: 100 */
+  maxAge: number;
+  ageRangeValid?: boolean;
+  ageRange?: string;
+}
 
 /**
  * Schema: CategoryResponse
