@@ -91,6 +91,7 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
           });
         }
       } catch (error) {
+        console.error("Error loading venue form data:", error);
         showError('No se pudieron cargar los datos necesarios para el formulario.');
         router.push('/admin/config/venues');
       } finally {
@@ -133,6 +134,7 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
       }
     } catch (error) {
         const action = isEditMode ? 'actualizar' : 'crear';
+        console.error(`Error al ${action} la sede:`, error);
         showError(`Error al ${action} la sede`);
     } finally {
       setSubmitting(false);

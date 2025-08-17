@@ -19,7 +19,7 @@ async function getBackendHeaders(session: { accessToken?: string } | null) {
 }
 
 // GET /api/sgd/venues - List all venues
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {

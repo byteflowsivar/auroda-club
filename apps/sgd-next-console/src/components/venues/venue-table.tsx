@@ -55,7 +55,6 @@ import {
   Building,
   RefreshCw,
   Plus,
-  Calendar
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
@@ -111,6 +110,7 @@ export function VenuesTable() {
       const venuesData = await apiClient.getVenues();
       setVenues(venuesData);
     } catch (error) {
+      console.error("Error loading venues:", error);
       showError('No se pudieron cargar las sedes.');
     } finally {
       setLoading(false);
@@ -131,6 +131,7 @@ export function VenuesTable() {
       showSuccess('Sede eliminada exitosamente');
       await loadVenues(false); // Recargar la lista
     } catch (error) {
+      console.error("Error deleting venue:", error);
       showError('Error al eliminar la sede');
     } finally {
       setIsDeleting(false);
@@ -291,7 +292,7 @@ export function VenuesTable() {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar Sede?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción marcará la sede "{deletingVenue?.name}" como inactiva. No se puede deshacer.
+              Esta acción marcará la sede &quot;{deletingVenue?.name}&quot; como inactiva. No se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
