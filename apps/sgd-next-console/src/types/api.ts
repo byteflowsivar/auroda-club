@@ -601,7 +601,7 @@ export interface ValidationErrorResponse {
 // TYPE GUARDS (básicos)
 // ============================================================================
 
-export function isAthleteResponse(obj: any): obj is AthleteResponse {
+export function isAthleteResponse(obj: unknown): obj is AthleteResponse {
   return obj && typeof obj === 'object' && 
          typeof obj.id === 'number' && 
          typeof obj.fullName === 'string' &&
@@ -609,7 +609,7 @@ export function isAthleteResponse(obj: any): obj is AthleteResponse {
          typeof obj.age === 'number';
 }
 
-export function isGuardianResponse(obj: any): obj is GuardianResponse {
+export function isGuardianResponse(obj: unknown): obj is GuardianResponse {
   return obj && typeof obj === 'object' && 
          typeof obj.id === 'number' && 
          typeof obj.fullName === 'string';

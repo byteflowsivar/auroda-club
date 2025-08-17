@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -37,10 +36,6 @@ const categoryFormSchema = z.object({
     .max(255, 'El nombre no puede exceder 255 caracteres')
     .regex(/\S/, 'El nombre no puede estar vacío'),
   
-  description: z.string()
-    .max(1000, 'La descripción no puede exceder 1000 caracteres')
-    .optional()
-    .or(z.literal('')),
   
   sportId: z.number({
     error: 'Debe seleccionar un deporte',
@@ -106,7 +101,6 @@ export function CategoryForm({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
       name: '',
-      description: '',
       sportId: sportId,
       minAge: 6,
       maxAge: 18,
@@ -157,7 +151,6 @@ export function CategoryForm({
         
         form.reset({
           name: category.name,
-          description: category.description || '',
           sportId: category.sport?.id,
           minAge: category.minAge,
           maxAge: category.maxAge,
@@ -186,7 +179,6 @@ export function CategoryForm({
       if (mode === 'create') {
         const createData: CategoryCreateRequest = {
           name: data.name,
-          description: data.description || undefined,
           sportId: data.sportId,
           minAge: data.minAge,
           maxAge: data.maxAge,
@@ -198,7 +190,6 @@ export function CategoryForm({
       } else {
         const updateData: CategoryUpdateRequest = {
           name: data.name,
-          description: data.description || undefined,
           minAge: data.minAge,
           maxAge: data.maxAge,
           ageRange: data.ageRange,
@@ -281,27 +272,6 @@ export function CategoryForm({
               )}
             />
 
-            {/* Descripción */}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Descripción opcional de la categoría..."
-                      className="min-h-[80px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Descripción detallada de la categoría (opcional, máximo 1000 caracteres)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Deporte */}
             <FormField
