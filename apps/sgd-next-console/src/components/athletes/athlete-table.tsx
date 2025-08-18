@@ -393,11 +393,11 @@ export function AthleteTable({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Atletas ({pagination.totalElements})
+                <Users className="h-5 w-5" />
+                Gestión de Atletas
               </CardTitle>
               <CardDescription>
-                Página {pagination.page + 1} de {pagination.totalPages}
+                {pagination.totalElements} atletas registrados
               </CardDescription>
             </div>
             <Button variant="outline" size="sm">
@@ -421,17 +421,19 @@ export function AthleteTable({
             </div>
           ) : athletes.length === 0 ? (
             <div className="text-center py-8">
-              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No se encontraron atletas</h3>
-              <p className="text-muted-foreground mb-4">
-                No hay atletas que coincidan con los filtros seleccionados.
-              </p>
-              {canEdit && (
-                <Button onClick={handleCreateAthlete}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Registrar Primer Atleta
-                </Button>
-              )}
+              <div className="flex flex-col items-center gap-2">
+                <Users className="h-8 w-8 text-muted-foreground" />
+                <p className="text-muted-foreground">
+                  {searchQuery || selectedSport !== 'all' || selectedVenue !== 'all' || selectedCategory !== 'all' 
+                    ? 'No se encontraron atletas' : 'No hay atletas registrados'}
+                </p>
+                {canEdit && !searchQuery && selectedSport === 'all' && selectedVenue === 'all' && selectedCategory === 'all' && (
+                  <Button onClick={handleCreateAthlete} className="mt-2">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Registrar primer atleta
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -590,10 +592,9 @@ export function AthleteTable({
       <AlertDialog open={deleteAthleteId !== null} onOpenChange={() => setDeleteAthleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogTitle>¿Eliminar atleta?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará permanentemente el registro del atleta. 
-              Esta acción no se puede deshacer.
+              Esta acción marcará el atleta como inactivo. Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

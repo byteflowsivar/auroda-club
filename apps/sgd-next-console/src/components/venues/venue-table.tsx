@@ -50,6 +50,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Search,
+  Eye,
   Edit,
   Trash2,
   MoreHorizontal,
@@ -121,6 +122,10 @@ export function VenuesTable() {
     loadVenues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleView = (venue: VenueResponse) => {
+    router.push(`/admin/config/venues/${venue.id}`);
+  };
 
   const handleDelete = async (venueToDelete: VenueResponse) => {
     try {
@@ -226,7 +231,18 @@ export function VenuesTable() {
                 {filteredVenues.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-8">
-                      No se encontraron sedes.
+                      <div className="flex flex-col items-center gap-2">
+                        <Building className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-muted-foreground">
+                          {searchTerm ? 'No se encontraron sedes' : 'No hay sedes registradas'}
+                        </p>
+                        {canCreate && !searchTerm && (
+                          <Button onClick={() => router.push('/admin/config/venues/new')} className="mt-2">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Registrar primera sede
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -238,13 +254,24 @@ export function VenuesTable() {
                       </TableCell>
                       <TableCell>{venue.address}</TableCell>
                       <TableCell>
-                        <Badge variant={venue.active ? 'default' : 'secondary'}>
+                        <Badge 
+                          variant={venue.active ? "default" : "secondary"}
+                          className={venue.active ? "bg-green-500 hover:bg-green-600" : ""}
+                        >
                           {venue.active ? 'Activa' : 'Inactiva'}
                         </Badge>
                       </TableCell>
                       <TableCell>{formatDate(venue.createdAt)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleView(venue)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+
                           {canEdit && (
                             <Button
                               variant="outline"
@@ -268,9 +295,9 @@ export function VenuesTable() {
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>¿Eliminar Sede?</AlertDialogTitle>
+                                  <AlertDialogTitle>¿Eliminar sede?</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    Esta acción marcará la sede "{venue.name}" como inactiva. No se puede deshacer.
+                                    Esta acción marcará la sede <strong>{venue.name}</strong> como inactiva. Esta acción no se puede deshacer.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

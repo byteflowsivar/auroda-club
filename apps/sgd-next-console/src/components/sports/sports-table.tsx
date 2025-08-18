@@ -470,19 +470,12 @@ export function SportsTable({
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar deporte?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará permanentemente el deporte <strong>{deletingSport?.name}</strong> 
-              y todos sus datos asociados.
-              {deletingSport?.categories && deletingSport.categories.length > 0 ? (
+              Esta acción marcará el deporte <strong>{deletingSport?.name}</strong> como inactivo. Esta acción no se puede deshacer.
+              {deletingSport?.categories && deletingSport.categories.length > 0 && (
                 <>
                   <br /><br />
-                  <strong>Advertencia:</strong> Este deporte tiene {deletingSport.categories.length}{' '}
+                  <strong>Nota:</strong> Este deporte tiene {deletingSport.categories.length}{' '}
                   categoría{deletingSport.categories.length !== 1 ? 's' : ''} asociada{deletingSport.categories.length !== 1 ? 's' : ''}.
-                  No se puede eliminar un deporte con categorías activas.
-                </>
-              ) : (
-                <>
-                  <br /><br />
-                  Esta acción no se puede deshacer.
                 </>
               )}
             </AlertDialogDescription>
