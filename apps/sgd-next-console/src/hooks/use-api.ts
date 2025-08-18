@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useErrorHandler } from '@/lib/error-handler';
-import type { PaginationInfo } from '@/types';
+import type { AthleteListParams, AthletePageResponse, PaginationInfo } from '@/types';
 
 // Estado para operaciones async
 interface AsyncState<T> {
@@ -11,7 +11,7 @@ interface AsyncState<T> {
 
 // Hook para manejar operaciones de API
 export function useApi<T>() {
-  const [state, setState] = useState<AsyncState<T>>({
+  const [ state, setState ] = useState<AsyncState<T>>({
     data: null,
     loading: false,
     error: null,
@@ -41,7 +41,7 @@ export function useApi<T>() {
 
     try {
       const result = await apiCall();
-      
+
       setState({
         data: result,
         loading: false,
@@ -59,7 +59,7 @@ export function useApi<T>() {
       return result;
     } catch (error) {
       const apiError = error as Error;
-      
+
       setState(prev => ({
         ...prev,
         loading: false,
@@ -76,7 +76,7 @@ export function useApi<T>() {
 
       throw apiError; // Re-throw para que el componente pueda manejarlo si necesita
     }
-  }, [handleError, showSuccess]);
+  }, [ handleError, showSuccess ]);
 
   const reset = useCallback(() => {
     setState({
@@ -115,7 +115,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
         context: 'Create Operation'
       }
     );
-  }, [createApi]);
+  }, [ createApi ]);
 
   const update = useCallback(async (
     apiCall: (id: number, data: UpdateRequest) => Promise<T>,
@@ -130,7 +130,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
         context: 'Update Operation'
       }
     );
-  }, [updateApi]);
+  }, [ updateApi ]);
 
   const remove = useCallback(async (
     apiCall: (id: number) => Promise<void>,
@@ -144,7 +144,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
         context: 'Delete Operation'
       }
     );
-  }, [deleteApi]);
+  }, [ deleteApi ]);
 
   const fetch = useCallback(async (
     apiCall: () => Promise<T>,
@@ -154,7 +154,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
       context,
       showErrorToast: true
     });
-  }, [fetchApi]);
+  }, [ fetchApi ]);
 
   return {
     // Estados individuales
@@ -174,7 +174,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
       ...fetchApi,
       execute: fetch,
     },
-    
+
     // Estados combinados
     isLoading: createApi.loading || updateApi.loading || deleteApi.loading || fetchApi.loading,
     hasError: !!(createApi.error || updateApi.error || deleteApi.error || fetchApi.error),
@@ -182,7 +182,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
 }
 
 // Hook para listas con paginación
-export function useListApi<T, TFilters = Record<string, unknown>>() {
+export function useListApi<T, TFilters = Record<string, unknown>>(p0: { fetchFn: (params?: AthleteListParams) => Promise<AthletePageResponse>; params: { search: string | undefined; sportId: number | undefined; venueId: number | undefined; categoryId: number | undefined; active: boolean; }; dependencies: (string | boolean)[]; }) {
   const [filters, setFilters] = useState<TFilters>({} as TFilters);
   const [pagination, setPagination] = useState({
     page: 0,
