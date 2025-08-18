@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -37,6 +38,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
   DropdownMenu,
@@ -71,8 +73,6 @@ export function VenuesTable() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [deletingVenue, setDeletingVenue] = useState<VenueResponse | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const canCreate = session?.user?.roles?.includes(ROLES.ADMIN_GENERAL);
   const canEdit = session?.user?.roles?.includes(ROLES.ADMIN_GENERAL);
@@ -123,19 +123,14 @@ export function VenuesTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelete = async () => {
-    if (!deletingVenue) return;
-    setIsDeleting(true);
+  const handleDelete = async (venueToDelete: VenueResponse) => {
     try {
-      await apiClient.deleteVenue(deletingVenue.id);
+      await apiClient.deleteVenue(venueToDelete.id);
       showSuccess('Sede eliminada exitosamente');
-      await loadVenues(false); // Recargar la lista
+      setVenues(venues.filter(v => v.id !== venueToDelete.id));
     } catch (error) {
       console.error("Error deleting venue:", error);
       showError('Error al eliminar la sede');
-    } finally {
-      setIsDeleting(false);
-      setDeletingVenue(null);
     }
   };
   
@@ -269,10 +264,28 @@ export function VenuesTable() {
                             {canDelete && (
                                 <>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={() => setDeletingVenue(venue)} className="text-red-600">
-                                        <Trash2 className="h-4 w-4 mr-2" />
-                                        Eliminar
-                                    </DropdownMenuItem>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-red-600 hover:bg-accent hover:text-red-600">
+                                          <Trash2 className="h-4 w-4 mr-2" />
+                                          Eliminar
+                                        </div>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>¿Eliminar Sede?</AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            Esta acción marcará la sede &quot;{venue.name}&quot; como inactiva. No se puede deshacer.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                          <AlertDialogAction onClick={() => handleDelete(venue)} className="bg-red-600 hover:bg-red-700">
+                                            Confirmar
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
                                 </> 
                             )}
                           </DropdownMenuContent>
@@ -286,23 +299,6 @@ export function VenuesTable() {
           </div>
         </CardContent>
       </Card>
-
-      <AlertDialog open={!!deletingVenue} onOpenChange={() => setDeletingVenue(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar Sede?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción marcará la sede &quot;{deletingVenue?.name}&quot; como inactiva. No se puede deshacer.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-red-600 hover:bg-red-700">
-              {isDeleting ? 'Eliminando...' : 'Confirmar'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
