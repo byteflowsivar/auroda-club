@@ -1,0 +1,82 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Filter, Search } from 'lucide-react';
+
+interface SportTableFiltersProps {
+  // Valores de filtros
+  searchTerm: string;
+  activeFilter: 'all' | 'active' | 'inactive';
+  includeCategories: boolean;
+
+  // Handlers
+  onSearchChange: (value: string) => void;
+  onActiveFilterChange: (value: 'all' | 'active' | 'inactive') => void;
+  onIncludeCategoriesChange: (value: boolean) => void;
+  onClearFilters: () => void;
+}
+
+export function SportTableFilters({
+  searchTerm,
+  activeFilter,
+  includeCategories,
+  onSearchChange,
+  onActiveFilterChange,
+  onIncludeCategoriesChange,
+  onClearFilters
+}: SportTableFiltersProps) {
+  return (
+    <div className="space-y-4">
+      {/* Filtros principales */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Búsqueda */}
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nombre o descripción..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+        </div>
+        {/* Filtro por estado */}
+        <Select value={activeFilter} onValueChange={onActiveFilterChange}>
+          <SelectTrigger className="w-full sm:w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="active">Activos</SelectItem>
+            <SelectItem value="inactive">Inactivos</SelectItem>
+          </SelectContent>
+        </Select>
+        {/* Botón limpiar */}
+        <Button variant="outline" onClick={onClearFilters}>
+          <Filter className="h-4 w-4 mr-2" />
+          Limpiar
+        </Button>
+      </div>
+
+      {/* Opciones adicionales */}
+      <div className="flex items-center gap-4">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={includeCategories}
+            onChange={(e) => onIncludeCategoriesChange(e.target.checked)}
+            className="rounded"
+          />
+          Incluir categorías
+        </label>
+      </div>
+    </div>
+  );
+}
