@@ -86,8 +86,7 @@ export function VenuesTable() {
       filtered = filtered.filter(venue =>
         venue.name.toLowerCase().includes(search) ||
         venue.code.toLowerCase().includes(search) ||
-        venue.address?.toLowerCase().includes(search) ||
-        venue.club.name.toLowerCase().includes(search)
+        venue.address?.toLowerCase().includes(search)
       );
     }
 
@@ -189,7 +188,7 @@ export function VenuesTable() {
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por nombre, código, dirección..."
+                  placeholder="Buscar por nombre, código o dirección..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
@@ -217,7 +216,6 @@ export function VenuesTable() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Sede</TableHead>
-                  <TableHead>Club</TableHead>
                   <TableHead>Dirección</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Creada</TableHead>
@@ -227,7 +225,7 @@ export function VenuesTable() {
               <TableBody>
                 {filteredVenues.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={5} className="text-center py-8">
                       No se encontraron sedes.
                     </TableCell>
                   </TableRow>
@@ -238,7 +236,6 @@ export function VenuesTable() {
                         <div className="font-medium">{venue.name}</div>
                         <div className="text-sm text-muted-foreground">{venue.code}</div>
                       </TableCell>
-                      <TableCell>{venue.club.name}</TableCell>
                       <TableCell>{venue.address}</TableCell>
                       <TableCell>
                         <Badge variant={venue.active ? 'default' : 'secondary'}>

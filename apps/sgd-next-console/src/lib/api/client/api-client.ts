@@ -19,13 +19,14 @@ import type {
   CategoryCreateRequest,
   CategoryUpdateRequest,
   CategoryListParams,
-  ClubResponse,
   VenueResponse,
   VenueCreateRequest,
   VenueUpdateRequest,
   GuardianInfo,
   AthleteInfo
 } from '@/types/api';
+
+import { ClubUtils } from '@/lib/config';
 
 import type { 
   ApiClientConfig, 
@@ -379,20 +380,8 @@ export class ApiClient {
   }
 
   // =============================================================================
-  // MÉTODOS ESPECÍFICOS PARA CLUBES Y SEDES
+  // MÉTODOS ESPECÍFICOS PARA SEDES (SINGLE-TENANT)
   // =============================================================================
-
-  async getClubs(): Promise<ClubResponse[]> {
-    return this.get<ClubResponse[]>('/clubs');
-  }
-
-  async getClub(id: number): Promise<ClubResponse> {
-    return this.get<ClubResponse>(`/clubs/${id}`);
-  }
-
-  async getClubVenues(id: number): Promise<VenueResponse[]> {
-    return this.get<VenueResponse[]>(`/clubs/${id}/venues`);
-  }
 
   async getVenues(): Promise<VenueResponse[]> {
     return this.get<VenueResponse[]>('/venues');
@@ -402,8 +391,12 @@ export class ApiClient {
     return this.get<VenueResponse>(`/venues/${id}`);
   }
 
-  async createVenue(data: VenueCreateRequest): Promise<VenueResponse> {
-    return this.post<VenueResponse>('/venues', data);
+  async createVenue(data: Omit<VenueCreateRequest, 'clubId'>): Promise<VenueResponse> {
+    const requestData = {
+      ...data,
+      clubId: ClubUtils.getClubIdForAPI()
+    };
+    return this.post<VenueResponse>('/venues', requestData);
   }
 
   async updateVenue(id: number, data: VenueUpdateRequest): Promise<VenueResponse> {

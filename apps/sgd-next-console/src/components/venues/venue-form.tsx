@@ -30,14 +30,14 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Save, X, Building, Calendar, User } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
-import type { VenueResponse, VenueCreateRequest, VenueUpdateRequest, ClubResponse } from '@/types/api';
+import { ClubUtils } from '@/lib/config';
+import type { VenueResponse, VenueCreateRequest, VenueUpdateRequest } from '@/types/api';
 
 const venueFormSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(255),
   code: z.string().min(3, 'El código debe tener al menos 3 caracteres').max(50),
   address: z.string().optional(),
   phone: z.string().optional(),
-  clubId: z.number().int().positive('Debe seleccionar un club'),
   active: z.boolean().default(true),
 });
 
@@ -56,7 +56,6 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
   const [loading, setLoading] = useState(!!venueId);
   const [submitting, setSubmitting] = useState(false);
   const [venue, setVenue] = useState<VenueResponse | null>(null);
-  const [clubs, setClubs] = useState<ClubResponse[]>([]);
 
   const isEditMode = !!venueId;
 
@@ -74,11 +73,8 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
   useEffect(() => {
     async function loadInitialData() {
       try {
-        setLoading(true);
-        const clubsData = await apiClient.getClubs();
-        setClubs(clubsData);
-
         if (isEditMode && venueId) {
+          setLoading(true);
           const venueData = await apiClient.getVenue(venueId);
           setVenue(venueData);
           form.reset({
@@ -86,13 +82,12 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
             code: venueData.code,
             address: venueData.address || '',
             phone: venueData.phone || '',
-            clubId: venueData.club.id,
             active: venueData.active,
           });
         }
       } catch (error) {
-        console.error("Error loading venue form data:", error);
-        showError('No se pudieron cargar los datos necesarios para el formulario.');
+        console.error("Error loading venue data:", error);
+        showError('No se pudieron cargar los datos de la sede.');
         router.push('/admin/config/venues');
       } finally {
         setLoading(false);
@@ -116,8 +111,7 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
         result = await apiClient.updateVenue(venueId, updateData);
         showSuccess(`Sede "${result.name}" actualizada exitosamente`);
       } else {
-        const createData: VenueCreateRequest = {
-            clubId: data.clubId!,
+        const createData = {
             name: data.name,
             code: data.code,
             address: data.address,
@@ -203,31 +197,18 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="clubId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Club *</FormLabel>
-                  <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()} disabled={isEditMode}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar club" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {clubs.map((club) => (
-                        <SelectItem key={club.id} value={club.id.toString()}>
-                          {club.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>El club no se puede cambiar una vez asignado.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Club información (solo lectura) */}
+            <FormItem>
+              <FormLabel>Club</FormLabel>
+              <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
+                <Building className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">{ClubUtils.getCurrentClub().name}</span>
+                <Badge variant="outline" className="text-xs">Instancia actual</Badge>
+              </div>
+              <FormDescription>
+                Esta sede pertenece automáticamente al club de esta instancia.
+              </FormDescription>
+            </FormItem>
             <FormField
               control={form.control}
               name="address"
@@ -281,7 +262,7 @@ export function VenueForm({ venueId, onSuccess, onCancel }: VenueFormProps) {
                     <h3 className="text-lg font-medium">Información Adicional</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                            <span className="font-semibold">Club: </span> {venue.club.name}
+                            <span className="font-semibold">Club: </span> {ClubUtils.getCurrentClub().name}
                         </div>
                         <div>
                             <span className="font-semibold">Estado: </span> 
