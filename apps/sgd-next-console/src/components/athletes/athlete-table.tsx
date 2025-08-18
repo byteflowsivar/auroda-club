@@ -12,7 +12,6 @@ import {
   Card,
   CardContent,
 } from '@/components/ui/card';
-import { apiClient } from '@/lib/api';
 import { useListApi } from '@/hooks/use-api';
 import type { AthleteListParams, AthleteResponse } from '@/types/api';
 
@@ -27,6 +26,7 @@ import { AthleteTableFilters } from './components/AthleteTableFilters';
 import { AthleteTableRow } from './components/AthleteTableRow';
 import { AthleteEmptyState } from './components/AthleteEmptyState';
 import { AthleteDeleteDialog } from './components/AthleteDeleteDialog';
+import apiClient from "@/lib/api";
 
 interface AthleteTableProps {
   /** Filtros iniciales */
@@ -83,7 +83,7 @@ export function AthleteTable({
 
   const handleDeleteConfirm = () => {
     if (actions.deleteAthleteId) {
-      actions.handleDelete(actions.deleteAthleteId, refresh).then();
+      actions.handleDelete(actions.deleteAthleteId, () => refresh(apiClient.getAthletes)).then();
     }
   };
 
@@ -96,7 +96,7 @@ export function AthleteTable({
           totalElements={pagination.totalElements}
           loading={loading}
           canCreate={canCreate}
-          onRefresh={refresh}
+          onRefresh={() => refresh(apiClient.getAthletes)}
           onCreate={actions.handleCreate}
         />
 
@@ -131,28 +131,30 @@ export function AthleteTable({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <AthleteEmptyState
-                  loading={loading}
-                  hasAthletes={athletes?.length > 0}
-                  canCreate={canCreate}
-                  searchQuery={filters.searchQuery}
-                  selectedSport={filters.selectedSport}
-                  selectedVenue={filters.selectedVenue}
-                  selectedCategory={filters.selectedCategory}
-                  onCreate={actions.handleCreate}
-                />
-
-                {athletes?.map((athlete: AthleteResponse) => (
-                  <AthleteTableRow
-                    key={athlete.id}
-                    athlete={athlete}
-                    canEdit={permissions.canEdit}
-                    canDelete={permissions.canDelete}
-                    onView={actions.handleView}
-                    onEdit={actions.handleEdit}
-                    onDelete={actions.setDeleteAthleteId}
+                {loading || (athletes && athletes.length === 0) ? (
+                  <AthleteEmptyState
+                    loading={loading}
+                    hasAthletes={athletes?.length > 0}
+                    canCreate={canCreate}
+                    searchQuery={filters.searchQuery}
+                    selectedSport={filters.selectedSport}
+                    selectedVenue={filters.selectedVenue}
+                    selectedCategory={filters.selectedCategory}
+                    onCreate={actions.handleCreate}
                   />
-                ))}
+                ) : (
+                  (athletes as AthleteResponse[])?.map((athlete: AthleteResponse) => (
+                    <AthleteTableRow
+                      key={athlete.id}
+                      athlete={athlete}
+                      canEdit={permissions.canEdit}
+                      canDelete={permissions.canDelete}
+                      onView={actions.handleView}
+                      onEdit={actions.handleEdit}
+                      onDelete={actions.setDeleteAthleteId}
+                    />
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
