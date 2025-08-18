@@ -69,7 +69,7 @@ export default function EditVenuePage({ params }: EditVenuePageProps) {
               </div>
             </div>
 
-            <VenueForm venueId={venueId} onSave={() => router.push('/admin/config/venues')} onCancel={() => router.push('/admin/config/venues')} />
+            <VenueForm venueId={venueId} onSuccess={() => router.push('/admin/config/venues')} onCancel={() => router.push('/admin/config/venues')} />
           </div>
         </SidebarInset>
       </SidebarProvider>

@@ -19,8 +19,9 @@ async function getBackendHeaders(session: { accessToken?: string } | null) {
 }
 
 // GET /api/sgd/venues/[id] - Get a single venue
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(request: NextRequest,
+                          { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -49,15 +50,16 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PUT /api/sgd/venues/[id] - Update a venue
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function PUT(request: NextRequest,
+                          { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
+    const body = await request.json(); // Use request.json()
     const headers = await getBackendHeaders(session);
 
     const response = await fetch(`${BACKEND_API_URL}/venues/${id}`, {
@@ -84,8 +86,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE /api/sgd/venues/[id] - Delete a venue
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function DELETE(request: NextRequest,
+                             { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -100,8 +103,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     });
 
     if (!response.ok) {
-        const textError = await response.text();
-        return NextResponse.json({ message: textError || 'Failed to delete venue' }, { status: response.status });
+      const textError = await response.text();
+      return NextResponse.json({ message: textError || 'Failed to delete venue' }, { status: response.status });
     }
 
     revalidateTag('venues');
