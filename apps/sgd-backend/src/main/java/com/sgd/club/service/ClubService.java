@@ -303,8 +303,11 @@ public class ClubService {
 
     @Transactional
     public void deleteVenue(Long venueId) {
-        Venue venue = venueRepository.findActiveById(venueId)
-                .orElseThrow(() -> new BusinessException("VENUE_NOT_FOUND", "Sede con ID " + venueId + " no encontrada"));
+        Venue venue = venueRepository.findById(venueId);
+
+        if (venue == null) {
+            throw new BusinessException("VENUE_NOT_FOUND", "Sede con ID " + venueId + " no encontrada");
+        }
 
         // Validate access
         validateVenueAccess(venue);
@@ -312,7 +315,7 @@ public class ClubService {
             throw new BusinessException("FORBIDDEN", "No tiene permisos para eliminar esta sede.");
         }
 
-        venue.setActive(false);
-        venueRepository.persist(venue);
+        // venue.setActive(false);
+        venueRepository.deleteById(venueId);
     }
 }
