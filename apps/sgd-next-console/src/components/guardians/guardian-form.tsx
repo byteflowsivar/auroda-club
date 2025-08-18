@@ -1,28 +1,14 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
@@ -34,33 +20,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  ArrowLeft,
-  Save,
-  Loader2,
-  UserPlus,
-  Phone,
-  Mail,
-  MapPin,
-  FileText,
-  AlertTriangle
-} from 'lucide-react';
+import { AlertTriangle, FileText, Loader2, Mail, MapPin, Phone, Save } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
 import {
-  guardianCreateSchema,
-  guardianUpdateSchema,
-  transformGuardianFormData,
   defaultGuardianFormValues,
   formatSalvadoranPhone,
   type GuardianCreateFormData,
-  type GuardianUpdateFormData
+  guardianCreateSchema,
+  type GuardianUpdateFormData,
+  guardianUpdateSchema,
+  transformGuardianFormData
 } from '@/lib/validations/guardian';
-import type { 
-  GuardianResponse,
-  GuardianCreateRequest,
-  GuardianUpdateRequest 
-} from '@/types/api';
+import type { GuardianCreateRequest, GuardianResponse, GuardianUpdateRequest } from '@/types/api';
 
 interface GuardianFormProps {
   /** Tutor a editar (undefined para crear nuevo) */

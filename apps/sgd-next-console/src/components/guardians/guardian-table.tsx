@@ -1,40 +1,23 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { apiClient } from "@/lib/api";
-import {
-  GuardianResponse,
-  GuardianPageResponse,
-} from "@/types/api";
+import { GuardianPageResponse, GuardianResponse, } from "@/types/api";
 
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationPrevious,
   PaginationNext,
-  PaginationLink,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { LoadingSpinner } from "@/components/auth/loading-spinner";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
@@ -74,7 +57,6 @@ export function GuardianTable({
   onSelect,
   selectedId,
 }: GuardianTableProps) {
-  const router = useRouter();
 
   const { canEdit, canDelete, canCreate } = useGuardianPermissions();
   const {
@@ -100,15 +82,14 @@ export function GuardianTable({
   const [pageSize, setPageSize] = useState(10);
 
   const fetcher = useCallback(
-    async (url: string) => {
+    async () => {
       const params = getApiParams();
-      const response = await apiClient.getGuardians({
+      return await apiClient.getGuardians({
         ...params,
         search: debouncedSearchTerm || undefined, // Use debounced search term
         page,
         size: pageSize,
       });
-      return response;
     },
     [page, pageSize, getApiParams, debouncedSearchTerm]
   );

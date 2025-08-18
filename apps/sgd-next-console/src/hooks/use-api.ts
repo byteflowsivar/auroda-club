@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useErrorHandler } from '@/lib/error-handler';
-import type { AthleteListParams, AthletePageResponse, PaginationInfo } from '@/types';
+import type { PaginationInfo } from '@/types';
 
 // Estado para operaciones async
 interface AsyncState<T> {

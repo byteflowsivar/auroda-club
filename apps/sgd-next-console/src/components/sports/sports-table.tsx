@@ -1,12 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -31,9 +28,6 @@ import { useSportPermissions } from './hooks/useSportPermissions';
 import { useSportActions } from './hooks/useSportActions';
 import { useSportFilters } from './hooks/useSportFilters';
 
-// Extracted Utils
-import { formatDate, hasActiveFilters } from './utils/sportUtils';
-
 interface SportsTableProps {
   /** Modo de selección para asociar deportes */
   selectionMode?: boolean;
@@ -48,9 +42,7 @@ export function SportsTable({
   selectedId,
   onSelect
 }: SportsTableProps) {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const { showSuccess, showError } = useErrorHandler();
+  const { showError } = useErrorHandler();
 
   // Original states for data and loading
   const [sports, setSports] = useState<SportResponse[]>([]);
@@ -191,7 +183,7 @@ export function SportsTable({
       <SportDeleteDialog
         open={!!actions.deletingSport}
         onOpenChange={() => actions.setDeletingSport(null)}
-        onConfirm={() => actions.deletingSport && handleDelete(actions.deletingSport, () => loadSports(false))}
+        onConfirm={() => handleDelete(actions.deletingSport!, () => loadSports(false))}
         sport={actions.deletingSport}
         deleting={actions.deleting}
       />
