@@ -72,15 +72,12 @@ export function AthleteTable({
         activeFilter: filters.activeFilter
       });
       
-      // Construir parámetros para la API
+      // Usar getApiParams() para construir parámetros correctamente
+      const apiParams = filters.getApiParams();
       const params: AthleteListParams = {
         page: 0,
         size: 20,
-        ...(filters.searchQuery && { search: filters.searchQuery }),
-        ...(filters.selectedSport && { sportId: filters.selectedSport }),
-        ...(filters.selectedVenue && { venueId: filters.selectedVenue }),
-        ...(filters.selectedCategory && { categoryId: filters.selectedCategory }),
-        ...(typeof filters.activeFilter === 'boolean' && { active: filters.activeFilter }),
+        ...apiParams,
       };
       
       // Ejecutar consulta directamente
@@ -119,14 +116,11 @@ export function AthleteTable({
     if (actions.deleteAthleteId) {
       actions.handleDelete(actions.deleteAthleteId, () => {
         // Recargar la lista después de eliminar
+        const apiParams = filters.getApiParams();
         const currentParams: AthleteListParams = {
           page: 0,
           size: 20,
-          ...(filters.searchQuery && { search: filters.searchQuery }),
-          ...(filters.selectedSport && { sportId: filters.selectedSport }),
-          ...(filters.selectedVenue && { venueId: filters.selectedVenue }),
-          ...(filters.selectedCategory && { categoryId: filters.selectedCategory }),
-          ...(typeof filters.activeFilter === 'boolean' && { active: filters.activeFilter }),
+          ...apiParams,
         };
         
         refresh(
@@ -154,14 +148,11 @@ export function AthleteTable({
           loading={loading}
           canCreate={canCreate}
           onRefresh={() => {
+            const apiParams = filters.getApiParams();
             const currentParams: AthleteListParams = {
               page: 0,
               size: 20,
-              ...(filters.searchQuery && { search: filters.searchQuery }),
-              ...(filters.selectedSport && { sportId: filters.selectedSport }),
-              ...(filters.selectedVenue && { venueId: filters.selectedVenue }),
-              ...(filters.selectedCategory && { categoryId: filters.selectedCategory }),
-              ...(typeof filters.activeFilter === 'boolean' && { active: filters.activeFilter }),
+              ...apiParams,
             };
             
             refresh(
@@ -204,7 +195,6 @@ export function AthleteTable({
                   <TableHead>Deporte</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead>Sede</TableHead>
-                  <TableHead>Tutores</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>

@@ -3,7 +3,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Calendar, Edit, Eye, MapPin, Trash2 } from 'lucide-react';
-import { calculateAge, getNameInitials, formatGuardiansCount } from '../utils/athleteUtils';
+import { calculateAge, getNameInitials } from '../utils/athleteUtils';
 import type { AthleteResponse } from '@/types/api';
 
 interface AthleteTableRowProps {
@@ -68,13 +68,6 @@ export function AthleteTableRow({
           <MapPin className="h-3 w-3" />
           {athlete.venue.name}
         </div>
-      </TableCell>
-      
-      {/* Tutores */}
-      <TableCell>
-        <Badge variant="secondary">
-          {formatGuardiansCount(athlete.guardians.length)}
-        </Badge>
       </TableCell>
       
       {/* Estado */}
