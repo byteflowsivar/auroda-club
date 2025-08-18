@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { apiClient } from '@/lib/api';
 import { useListApi } from '@/hooks/use-api';
-import type { AthleteListParams } from '@/types/api';
+import type { AthleteListParams, AthleteResponse } from '@/types/api';
 
 // Hooks personalizados
 import { useAthleteFilters } from './hooks/useAthleteFilters';
@@ -42,11 +42,11 @@ interface AthleteTableProps {
 }
 
 export function AthleteTable({
-  initialFilters = {},
-  showCreateButton = true,
-  readOnly = false,
-}: AthleteTableProps) {
-  
+                               initialFilters = {},
+                               showCreateButton = true,
+                               readOnly = false,
+                             }: AthleteTableProps) {
+
   // Hooks personalizados para lógica de negocio
   const filters = useAthleteFilters(initialFilters);
   const permissions = useAthletePermissions(readOnly);
@@ -63,10 +63,10 @@ export function AthleteTable({
     fetchFn: apiClient.getAthletes,
     params: filters.getApiParams(),
     dependencies: [
-      filters.searchQuery, 
-      filters.selectedSport, 
-      filters.selectedVenue, 
-      filters.selectedCategory, 
+      filters.searchQuery,
+      filters.selectedSport,
+      filters.selectedVenue,
+      filters.selectedCategory,
       filters.activeFilter
     ]
   });
@@ -77,11 +77,11 @@ export function AthleteTable({
       // La búsqueda se activará automáticamente por useListApi
     }
   }, [
-    filters.filtersLoading, 
-    filters.searchQuery, 
-    filters.selectedSport, 
-    filters.selectedVenue, 
-    filters.selectedCategory, 
+    filters.filtersLoading,
+    filters.searchQuery,
+    filters.selectedSport,
+    filters.selectedVenue,
+    filters.selectedCategory,
     filters.activeFilter
   ]);
 
@@ -109,7 +109,7 @@ export function AthleteTable({
           onRefresh={refresh}
           onCreate={actions.handleCreate}
         />
-        
+
         <CardContent className="space-y-4">
           <AthleteTableFilters
             searchQuery={filters.searchQuery}
@@ -151,8 +151,8 @@ export function AthleteTable({
                   selectedCategory={filters.selectedCategory}
                   onCreate={actions.handleCreate}
                 />
-                
-                {athletes?.map((athlete) => (
+
+                {athletes?.map((athlete: AthleteResponse) => (
                   <AthleteTableRow
                     key={athlete.id}
                     athlete={athlete}
