@@ -182,7 +182,7 @@ export function useCrudApi<T, CreateRequest = unknown, UpdateRequest = unknown>(
 }
 
 // Hook para listas con paginación
-export function useListApi<T, TFilters = Record<string, unknown>>(p0: { fetchFn: (params?: AthleteListParams) => Promise<AthletePageResponse>; params: { search: string | undefined; sportId: number | undefined; venueId: number | undefined; categoryId: number | undefined; active: boolean; }; dependencies: (string | boolean)[]; }) {
+export function useListApi<T, TFilters = Record<string, unknown>>() {
   const [filters, setFilters] = useState<TFilters>({} as TFilters);
   const [pagination, setPagination] = useState({
     page: 0,

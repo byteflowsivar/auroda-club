@@ -11,12 +11,12 @@ export const useAthletePermissions = (
 ): UseAthletePermissionsReturn => {
   const { data: session } = useSession();
 
-  const canEdit = !readOnly && (
-    session?.user?.roles?.includes('ADMIN_GENERAL') || 
+  const canEdit = !!(!readOnly && (
+    session?.user?.roles?.includes('ADMIN_GENERAL') ||
     session?.user?.roles?.includes('ADMIN_CLUB')
-  );
+  ));
   
-  const canDelete = !readOnly && session?.user?.roles?.includes('ADMIN_GENERAL');
+  const canDelete = !!(!readOnly && session?.user?.roles?.includes('ADMIN_GENERAL'));
   
   const canCreate = canEdit; // Misma lógica que editar
 

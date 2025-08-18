@@ -54,22 +54,12 @@ export function AthleteTable({
 
   // Hook para manejo de la lista con API
   const {
-    data: athletes,
+    items: athletes,
     pagination,
     loading,
-    refresh,
+    fetchList: refresh,
     reset
-  } = useListApi({
-    fetchFn: apiClient.getAthletes,
-    params: filters.getApiParams(),
-    dependencies: [
-      filters.searchQuery,
-      filters.selectedSport,
-      filters.selectedVenue,
-      filters.selectedCategory,
-      filters.activeFilter
-    ]
-  });
+  } = useListApi();
 
   // Solo activar búsqueda cuando filtros estén cargados
   useEffect(() => {
@@ -93,7 +83,7 @@ export function AthleteTable({
 
   const handleDeleteConfirm = () => {
     if (actions.deleteAthleteId) {
-      actions.handleDelete(actions.deleteAthleteId, refresh);
+      actions.handleDelete(actions.deleteAthleteId, refresh).then();
     }
   };
 
