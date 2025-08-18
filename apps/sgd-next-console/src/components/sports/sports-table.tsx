@@ -3,31 +3,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,33 +19,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Search,
-  Eye,
-  Edit,
-  Trash2,
-  MoreHorizontal,
-  Filter,
-  Trophy,
-  RefreshCw,
-  Plus,
-  Target,
-  Calendar
-} from 'lucide-react';
+import { Calendar, Edit, Eye, Filter, Plus, RefreshCw, Search, Target, Trash2, Trophy } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
-import type { 
-  SportResponse,
-  SportListParams
-} from '@/types/api';
+import type { SportListParams, SportResponse } from '@/types/api';
 
 interface SportsTableProps {
   /** Modo de selección para asociar deportes */
@@ -76,27 +34,27 @@ interface SportsTableProps {
 }
 
 export function SportsTable({
-  selectionMode = false,
-  selectedId,
-  onSelect
-}: SportsTableProps) {
+                              selectionMode = false,
+                              selectedId,
+                              onSelect
+                            }: SportsTableProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const { showSuccess, showError } = useErrorHandler();
 
   // Estados para datos
-  const [sports, setSports] = useState<SportResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [ sports, setSports ] = useState<SportResponse[]>([]);
+  const [ loading, setLoading ] = useState(true);
+  const [ refreshing, setRefreshing ] = useState(false);
 
   // Estados para filtros
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [includeCategories, setIncludeCategories] = useState(true);
+  const [ searchTerm, setSearchTerm ] = useState('');
+  const [ activeFilter, setActiveFilter ] = useState<'all' | 'active' | 'inactive'>('all');
+  const [ includeCategories, setIncludeCategories ] = useState(true);
 
   // Estados para acciones
-  const [deletingSport, setDeletingSport] = useState<SportResponse | null>(null);
-  const [deleting, setDeleting] = useState(false);
+  const [ deletingSport, setDeletingSport ] = useState<SportResponse | null>(null);
+  const [ deleting, setDeleting ] = useState(false);
 
   // Verificar permisos basados en rol del usuario
   const canCreate = session?.user?.roles?.includes('ADMIN_GENERAL') || false;
@@ -105,12 +63,10 @@ export function SportsTable({
 
   // Construir parámetros de búsqueda
   const searchParams = useMemo((): SportListParams => {
-    const params: SportListParams = {
+    return {
       includeCategories
     };
-
-    return params;
-  }, [includeCategories]);
+  }, [ includeCategories ]);
 
   // Filtrar deportes localmente
   const filteredSports = useMemo(() => {
@@ -119,7 +75,7 @@ export function SportsTable({
     // Filtro por búsqueda
     if (searchTerm.trim()) {
       const search = searchTerm.toLowerCase();
-      filtered = filtered.filter(sport => 
+      filtered = filtered.filter(sport =>
         sport.name.toLowerCase().includes(search) ||
         sport.description.toLowerCase().includes(search)
       );
@@ -127,13 +83,13 @@ export function SportsTable({
 
     // Filtro por estado
     if (activeFilter !== 'all') {
-      filtered = filtered.filter(sport => 
+      filtered = filtered.filter(sport =>
         activeFilter === 'active' ? sport.active : !sport.active
       );
     }
 
     return filtered;
-  }, [sports, searchTerm, activeFilter]);
+  }, [ sports, searchTerm, activeFilter ]);
 
   // Cargar deportes
   const loadSports = async (showSpinner = true) => {
@@ -158,8 +114,8 @@ export function SportsTable({
   // Cargar datos al inicio y cambiar parámetros
   useEffect(() => {
     loadSports();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ searchParams ]);
 
   // Formatear fecha
   const formatDate = (dateString: string): string => {
@@ -227,16 +183,16 @@ export function SportsTable({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <div className="h-7 bg-muted rounded animate-pulse mb-2" style={{ width: '150px' }} />
-              <div className="h-4 bg-muted rounded animate-pulse" style={{ width: '300px' }} />
+              <div className="h-7 bg-muted rounded animate-pulse mb-2" style={{ width: '150px' }}/>
+              <div className="h-4 bg-muted rounded animate-pulse" style={{ width: '300px' }}/>
             </div>
-            <div className="h-10 bg-muted rounded animate-pulse" style={{ width: '120px' }} />
+            <div className="h-10 bg-muted rounded animate-pulse" style={{ width: '120px' }}/>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-16 bg-muted rounded animate-pulse" />
+              <div key={i} className="h-16 bg-muted rounded animate-pulse"/>
             ))}
           </div>
         </CardContent>
@@ -251,11 +207,11 @@ export function SportsTable({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
+                <Trophy className="h-5 w-5"/>
                 {selectionMode ? 'Seleccionar Deporte' : 'Gestión de Deportes'}
               </CardTitle>
               <CardDescription>
-                {selectionMode 
+                {selectionMode
                   ? 'Seleccione un deporte para configurar'
                   : `${filteredSports.length} deportes registrados`
                 }
@@ -268,11 +224,11 @@ export function SportsTable({
                 onClick={() => loadSports(false)}
                 disabled={refreshing}
               >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}/>
               </Button>
               {!selectionMode && canCreate && (
                 <Button onClick={handleCreate}>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2"/>
                   Nuevo Deporte
                 </Button>
               )}
@@ -284,7 +240,7 @@ export function SportsTable({
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
                 <Input
                   placeholder="Buscar por nombre o descripción..."
                   value={searchTerm}
@@ -295,7 +251,7 @@ export function SportsTable({
             </div>
             <Select value={activeFilter} onValueChange={(value: typeof activeFilter) => setActiveFilter(value)}>
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue />
+                <SelectValue/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
@@ -304,7 +260,7 @@ export function SportsTable({
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={resetFilters}>
-              <Filter className="h-4 w-4 mr-2" />
+              <Filter className="h-4 w-4 mr-2"/>
               Limpiar
             </Button>
           </div>
@@ -340,13 +296,13 @@ export function SportsTable({
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8">
                       <div className="flex flex-col items-center gap-2">
-                        <Trophy className="h-8 w-8 text-muted-foreground" />
+                        <Trophy className="h-8 w-8 text-muted-foreground"/>
                         <p className="text-muted-foreground">
                           {searchTerm ? 'No se encontraron deportes' : 'No hay deportes registrados'}
                         </p>
                         {!selectionMode && canCreate && !searchTerm && (
                           <Button onClick={handleCreate} className="mt-2">
-                            <Plus className="h-4 w-4 mr-2" />
+                            <Plus className="h-4 w-4 mr-2"/>
                             Crear primer deporte
                           </Button>
                         )}
@@ -355,7 +311,7 @@ export function SportsTable({
                   </TableRow>
                 ) : (
                   filteredSports.map((sport) => (
-                    <TableRow 
+                    <TableRow
                       key={sport.id}
                       className={`${selectionMode ? 'cursor-pointer hover:bg-muted/50' : ''} ${selectedId === sport.id ? 'bg-blue-50' : ''}`}
                       onClick={selectionMode ? () => handleSelection(sport) : undefined}
@@ -363,7 +319,7 @@ export function SportsTable({
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
-                            <Trophy className="h-5 w-5 text-blue-600" />
+                            <Trophy className="h-5 w-5 text-blue-600"/>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -384,7 +340,7 @@ export function SportsTable({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Target className="h-3 w-3" />
+                          <Target className="h-3 w-3"/>
                           <span className="text-sm font-medium">
                             {sport.categories?.length || 0}
                           </span>
@@ -408,7 +364,7 @@ export function SportsTable({
                         )}
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={sport.active ? "default" : "secondary"}
                           className={sport.active ? "bg-green-500 hover:bg-green-600" : ""}
                         >
@@ -417,7 +373,7 @@ export function SportsTable({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
+                          <Calendar className="h-3 w-3"/>
                           {formatDate(sport.createdAt)}
                         </div>
                       </TableCell>
@@ -429,19 +385,19 @@ export function SportsTable({
                               size="sm"
                               onClick={() => handleView(sport)}
                             >
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-4 w-4"/>
                             </Button>
-                            
+
                             {canEdit && (
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleEdit(sport)}
                               >
-                                <Edit className="h-4 w-4" />
+                                <Edit className="h-4 w-4"/>
                               </Button>
                             )}
-                            
+
                             {canDelete && sport.categories?.length === 0 && (
                               <Button
                                 variant="outline"
@@ -449,7 +405,7 @@ export function SportsTable({
                                 className="text-red-600 hover:text-red-700"
                                 onClick={() => setDeletingSport(sport)}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-4 w-4"/>
                               </Button>
                             )}
                           </div>
@@ -470,10 +426,11 @@ export function SportsTable({
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar deporte?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción marcará el deporte <strong>{deletingSport?.name}</strong> como inactivo. Esta acción no se puede deshacer.
+              Esta acción marcará el deporte <strong>{deletingSport?.name}</strong> como inactivo. Esta acción no se
+              puede deshacer.
               {deletingSport?.categories && deletingSport.categories.length > 0 && (
                 <>
-                  <br /><br />
+                  <br/><br/>
                   <strong>Nota:</strong> Este deporte tiene {deletingSport.categories.length}{' '}
                   categoría{deletingSport.categories.length !== 1 ? 's' : ''} asociada{deletingSport.categories.length !== 1 ? 's' : ''}.
                 </>
