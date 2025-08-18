@@ -34,41 +34,44 @@
 
 ### 📋 Información del Proyecto
 - **Nombre**: Sistema de Gestión Deportiva (SGD) - Aplicación Web Administrativa
-- **Usuarios**: Administradores de club, Administradores generales, Profesores
+- **Arquitectura**: Single-tenant (una instancia por club)
+- **Usuarios**: Administradores de club, Profesores  
 - **Framework**: NextJS 14+ con App Router
 - **Autenticación**: Keycloak integration (sgd-frontend client)
-- **API Backend**: Quarkus REST API
+- **API Backend**: Quarkus REST API (single-tenant)
 
 ### 🏗️ Arquitectura del Sistema
 ```
-Usuarios (Admin/Profesores) → Frontend (NextJS) → Backend (Quarkus) → PostgreSQL
-                                      ↓
-                                  Keycloak (Auth)
+SINGLE-TENANT: Una instancia completa por club
+
+Club A: Frontend → Backend → PostgreSQL → Keycloak
+Club B: Frontend → Backend → PostgreSQL → Keycloak  
+Club C: Frontend → Backend → PostgreSQL → Keycloak
+
+Cada instancia es completamente independiente
 ```
 
 ### 👥 Usuarios y Roles
 
-#### **ADMIN_GENERAL**
-- **Permisos**: Acceso completo al sistema
+#### **ADMIN_CLUB** (Administrador del Club)
+- **Permisos**: Acceso completo a la instancia del club
 - **Funcionalidades**:
     - Gestión completa de atletas y tutores
     - Configuración de disciplinas y categorías
-    - Administración de usuarios y sedes
-    - Reportes y estadísticas globales
-
-#### **ADMIN_CLUB**
-- **Permisos**: Gestión de atletas y tutores de todas las sedes del club
-- **Funcionalidades**:
-    - CRUD de atletas y tutores
-    - Visualización de reportes del club
+    - Administración de sedes del club
     - Gestión de profesores
+    - Reportes y estadísticas del club
+    - Configuración general del club
 
-#### **PROFESOR**
+#### **PROFESOR** (Instructor/Entrenador)
 - **Permisos**: Visualización de atletas asignados
 - **Funcionalidades**:
     - Lista de atletas de su disciplina/sede
-    - Actualización básica de datos deportivos
+    - Actualización básica de datos deportivos  
     - Consulta de información de contacto
+    - Visualización de reportes de su área
+
+**NOTA**: No existe rol ADMIN_GENERAL ya que cada instancia es independiente por club.
 
 ### 🎨 Flujos de Usuario Principales
 
@@ -220,6 +223,10 @@ KEYCLOAK_CLIENT_ID=sgd-frontend
 KEYCLOAK_CLIENT_SECRET=your-frontend-secret
 
 BACKEND_API_URL=http://localhost:8080/api
+
+# SINGLE-TENANT CONFIG
+CLUB_ID=1                    # ID del club de esta instancia
+CLUB_NAME=Club Deportivo ABC # Nombre del club (opcional, para UI)
 ```
 
 ### Integración con API Backend
