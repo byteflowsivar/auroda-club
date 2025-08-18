@@ -42,7 +42,7 @@ export default function NewVenuePage() {
               </div>
             </div>
 
-            <VenueForm onSave={() => router.push('/admin/config/venues')} onCancel={() => router.push('/admin/config/venues')} />
+            <VenueForm onSuccess={() => router.push('/admin/config/venues')} onCancel={() => router.push('/admin/config/venues')} />
           </div>
         </SidebarInset>
       </SidebarProvider>
