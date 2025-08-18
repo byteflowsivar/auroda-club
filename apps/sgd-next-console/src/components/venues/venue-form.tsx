@@ -31,7 +31,7 @@ const venueFormSchema = z.object({
   code: z.string().min(3, 'El código debe tener al menos 3 caracteres').max(50),
   address: z.string().optional(),
   phone: z.string().optional(),
-  active: z.boolean().default(true),
+  active: z.boolean().default(true).optional(),
 });
 
 type VenueFormData = z.infer<typeof venueFormSchema>;
