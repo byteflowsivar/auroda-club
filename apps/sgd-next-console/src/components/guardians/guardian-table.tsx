@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -38,6 +39,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
   DropdownMenu,
@@ -115,10 +117,6 @@ export function GuardianTable({
   const [athletesFilter, setAthletesFilter] = useState<'all' | 'with' | 'without'>('all');
   const [sortBy, setSortBy] = useState<'fullName' | 'email' | 'createdAt'>('fullName');
   const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('ASC');
-
-  // Estados para acciones
-  const [deletingGuardian, setDeletingGuardian] = useState<GuardianResponse | null>(null);
-  const [deleting, setDeleting] = useState(false);
 
   // Verificar permisos
   const canCreate = session?.user?.roles?.includes('ADMIN_GENERAL') || 
@@ -208,16 +206,12 @@ export function GuardianTable({
   // Handler para eliminar
   const handleDelete = async (guardian: GuardianResponse) => {
     try {
-      setDeleting(true);
       await apiClient.deleteGuardian(guardian.id);
       showSuccess(`Tutor ${guardian.fullName} eliminado exitosamente`);
-      setDeletingGuardian(null);
-      await loadGuardians(false); // Refrescar sin spinner
+      setGuardians(guardians.filter(g => g.id !== guardian.id));
     } catch (error) {
       console.error('Error deleting guardian:', error);
       showError('Error al eliminar tutor');
-    } finally {
-      setDeleting(false);
     }
   };
 
@@ -479,13 +473,33 @@ export function GuardianTable({
                               {canDelete && (
                                 <>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem 
-                                    onClick={() => setDeletingGuardian(guardian)}
-                                    className="text-red-600"
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Eliminar
-                                  </DropdownMenuItem>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <DropdownMenuItem
+                                        className="text-red-600 hover:text-red-600"
+                                      >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        Eliminar
+                                      </DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>¿Eliminar tutor?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Esta acción marcará el tutor <strong>{guardian.fullName}</strong> como inactivo. Esta acción no se puede deshacer.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => handleDelete(guardian)}
+                                          className="bg-red-600 hover:bg-red-700"
+                                        >
+                                          Confirmar
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
                                 </>
                               )}
                             </DropdownMenuContent>
@@ -565,39 +579,6 @@ export function GuardianTable({
           )}
         </CardContent>
       </Card>
-
-      {/* Dialog de confirmación para eliminar */}
-      <AlertDialog open={!!deletingGuardian} onOpenChange={() => setDeletingGuardian(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar tutor?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción eliminará permanentemente el registro de{' '}
-              <strong>{deletingGuardian?.fullName}</strong> y todos sus datos asociados.
-              {deletingGuardian && deletingGuardian.athletes && deletingGuardian.athletes.length > 0 && (
-                <>
-                  <br /><br />
-                  <strong>Advertencia:</strong> Este tutor tiene {deletingGuardian.athletes.length}{' '}
-                  atleta{deletingGuardian.athletes.length !== 1 ? 's' : ''} asociado{deletingGuardian.athletes.length !== 1 ? 's' : ''}.
-                  Al eliminarlo, se removerá la asociación con {deletingGuardian.athletes.length === 1 ? 'este atleta' : 'estos atletas'}.
-                </>
-              )}
-              <br /><br />
-              Esta acción no se puede deshacer.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deletingGuardian && handleDelete(deletingGuardian)}
-              disabled={deleting}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {deleting ? 'Eliminando...' : 'Eliminar'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

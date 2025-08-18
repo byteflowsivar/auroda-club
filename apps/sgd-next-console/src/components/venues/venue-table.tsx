@@ -247,49 +247,48 @@ export function VenuesTable() {
                       </TableCell>
                       <TableCell>{formatDate(venue.createdAt)}</TableCell>
                       <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
+                        <div className="flex items-center gap-2 justify-end">
+                          {canEdit && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => router.push(`/admin/config/venues/${venue.id}/edit`)}
+                            >
+                              <Edit className="h-4 w-4" />
                             </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                            {canEdit && (
-                                <DropdownMenuItem onClick={() => router.push(`/admin/config/venues/${venue.id}/edit`)}>
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Editar
-                                </DropdownMenuItem>
-                            )}
-                            {canDelete && (
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <AlertDialog>
-                                      <AlertDialogTrigger asChild>
-                                        <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-red-600 hover:bg-accent hover:text-red-600">
-                                          <Trash2 className="h-4 w-4 mr-2" />
-                                          Eliminar
-                                        </div>
-                                      </AlertDialogTrigger>
-                                      <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                          <AlertDialogTitle>¿Eliminar Sede?</AlertDialogTitle>
-                                          <AlertDialogDescription>
-                                            Esta acción marcará la sede &quot;{venue.name}&quot; como inactiva. No se puede deshacer.
-                                          </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                          <AlertDialogAction onClick={() => handleDelete(venue)} className="bg-red-600 hover:bg-red-700">
-                                            Confirmar
-                                          </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                      </AlertDialogContent>
-                                    </AlertDialog>
-                                </> 
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                          )}
+                          
+                          {canDelete && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>¿Eliminar Sede?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Esta acción marcará la sede "{venue.name}" como inactiva. No se puede deshacer.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDelete(venue)} 
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Confirmar
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
