@@ -56,16 +56,13 @@ export default function EditAthletePage({ params }: EditAthletePageProps) {
   }, [athleteId]);
 
   const handleSave = (updatedAthlete: AthleteResponse) => {
-    // Redirigir al detalle del atleta
-    router.push(`/admin/athletes/${updatedAthlete.id}`);
+    // Redirigir a la lista de atletas después de guardar exitosamente
+    router.push('/admin/athletes');
   };
 
   const handleCancel = () => {
-    if (athleteId) {
-      router.push(`/admin/athletes/${athleteId}`);
-    } else {
-      router.push('/admin/athletes');
-    }
+    // Volver a la lista de atletas
+    router.push('/admin/athletes');
   };
 
   if (loading) {
@@ -217,7 +214,7 @@ export default function EditAthletePage({ params }: EditAthletePageProps) {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild>
-              <Link href={`/admin/athletes/${athlete.id}`}>
+              <Link href="/admin/athletes">
                 <ArrowLeft className="h-4 w-4"/>
               </Link>
             </Button>

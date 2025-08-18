@@ -653,12 +653,20 @@ export function AthleteForm({ athlete, onSave, onCancel, readOnly = false }: Ath
                 name="guardians"
                 render={({ field }) => {
                   // Convertir guardians a formato esperado por GuardianSelector
-                  const guardianInfos = (field.value || []).map((g: GuardianAssociation) => ({
-                    id: g.guardianId,
-                    fullName: `Guardian ${g.guardianId}`, // Se sobrescribirá al cargar datos
-                    relationship: g.relationship,
-                    isPrimary: g.isPrimary || false
-                  }));
+                  // Usar los datos reales de los guardians del atleta
+                  const guardianInfos = (field.value || []).map((g: GuardianAssociation) => {
+                    // Buscar información completa del guardian en los datos del atleta
+                    const guardianData = athlete?.guardians?.find(guardian => guardian.id === g.guardianId);
+                    
+                    return {
+                      id: g.guardianId,
+                      fullName: guardianData?.fullName || `Guardian ${g.guardianId}`,
+                      email: guardianData?.email,
+                      phone: guardianData?.phone,
+                      relationship: g.relationship,
+                      isPrimary: g.isPrimary || false
+                    };
+                  });
 
                   return (
                     <FormItem>

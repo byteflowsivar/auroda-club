@@ -188,6 +188,12 @@ export function GuardianSelector({
   const handleRemoveGuardian = (guardianId: number) => {
     const guardian = selectedGuardians.find(g => g.id === guardianId);
     
+    if (!guardian) {
+      console.error('Guardian not found:', guardianId);
+      setRemoveGuardianId(null);
+      return;
+    }
+
     const updatedGuardians = selectedGuardians.filter(g => g.id !== guardianId);
     const updatedAssociations = guardianAssociations.filter(a => a.guardianId !== guardianId);
 
@@ -195,15 +201,19 @@ export function GuardianSelector({
     const wasRemovingPrimary = guardianAssociations.find(a => a.guardianId === guardianId)?.isPrimary;
     if (wasRemovingPrimary && updatedAssociations.length > 0) {
       updatedAssociations[0].isPrimary = true;
-      updatedGuardians[0].isPrimary = true;
+      if (updatedGuardians.length > 0) {
+        updatedGuardians[0].isPrimary = true;
+      }
     }
 
+    // Actualizar el estado primero
     onSelectionChange(updatedGuardians, updatedAssociations);
+    
+    // Luego cerrar el modal
     setRemoveGuardianId(null);
     
-    if (guardian) {
-      showSuccess(`Tutor ${guardian.fullName} removido exitosamente`);
-    }
+    // Y mostrar el mensaje de éxito
+    showSuccess(`Tutor ${guardian.fullName} removido exitosamente`);
   };
 
   // Actualizar relación
@@ -597,19 +607,41 @@ export function GuardianSelector({
       )}
 
       {/* Dialog de confirmación para remover */}
-      <AlertDialog open={removeGuardianId !== null} onOpenChange={() => setRemoveGuardianId(null)}>
+      <AlertDialog 
+        open={removeGuardianId !== null} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setRemoveGuardianId(null);
+          }
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Remover tutor?</AlertDialogTitle>
             <AlertDialogDescription>
               ¿Está seguro que desea remover este tutor de la lista de responsables? 
               Esta acción se puede deshacer agregándolo nuevamente.
+              {removeGuardianId && (
+                <>
+                  <br />
+                  <strong>
+                    Tutor: {selectedGuardians.find(g => g.id === removeGuardianId)?.fullName}
+                  </strong>
+                </>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setRemoveGuardianId(null)}>
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => removeGuardianId && handleRemoveGuardian(removeGuardianId)}
+              onClick={() => {
+                if (removeGuardianId) {
+                  handleRemoveGuardian(removeGuardianId);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
             >
               Remover
             </AlertDialogAction>
