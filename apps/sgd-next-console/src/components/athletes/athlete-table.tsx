@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -61,10 +61,43 @@ export function AthleteTable({
     reset
   } = useListApi();
 
-  // Solo activar búsqueda cuando filtros estén cargados
+  // Cargar datos inicial y cuando cambien los filtros
   useEffect(() => {
     if (!filters.filtersLoading) {
-      // La búsqueda se activará automáticamente por useListApi
+      console.log('🔄 Cargando atletas con filtros:', {
+        searchQuery: filters.searchQuery,
+        selectedSport: filters.selectedSport,
+        selectedVenue: filters.selectedVenue,
+        selectedCategory: filters.selectedCategory,
+        activeFilter: filters.activeFilter
+      });
+      
+      // Construir parámetros para la API
+      const params: AthleteListParams = {
+        page: 0,
+        size: 20,
+        ...(filters.searchQuery && { search: filters.searchQuery }),
+        ...(filters.selectedSport && { sportId: filters.selectedSport }),
+        ...(filters.selectedVenue && { venueId: filters.selectedVenue }),
+        ...(filters.selectedCategory && { categoryId: filters.selectedCategory }),
+        ...(typeof filters.activeFilter === 'boolean' && { active: filters.activeFilter }),
+      };
+      
+      // Ejecutar consulta directamente
+      refresh(
+        async (apiParams) => {
+          console.log('📡 Llamando API con parámetros:', apiParams);
+          const response = await apiClient.getAthletes(apiParams as AthleteListParams);
+          console.log('📦 Respuesta recibida:', response);
+          
+          return {
+            content: response.content,
+            pagination: response.pagination
+          };
+        },
+        params,
+        true
+      ).catch(console.error);
     }
   }, [
     filters.filtersLoading,
@@ -73,6 +106,7 @@ export function AthleteTable({
     filters.selectedVenue,
     filters.selectedCategory,
     filters.activeFilter
+    // NO incluir refresh en las dependencias
   ]);
 
   // Handlers combinados
@@ -83,7 +117,30 @@ export function AthleteTable({
 
   const handleDeleteConfirm = () => {
     if (actions.deleteAthleteId) {
-      actions.handleDelete(actions.deleteAthleteId, () => refresh(apiClient.getAthletes)).then();
+      actions.handleDelete(actions.deleteAthleteId, () => {
+        // Recargar la lista después de eliminar
+        const currentParams: AthleteListParams = {
+          page: 0,
+          size: 20,
+          ...(filters.searchQuery && { search: filters.searchQuery }),
+          ...(filters.selectedSport && { sportId: filters.selectedSport }),
+          ...(filters.selectedVenue && { venueId: filters.selectedVenue }),
+          ...(filters.selectedCategory && { categoryId: filters.selectedCategory }),
+          ...(typeof filters.activeFilter === 'boolean' && { active: filters.activeFilter }),
+        };
+        
+        refresh(
+          async (apiParams) => {
+            const response = await apiClient.getAthletes(apiParams as AthleteListParams);
+            return {
+              content: response.content,
+              pagination: response.pagination
+            };
+          },
+          currentParams,
+          false
+        );
+      }).then();
     }
   };
 
@@ -96,7 +153,29 @@ export function AthleteTable({
           totalElements={pagination.totalElements}
           loading={loading}
           canCreate={canCreate}
-          onRefresh={() => refresh(apiClient.getAthletes)}
+          onRefresh={() => {
+            const currentParams: AthleteListParams = {
+              page: 0,
+              size: 20,
+              ...(filters.searchQuery && { search: filters.searchQuery }),
+              ...(filters.selectedSport && { sportId: filters.selectedSport }),
+              ...(filters.selectedVenue && { venueId: filters.selectedVenue }),
+              ...(filters.selectedCategory && { categoryId: filters.selectedCategory }),
+              ...(typeof filters.activeFilter === 'boolean' && { active: filters.activeFilter }),
+            };
+            
+            refresh(
+              async (apiParams) => {
+                const response = await apiClient.getAthletes(apiParams as AthleteListParams);
+                return {
+                  content: response.content,
+                  pagination: response.pagination
+                };
+              },
+              currentParams,
+              false
+            );
+          }}
           onCreate={actions.handleCreate}
         />
 
