@@ -23,7 +23,7 @@ export default async function GuardianDetailPage({ params }: GuardianDetailPageP
       <AppSidebar variant="inset"/>
       <SidebarInset>
         <SiteHeader/>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
           <GuardianDetail guardianId={guardianId} />
         </div>
       </SidebarInset>

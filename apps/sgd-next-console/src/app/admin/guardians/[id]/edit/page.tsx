@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
 import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
 import { GuardianForm } from "@/components/guardians/guardian-form"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2 } from "lucide-react"
 import { apiClient } from '@/lib/api'
 import type { GuardianResponse } from '@/types/api'
+import Link from "next/link"
 
 export default function EditGuardianPage() {
   const params = useParams()
@@ -50,7 +52,21 @@ export default function EditGuardianPage() {
       <AppSidebar variant="inset"/>
       <SidebarInset>
         <SiteHeader/>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" size="icon" asChild>
+              <Link href={`/admin/guardians/${guardianId}`}>
+                <ArrowLeft className="h-4 w-4"/>
+              </Link>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Editar Tutor</h1>
+              <p className="text-muted-foreground">
+                Modifica la información del tutor ID: {guardianId}
+              </p>
+            </div>
+          </div>
+
           {loading ? (
             <Card>
               <CardContent className="flex items-center justify-center py-12">

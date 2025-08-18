@@ -176,25 +176,6 @@ export function GuardianForm({ guardian, onSuccess, onCancel }: GuardianFormProp
   return (
     <>
       <Card>
-        <CardHeader>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={handleCancel}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <UserPlus className="h-5 w-5" />
-                {isEditing ? 'Editar Tutor' : 'Nuevo Tutor'}
-              </CardTitle>
-              <CardDescription>
-                {isEditing 
-                  ? `Actualizar información de ${guardian.fullName}`
-                  : 'Registrar un nuevo tutor responsable de atletas'
-                }
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
