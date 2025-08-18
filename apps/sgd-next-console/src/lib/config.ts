@@ -14,9 +14,7 @@ export const SINGLE_TENANT_CONFIG = {
   
   /** URL del logo del club (opcional) */
   clubLogo: process.env.CLUB_LOGO_URL || null,
-  
-  /** Color primario del club para temas (opcional) */
-  clubPrimaryColor: process.env.CLUB_PRIMARY_COLOR || '#1e40af',
+
 } as const;
 
 /**
@@ -43,8 +41,7 @@ export const ClubUtils = {
     return {
       id: SINGLE_TENANT_CONFIG.clubId,
       name: SINGLE_TENANT_CONFIG.clubName,
-      logo: SINGLE_TENANT_CONFIG.clubLogo,
-      primaryColor: SINGLE_TENANT_CONFIG.clubPrimaryColor,
+      logo: SINGLE_TENANT_CONFIG.clubLogo
     };
   },
 

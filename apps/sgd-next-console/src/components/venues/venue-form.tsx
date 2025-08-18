@@ -17,21 +17,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { Loader2, Save, X, Building, Calendar, User } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
 import { ClubUtils } from '@/lib/config';
-import type { VenueResponse, VenueCreateRequest, VenueUpdateRequest } from '@/types/api';
+import { VenueResponse, VenueUpdateRequest } from '@/types';
+import { Badge } from "@/components/ui/badge";
 
 const venueFormSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(255),
