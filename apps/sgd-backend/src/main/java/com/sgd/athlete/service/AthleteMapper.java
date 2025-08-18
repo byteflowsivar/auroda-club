@@ -111,10 +111,16 @@ public class AthleteMapper {
         AthleteResponse response = new AthleteResponse();
         response.setId(athlete.getId());
         response.setFullName(athlete.getFullName());
+        response.setBirthDate(athlete.getBirthDate());
         response.setAge(athlete.getAge());
         response.setGender(athlete.getGender());
         response.setEmail(athlete.getEmail());
         response.setPhone(athlete.getPhone());
+        response.setAddress(athlete.getAddress());
+        response.setIdentificationNumber(athlete.getIdentificationNumber());
+        response.setEmergencyContact(athlete.getEmergencyContact());
+        response.setEmergencyPhone(athlete.getEmergencyPhone());
+        response.setMedicalNotes(athlete.getMedicalNotes());
         response.setActive(athlete.isActive());
         response.setRegistrationDate(athlete.getRegistrationDate());
         response.setCreatedAt(athlete.getCreatedAt());
