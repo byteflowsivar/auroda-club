@@ -244,7 +244,7 @@ public class Athlete extends BaseEntity {
 
     public boolean hasActiveGuardians() {
         return athleteGuardians.stream()
-                .anyMatch(ag -> ag.isActive());
+                .anyMatch(BaseEntity::isActive);
     }
 
     public boolean hasValidCategoryForAge() {

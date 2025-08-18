@@ -21,6 +21,7 @@ import com.sgd.sport.repository.SportRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -60,6 +61,9 @@ public class AthleteService {
 
     @Inject
     AthleteMapper athleteMapper;
+    
+    @Inject
+    EntityManager entityManager;
 
     /**
      * Get paginated list of athletes with filters and security restrictions.
@@ -137,6 +141,10 @@ public class AthleteService {
         // Handle guardian associations
         if (request.getGuardians() != null && !request.getGuardians().isEmpty()) {
             associateGuardians(athlete, request.getGuardians());
+            // Flush to ensure associations are persisted
+            entityManager.flush();
+            // Refresh athlete to get updated relationships
+            entityManager.refresh(athlete);
         }
 
         // Validate minor guardian requirement after associations

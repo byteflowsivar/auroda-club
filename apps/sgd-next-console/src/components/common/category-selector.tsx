@@ -49,23 +49,26 @@ export function CategorySelector({
         setLoading(true);
         setError(null);
         
+        console.log('🔍 Cargando categorías para deporte:', sportId);
+        
         // Cargar categorías del deporte específico
         const allCategories = await apiClient.getCategoriesBySport(sportId);
+        
+        console.log('📦 Categorías recibidas:', allCategories);
+        console.log('📊 Cantidad de categorías:', allCategories.length);
+        
         setCategories(allCategories);
         
-        // If categories have a gender property, filter them
-        const compatibleCategories = allCategories.filter(cat => {
-          const ageCompatible = athleteAge ? (athleteAge >= cat.minAge && athleteAge <= cat.maxAge) : true;
-          const genderCompatible = !athleteGender || !cat.gender || athleteGender === cat.gender;
-          return ageCompatible && genderCompatible;
-        });
-
-        // Si la categoría actual no es compatible, limpiar selección
-        if (value && !compatibleCategories.some(cat => cat.id === value)) {
-          onValueChange(0);
+        // Si la categoría actual no es compatible con la edad, limpiar selección
+        if (value && athleteAge) {
+          const selectedCategory = allCategories.find(cat => cat.id === value);
+          if (selectedCategory && (athleteAge < selectedCategory.minAge || athleteAge > selectedCategory.maxAge)) {
+            console.log('⚠️ Categoría actual no compatible con edad, limpiando selección');
+            onValueChange(0);
+          }
         }
       } catch (err) {
-        console.error('Error loading categories:', err);
+        console.error('❌ Error loading categories:', err);
         setError('Error al cargar categorías');
         setCategories([]);
       } finally {
@@ -74,40 +77,35 @@ export function CategorySelector({
     };
 
     loadCategories();
-  }, [sportId, athleteAge, athleteGender, value, onValueChange]); // Added athleteGender to dependencies
+  }, [sportId, athleteAge, value, onValueChange]);
 
-  // Filtrar categorías apropiadas para el atleta
+  // Filtrar categorías apropiadas para el atleta (solo por edad)
   const getFilteredCategories = () => {
-    if (!athleteAge && !athleteGender) return categories; // If no age or gender, return all
+    if (!athleteAge) return categories; // Si no hay edad, mostrar todas
 
     return categories.filter(category => {
-      return athleteAge && athleteAge >= category.minAge && athleteAge <= category.maxAge;
+      return athleteAge >= category.minAge && athleteAge <= category.maxAge;
     });
   };
 
-  // Verificar si una categoría es recomendada
+  // Verificar si una categoría es recomendada (compatible con edad)
   const isCategoryRecommended = (category: CategoryResponse): boolean => {
-    if (!athleteAge && !athleteGender) return false; // If no age or gender, no recommendation
+    if (!athleteAge) return false; // Si no hay edad, no hay recomendación
     
-    const ageCompatible = athleteAge ? (athleteAge >= category.minAge && athleteAge <= category.maxAge) : true;
-    const genderCompatible = !athleteGender || !category.gender || athleteGender === category.gender;
-    
-    return ageCompatible && genderCompatible;
+    return athleteAge >= category.minAge && athleteAge <= category.maxAge;
   };
 
   // Verificar si una categoría tiene advertencias
   const getCategoryWarning = (category: CategoryResponse): string | null => {
-    if (!athleteAge && !athleteGender) return null;
+    if (!athleteAge) return null;
 
     const warnings: string[] = [];
 
-    if (athleteAge) {
-      if (athleteAge < category.minAge) {
-        warnings.push(`Edad mínima: ${category.minAge} años`);
-      }
-      if (athleteAge > category.maxAge) {
-        warnings.push(`Edad máxima: ${category.maxAge} años`);
-      }
+    if (athleteAge < category.minAge) {
+      warnings.push(`Edad mínima: ${category.minAge} años`);
+    }
+    if (athleteAge > category.maxAge) {
+      warnings.push(`Edad máxima: ${category.maxAge} años`);
     }
 
     return warnings.length > 0 ? warnings.join('; ') : null;
@@ -157,14 +155,14 @@ export function CategorySelector({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {/* Categorías recomendadas primero */}
-          {filteredCategories.length > 0 && (
+          {/* Mostrar categorías recomendadas primero si hay edad */}
+          {athleteAge && filteredCategories.length > 0 && (
             <>
               <div className="px-2 py-1 text-xs font-medium text-muted-foreground">
-                Categorías Recomendadas
+                🏆 Categorías Recomendadas (Edad: {athleteAge} años)
               </div>
               {filteredCategories.map((category) => (
-                <SelectItem key={category.id} value={category.id.toString()}>
+                <SelectItem key={`rec-${category.id}`} value={category.id.toString()}>
                   <div className="flex items-center justify-between w-full">
                     <span>{category.name}</span>
                     <div className="flex items-center gap-2 ml-2">
@@ -179,23 +177,33 @@ export function CategorySelector({
             </>
           )}
 
-          {/* Mostrar todas las categorías si no hay edad definida o hay categorías no recomendadas */}
-          {(!athleteAge && !athleteGender || categories.some(cat => !isCategoryRecommended(cat))) && (
-            <>
-              {filteredCategories.length > 0 && (
-                <div className="border-t my-1" />
-              )}
-              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">
-                {filteredCategories.length > 0 ? 'Otras Categorías' : 'Categorías Disponibles'}
-              </div>
-              {categories
-                .filter(cat => (!athleteAge && !athleteGender) || !isCategoryRecommended(cat))
-                .map((category) => {
+          {/* Separador si hay recomendadas y otras */}
+          {athleteAge && filteredCategories.length > 0 && filteredCategories.length < categories.length && (
+            <div className="border-t my-1" />
+          )}
+
+          {/* Mostrar todas las categorías o las no recomendadas */}
+          {(() => {
+            const nonRecommended = athleteAge ? 
+              categories.filter(cat => !isCategoryRecommended(cat)) : 
+              categories;
+            
+            if (nonRecommended.length === 0) return null;
+
+            return (
+              <>
+                <div className="px-2 py-1 text-xs font-medium text-muted-foreground">
+                  {athleteAge && filteredCategories.length > 0 ? 
+                    '📋 Otras Categorías' : 
+                    '📋 Categorías Disponibles'
+                  }
+                </div>
+                {nonRecommended.map((category) => {
                   const warning = getCategoryWarning(category);
                   
                   return (
                     <SelectItem 
-                      key={category.id} 
+                      key={`other-${category.id}`} 
                       value={category.id.toString()}
                       className={warning ? "opacity-60" : ""}
                     >
@@ -213,10 +221,11 @@ export function CategorySelector({
                     </SelectItem>
                   );
                 })}
-            </>
-          )}
+              </>
+            );
+          })()}
 
-          {categories.length === 0 && (
+          {categories.length === 0 && !loading && (
             <div className="px-2 py-1 text-sm text-muted-foreground">
               No hay categorías disponibles para este deporte
             </div>
@@ -225,12 +234,12 @@ export function CategorySelector({
       </Select>
 
       {/* Información adicional sobre la categoría seleccionada */}
-      {selectedCategory && (athleteAge || athleteGender) && (
+      {selectedCategory && athleteAge && (
         <div className="text-sm">
           {isCategoryRecommended(selectedCategory) ? (
             <div className="flex items-center gap-1 text-green-600">
               <Trophy className="h-3 w-3" />
-              <span>Categoría recomendada para este atleta</span>
+              <span>Categoría recomendada para {athleteAge} años</span>
             </div>
           ) : (
             <div className="flex items-center gap-1 text-yellow-600">
