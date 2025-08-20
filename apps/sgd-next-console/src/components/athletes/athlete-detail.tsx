@@ -51,6 +51,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useErrorHandler } from '@/lib/error-handler';
+import { calculateAge } from '@/components/athletes/utils/athleteUtils'
 import type { AthleteResponse } from '@/types/api';
 
 interface AthleteDetailProps {
@@ -66,10 +67,10 @@ export function AthleteDetail({ athleteId, onDelete }: AthleteDetailProps) {
   const { showSuccess } = useErrorHandler();
 
   // Estados locales
-  const [athlete, setAthlete] = useState<AthleteResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [ athlete, setAthlete ] = useState<AthleteResponse | null>(null);
+  const [ loading, setLoading ] = useState(true);
+  const [ showDeleteDialog, setShowDeleteDialog ] = useState(false);
+  const [ deleting, setDeleting ] = useState(false);
 
   // Cargar datos del atleta
   useEffect(() => {
@@ -85,22 +86,8 @@ export function AthleteDetail({ athleteId, onDelete }: AthleteDetailProps) {
       }
     };
 
-    loadAthleteData();
-  }, [athleteId]);
-
-  // Calcular edad desde fecha de nacimiento
-  const calculateAge = (birthDate: string): number => {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    
-    return age;
-  };
+    loadAthleteData().then();
+  }, [ athleteId ]);
 
   // Obtener iniciales del nombre
   const getInitials = (name: string): string => {
@@ -140,7 +127,7 @@ export function AthleteDetail({ athleteId, onDelete }: AthleteDetailProps) {
   // Handler para copiar información
   const handleCopyInfo = () => {
     if (!athlete) return;
-    
+
     const info = `
 Atleta: ${athlete.fullName}
 Edad: ${calculateAge(athlete.birthDate)} años
@@ -150,14 +137,14 @@ Sede: ${athlete.venue.name}
 Email: ${athlete.email || 'No registrado'}
 Teléfono: ${athlete.phone || 'No registrado'}
     `.trim();
-    
+
     navigator.clipboard.writeText(info);
     showSuccess('Información copiada al portapapeles');
   };
 
   // Verificar permisos
-  const canEdit = session?.user?.roles?.includes('ADMIN_GENERAL') || 
-                  session?.user?.roles?.includes('ADMIN_CLUB');
+  const canEdit = session?.user?.roles?.includes('ADMIN_GENERAL') ||
+    session?.user?.roles?.includes('ADMIN_CLUB');
   const canDelete = session?.user?.roles?.includes('ADMIN_GENERAL');
 
   if (loading) {
@@ -166,23 +153,23 @@ Teléfono: ${athlete.phone || 'No registrado'}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4"/>
             </Button>
             <div>
-              <div className="h-8 bg-muted rounded animate-pulse mb-2" style={{ width: '200px' }} />
-              <div className="h-4 bg-muted rounded animate-pulse" style={{ width: '100px' }} />
+              <div className="h-8 bg-muted rounded animate-pulse mb-2" style={{ width: '200px' }}/>
+              <div className="h-4 bg-muted rounded animate-pulse" style={{ width: '100px' }}/>
             </div>
           </div>
         </div>
-        
+
         <div className="grid gap-6 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i}>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="h-4 bg-muted rounded animate-pulse" />
-                  <div className="h-4 bg-muted rounded animate-pulse w-3/4" />
-                  <div className="h-4 bg-muted rounded animate-pulse w-1/2" />
+                  <div className="h-4 bg-muted rounded animate-pulse"/>
+                  <div className="h-4 bg-muted rounded animate-pulse w-3/4"/>
+                  <div className="h-4 bg-muted rounded animate-pulse w-1/2"/>
                 </div>
               </CardContent>
             </Card>
@@ -195,13 +182,13 @@ Teléfono: ${athlete.phone || 'No registrado'}
   if (!athlete) {
     return (
       <div className="text-center py-12">
-        <User className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <User className="h-12 w-12 text-muted-foreground mx-auto mb-4"/>
         <h3 className="text-lg font-semibold mb-2">Atleta no encontrado</h3>
         <p className="text-muted-foreground mb-4">
           No se pudo cargar la información del atleta.
         </p>
         <Button onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2"/>
           Volver
         </Button>
       </div>
@@ -217,7 +204,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4"/>
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{athlete.fullName}</h1>
@@ -226,42 +213,42 @@ Teléfono: ${athlete.phone || 'No registrado'}
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4"/>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               <DropdownMenuItem onClick={handleCopyInfo}>
-                <Copy className="h-4 w-4 mr-2" />
+                <Copy className="h-4 w-4 mr-2"/>
                 Copiar Información
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator/>
               {canEdit && (
                 <DropdownMenuItem onClick={handleEdit}>
-                  <Edit className="h-4 w-4 mr-2" />
+                  <Edit className="h-4 w-4 mr-2"/>
                   Editar
                 </DropdownMenuItem>
               )}
               {canDelete && (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => setShowDeleteDialog(true)}
                   className="text-red-600"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-4 w-4 mr-2"/>
                   Eliminar
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-          
+
           {canEdit && (
             <Button onClick={handleEdit}>
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-4 w-4 mr-2"/>
               Editar
             </Button>
           )}
@@ -270,7 +257,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
 
       {/* Estado del atleta */}
       <div className="flex items-center gap-2">
-        <Badge 
+        <Badge
           variant={athlete.active ? "default" : "secondary"}
           className={athlete.active ? "bg-green-500 hover:bg-green-600" : ""}
         >
@@ -278,7 +265,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
         </Badge>
         {isMinor && (
           <Badge variant="outline">
-            <AlertTriangle className="h-3 w-3 mr-1" />
+            <AlertTriangle className="h-3 w-3 mr-1"/>
             Menor de edad
           </Badge>
         )}
@@ -289,7 +276,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
+              <User className="h-5 w-5"/>
               Información Personal
             </CardTitle>
           </CardHeader>
@@ -303,13 +290,13 @@ Teléfono: ${athlete.phone || 'No registrado'}
               <div>
                 <h3 className="text-lg font-semibold">{athlete.fullName}</h3>
                 <div className="flex items-center gap-1 text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
+                  <Calendar className="h-3 w-3"/>
                   {age} años ({formatDate(athlete.birthDate)})
                 </div>
               </div>
             </div>
 
-            <Separator />
+            <Separator/>
 
             <div className="space-y-3">
               {athlete.gender && (
@@ -318,7 +305,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
                   <span>{athlete.gender === 'M' ? 'Masculino' : 'Femenino'}</span>
                 </div>
               )}
-              
+
               {athlete.identificationNumber && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Identificación:</span>
@@ -338,7 +325,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5" />
+              <Phone className="h-5 w-5"/>
               Información de Contacto
             </CardTitle>
           </CardHeader>
@@ -346,7 +333,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
             <div className="space-y-3">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <Mail className="h-4 w-4 text-muted-foreground"/>
                   <span className="text-sm font-medium">Email</span>
                 </div>
                 <p>{athlete.email || 'No registrado'}</p>
@@ -354,7 +341,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
 
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <Phone className="h-4 w-4 text-muted-foreground"/>
                   <span className="text-sm font-medium">Teléfono</span>
                 </div>
                 <p>{athlete.phone || 'No registrado'}</p>
@@ -363,7 +350,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
               {athlete.address && (
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <MapPin className="h-4 w-4 text-muted-foreground"/>
                     <span className="text-sm font-medium">Dirección</span>
                   </div>
                   <p>{athlete.address}</p>
@@ -377,7 +364,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
+              <Trophy className="h-5 w-5"/>
               Información Deportiva
             </CardTitle>
           </CardHeader>
@@ -396,7 +383,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Sede:</span>
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
+                  <MapPin className="h-3 w-3"/>
                   <span>{athlete.venue.name}</span>
                 </div>
               </div>
@@ -409,7 +396,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
 
             {athlete.sport.description && (
               <>
-                <Separator />
+                <Separator/>
                 <div>
                   <span className="text-sm font-medium">Descripción del deporte:</span>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -426,7 +413,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5" />
+                <AlertTriangle className="h-5 w-5"/>
                 Contacto de Emergencia
               </CardTitle>
             </CardHeader>
@@ -453,7 +440,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
+                <Users className="h-5 w-5"/>
                 Tutores Responsables
                 <Badge variant="secondary">{athlete.guardians.length}</Badge>
               </CardTitle>
@@ -485,7 +472,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
                         </div>
                         {guardian.phone && (
                           <div className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
+                            <Phone className="h-3 w-3"/>
                             {guardian.phone}
                           </div>
                         )}
@@ -503,7 +490,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+                <FileText className="h-5 w-5"/>
                 Notas Médicas
               </CardTitle>
             </CardHeader>
@@ -519,7 +506,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+              <Activity className="h-5 w-5"/>
               Actividad Reciente
             </CardTitle>
           </CardHeader>
@@ -544,7 +531,7 @@ Teléfono: ${athlete.phone || 'No registrado'}
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar atleta?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará permanentemente el registro de <strong>{athlete.fullName}</strong> 
+              Esta acción eliminará permanentemente el registro de <strong>{athlete.fullName}</strong>
               y todos sus datos asociados. Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>

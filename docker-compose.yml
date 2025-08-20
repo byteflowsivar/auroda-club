@@ -29,6 +29,7 @@ services:
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_HTTP_ENABLED: ${KC_HTTP_ENABLED}
+      KC_HEALTH_ENABLED: true
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://keycloak_db:5432/${KC_POSTGRES_DB}
       KC_DB_USERNAME: ${KC_POSTGRES_USER}
@@ -38,7 +39,7 @@ services:
       KC_PROXY: edge
       KC_HOSTNAME_STRICT_HTTPS: false
     ports:
-      - 8089:8080
+      - 8080:8080
       - 8443:8443
     depends_on:
       keycloak_db:
@@ -46,6 +47,11 @@ services:
     networks:
       - keycloak-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl --head -fsS http://localhost:9000/health/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./packages/keycloak-themes:/opt/keycloak/themes  # Opcional para temas personalizados
 
@@ -70,6 +76,32 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  club_backend:
+    image: quarkus/sgd-backend-jvm:latest
+    container_name: aurora-club-backend
+    ports:
+      - 8081:8080
+    depends_on:
+      aurora_db:
+        condition: service_healthy
+      keycloak_db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      KEYCLOAK_CLIENT_SECRET: ${BACKEND_KEYCLOAK_CLIENT_SECRET}
+      DB_HOST: aurora-postgres
+      DB_PORT: 5432
+      DB_NAME: ${AURORA_POSTGRES_DB}
+      DB_USER: ${AURORA_POSTGRES_USER}
+      DB_PASSWORD: ${AURORA_POSTGRES_PASSWORD}
+    networks:
+      - aurora-network
+    restart: unless-stopped
+
 
 networks:
   keycloak-network:

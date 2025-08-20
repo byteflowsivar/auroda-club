@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CalendarIcon, AlertTriangle, User, MapPin, Phone, Heart, FileText } from 'lucide-react';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { AlertTriangle, FileText, Heart, MapPin, Phone, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -16,22 +14,21 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { CategorySelector } from '@/components/common/category-selector';
 import { GuardianSelector } from '@/components/common/guardian-selector';
 
 import { apiClient } from '@/lib/api';
-import type { 
-  AthleteCreateRequest, 
-  AthleteUpdateRequest, 
+import type {
+  AthleteCreateRequest,
   AthleteResponse,
+  AthleteUpdateRequest,
+  GuardianAssociation,
   SportResponse,
-  VenueResponse,
-  GuardianAssociation 
+  VenueResponse
 } from '@/types/api';
-import { PHONE_PATTERN, PHONE_FORMAT_MESSAGE, MINOR_AGE_LIMIT } from '@/types/api';
+import { MINOR_AGE_LIMIT, PHONE_FORMAT_MESSAGE, PHONE_PATTERN } from '@/types/api';
 
 // Esquema de validación basado en el OpenAPI spec
 const athleteFormSchema = z.object({

@@ -1,238 +1,81 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { Button } from "@/components/ui/button"
-import { SidebarInset, SidebarProvider, } from "@/components/ui/sidebar"
-import { ArrowLeft, Loader2 } from "lucide-react"
-import Link from "next/link"
-import { AthleteForm } from "@/components/athletes/athlete-form"
-import { apiClient } from "@/lib/api"
-import { Card, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import type { AthleteResponse } from "@/types/api"
+import { AdminPageLayout } from "@/components/admin/AdminPageLayout";
+import { EditAthleteContent } from "@/components/athletes/EditAthleteContent";
+import { LoadingState } from "@/components/admin/LoadingState";
+import { ErrorState } from "@/components/admin/ErrorState";
+import { useAthleteParams } from "@/hooks/useAthleteParams";
+import { useEditAthlete } from "@/hooks/useEditAthlete";
 
 interface EditAthletePageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }
 
+/**
+ * Página de edición de atletas - Refactorizada con mejores prácticas
+ * 
+ * Separación de responsabilidades:
+ * - useAthleteParams: Manejo de parámetros async
+ * - useEditAthlete: Lógica de negocio (estado, API, navegación)
+ * - AdminPageLayout: Layout reutilizable
+ * - EditAthleteContent: Lógica de presentación
+ */
 export default function EditAthletePage({ params }: EditAthletePageProps) {
-  const router = useRouter();
-  const [athlete, setAthlete] = useState<AthleteResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [athleteId, setAthleteId] = useState<string | null>(null);
+  console.log(`🚀 [EditAthletePage] Iniciando página de edición`);
 
-  // Resolver params de forma asíncrona
-  useEffect(() => {
-    const resolveParams = async () => {
-      const resolvedParams = await params;
-      setAthleteId(resolvedParams.id);
-    };
-    resolveParams();
-  }, [params]);
+  // Hook para manejar parámetros async de forma optimizada
+  const { athleteId, loading: paramsLoading, error: paramsError } = useAthleteParams(params);
+  
+  // Hook para manejar toda la lógica de edición de atletas
+  const editState = useEditAthlete(athleteId);
 
-  // Cargar datos del atleta
-  useEffect(() => {
-    const loadAthlete = async () => {
-      if (!athleteId) return;
+  console.log(`📊 [EditAthletePage] Estado actual:`, {
+    athleteId,
+    paramsLoading,
+    paramsError,
+    athleteLoading: editState.loading,
+    athleteError: editState.error,
+    athleteName: editState.athlete?.fullName
+  });
 
-      try {
-        setLoading(true);
-        setError(null);
-        const athleteData = await apiClient.getAthlete(parseInt(athleteId));
-        setAthlete(athleteData);
-      } catch (err: any) {
-        console.error('Error loading athlete:', err);
-        setError(err.message || 'Error al cargar los datos del atleta');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadAthlete();
-  }, [athleteId]);
-
-  const handleSave = (updatedAthlete: AthleteResponse) => {
-    // Redirigir a la lista de atletas después de guardar exitosamente
-    router.push('/admin/athletes');
-  };
-
-  const handleCancel = () => {
-    // Volver a la lista de atletas
-    router.push('/admin/athletes');
-  };
-
-  if (loading) {
+  // Mientras se resuelven los parámetros
+  if (paramsLoading) {
     return (
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
+      <AdminPageLayout
+        title="Editar Atleta"
+        subtitle="Procesando solicitud..."
+        backHref="/admin/athletes"
       >
-        <AppSidebar variant="inset"/>
-        <SidebarInset>
-          <SiteHeader/>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" asChild>
-                <Link href="/admin/athletes">
-                  <ArrowLeft className="h-4 w-4"/>
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Editar Atleta</h1>
-                <p className="text-muted-foreground">
-                  Cargando información del atleta...
-                </p>
-              </div>
-            </div>
-
-            <Card>
-              <CardContent className="flex items-center justify-center py-12">
-                <div className="flex items-center space-x-2">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                  <span>Cargando datos del atleta...</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+        <LoadingState message="Procesando solicitud..." />
+      </AdminPageLayout>
     );
   }
 
-  if (error) {
+  // Error en parámetros
+  if (paramsError) {
     return (
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
+      <AdminPageLayout
+        title="Editar Atleta"
+        subtitle="Error en parámetros"
+        backHref="/admin/athletes"
       >
-        <AppSidebar variant="inset"/>
-        <SidebarInset>
-          <SiteHeader/>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" asChild>
-                <Link href="/admin/athletes">
-                  <ArrowLeft className="h-4 w-4"/>
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Editar Atleta</h1>
-                <p className="text-muted-foreground">
-                  Error al cargar la información
-                </p>
-              </div>
-            </div>
-
-            <Alert variant="destructive">
-              <AlertDescription>
-                {error}
-              </AlertDescription>
-            </Alert>
-
-            <div className="flex justify-center">
-              <Button onClick={() => window.location.reload()}>
-                Intentar de nuevo
-              </Button>
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+        <ErrorState 
+          message={paramsError}
+          onRetry={() => window.location.reload()}
+          retryText="Recargar página"
+        />
+      </AdminPageLayout>
     );
   }
 
-  if (!athlete) {
-    return (
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
-      >
-        <AppSidebar variant="inset"/>
-        <SidebarInset>
-          <SiteHeader/>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" asChild>
-                <Link href="/admin/athletes">
-                  <ArrowLeft className="h-4 w-4"/>
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Editar Atleta</h1>
-                <p className="text-muted-foreground">
-                  Atleta no encontrado
-                </p>
-              </div>
-            </div>
-
-            <Alert>
-              <AlertDescription>
-                No se pudo encontrar el atleta solicitado.
-              </AlertDescription>
-            </Alert>
-
-            <div className="flex justify-center">
-              <Button asChild>
-                <Link href="/admin/athletes">
-                  Volver a la lista
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    );
-  }
-
+  // Página principal con todos los estados manejados por EditAthleteContent
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
+    <AdminPageLayout
+      title="Editar Atleta"
+      subtitle={editState.athlete ? `Modificar información de ${editState.athlete.fullName}` : undefined}
+      backHref="/admin/athletes"
     >
-      <AppSidebar variant="inset"/>
-      <SidebarInset>
-        <SiteHeader/>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" asChild>
-              <Link href="/admin/athletes">
-                <ArrowLeft className="h-4 w-4"/>
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Editar Atleta</h1>
-              <p className="text-muted-foreground">
-                Modificar información de {athlete.fullName}
-              </p>
-            </div>
-          </div>
-
-          <AthleteForm
-            athlete={athlete}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+      <EditAthleteContent {...editState} />
+    </AdminPageLayout>
   );
 }
