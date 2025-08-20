@@ -22,7 +22,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.3
     container_name: keycloak
-    # command: start --optimized
+    #command: start --optimized
     command: start-dev
     env_file:
       - .env
@@ -39,8 +39,9 @@ services:
       KC_PROXY: edge
       KC_HOSTNAME_STRICT_HTTPS: false
     ports:
-      - 8080:8080
+      - 8089:8080
       - 8443:8443
+      - 9000:9000
     depends_on:
       keycloak_db:
         condition: service_healthy
@@ -48,10 +49,11 @@ services:
       - keycloak-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl --head -fsS http://localhost:9000/health/ready || exit 1"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD", "sh", "-c", "timeout 5 bash -c '</dev/tcp/localhost/8080' || exit 1"]
+      interval: 30s
+      timeout: 10s
       retries: 5
+      start_period: 120s
     volumes:
       - ./packages/keycloak-themes:/opt/keycloak/themes  # Opcional para temas personalizados
 
@@ -81,7 +83,7 @@ services:
     image: quarkus/sgd-backend-jvm:latest
     container_name: aurora-club-backend
     ports:
-      - 8081:8080
+      - 8080:8080
     depends_on:
       aurora_db:
         condition: service_healthy
