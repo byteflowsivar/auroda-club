@@ -4,7 +4,9 @@ import useSWR from "swr"
 import { useSession } from "next-auth/react"
 import { Users, Building, Trophy } from "lucide-react"
 
-// Layout Components
+// Auth and Layout
+import { AuthGuard } from "@/components/auth/auth-guard"
+import { ROLES } from "@/lib/constants"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -23,57 +25,19 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 function AdminDashboard({ data, isLoading }: { data: any; isLoading: boolean }) {
   return (
     <div className="space-y-6">
-      {/* Fila de KPIs */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard 
-          title="Total Atletas Activos" 
-          value={data?.totalActiveAthletes} 
-          icon={<Users className="h-4 w-4 text-muted-foreground" />} 
-          isLoading={isLoading}
-        />
-        <StatCard 
-          title="Nuevos Atletas (30 días)" 
-          value={data?.newAthletesLast30Days} 
-          icon={<Users className="h-4 w-4 text-muted-foreground" />} 
-          isLoading={isLoading}
-        />
-        <StatCard 
-          title="Total Sedes Activas" 
-          value={data?.totalActiveVenues} 
-          icon={<Building className="h-4 w-4 text-muted-foreground" />} 
-          isLoading={isLoading}
-        />
-        <StatCard 
-          title="Deportes Ofertados" 
-          value={data?.totalActiveSports} 
-          icon={<Trophy className="h-4 w-4 text-muted-foreground" />} 
-          isLoading={isLoading}
-        />
+        <StatCard title="Total Atletas Activos" value={data?.totalActiveAthletes} icon={<Users className="h-4 w-4 text-muted-foreground" />} isLoading={isLoading} />
+        <StatCard title="Nuevos Atletas (30 días)" value={data?.newAthletesLast30Days} icon={<Users className="h-4 w-4 text-muted-foreground" />} isLoading={isLoading} />
+        <StatCard title="Total Sedes Activas" value={data?.totalActiveVenues} icon={<Building className="h-4 w-4 text-muted-foreground" />} isLoading={isLoading} />
+        <StatCard title="Deportes Ofertados" value={data?.totalActiveSports} icon={<Trophy className="h-4 w-4 text-muted-foreground" />} isLoading={isLoading} />
       </div>
-
-      {/* Fila de Gráficos y Alertas */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <DashboardChart 
-            title="Atletas por Deporte" 
-            data={data?.athletesBySport} 
-            type="bar" 
-            isLoading={isLoading}
-          />
+          <DashboardChart title="Atletas por Deporte" data={data?.athletesBySport} type="bar" isLoading={isLoading} />
         </div>
         <div className="space-y-6">
-          <DashboardChart 
-            title="Atletas por Sede" 
-            data={data?.athletesByVenue} 
-            type="donut" 
-            isLoading={isLoading}
-          />
-          <AlertCard 
-            title="Atletas Menores Sin Tutor" 
-            value={data?.athletesWithoutGuardian} 
-            link="/admin/athletes?filter=no_guardian" // hypothetical link
-            linkText="Revisar atletas"
-          />
+          <DashboardChart title="Atletas por Sede" data={data?.athletesByVenue} type="donut" isLoading={isLoading} />
+          <AlertCard title="Atletas Menores Sin Tutor" value={data?.athletesWithoutGuardian} link="/admin/athletes?filter=no_guardian" linkText="Revisar atletas" />
         </div>
       </div>
     </div>
@@ -81,7 +45,6 @@ function AdminDashboard({ data, isLoading }: { data: any; isLoading: boolean }) 
 }
 
 function ProfessorDashboard() {
-  // TODO: Implementar dashboard específico para profesores
   return (
     <div className="p-4 border rounded-lg">
       <h2 className="text-xl font-semibold">Dashboard del Profesor</h2>
@@ -90,35 +53,28 @@ function ProfessorDashboard() {
   )
 }
 
-// --- Componente Principal de la Página ---
+// --- Componente de Contenido del Dashboard ---
 
 function DashboardContent() {
   const { data: session } = useSession()
-  const { data, error, isLoading } = useSWR("/api/sgd/dashboard/summary", fetcher)
 
-  const userRole = session?.user?.role
+  const { data, error, isLoading } = useSWR("/api/sgd/dashboard/summary", fetcher)
+  const userRole = session?.user.roles;
 
   const renderDashboard = () => {
-    if (isLoading) {
-      return <AdminDashboard data={null} isLoading={true} />
-    }
+    if (isLoading) return <AdminDashboard data={null} isLoading={true} />
+    if (error) return <ErrorState message="No se pudo cargar la información del dashboard." />
+    if (!data) return <p>No hay datos disponibles.</p>
 
-    if (error) {
-      return <ErrorState message="No se pudo cargar la información del dashboard." />
-    }
-
-    if (!data) {
-      return <p>No hay datos disponibles.</p>
-    }
-
-    if (userRole === "ADMIN_GENERAL" || userRole === "ADMIN_CLUB") {
+    // Valida si el array de roles del usuario incluye alguno de los roles de administrador
+    if (userRole?.includes(ROLES.ADMIN_GENERAL) || userRole?.includes(ROLES.ADMIN_CLUB)) {
       return <AdminDashboard data={data} isLoading={false} />
     }
 
-    if (userRole === "PROFESOR") {
+    // Valida si el array de roles incluye el rol de profesor
+    if (userRole?.includes(ROLES.PROFESOR)) {
       return <ProfessorDashboard />
     }
-
     return <p>No tienes un rol asignado para ver el dashboard.</p>
   }
 
@@ -135,21 +91,18 @@ function DashboardContent() {
   )
 }
 
+// --- Componente Principal de la Página ---
+
 export default function DashboardPage() {
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset"/>
-      <SidebarInset>
-        <SiteHeader/>
-        <DashboardContent />
-      </SidebarInset>
-    </SidebarProvider>
+    <AuthGuard requiredRoles={[ROLES.ADMIN_GENERAL, ROLES.ADMIN_CLUB, ROLES.PROFESOR]}>
+      <SidebarProvider style={{ "--sidebar-width": "calc(var(--spacing) * 72)", "--header-height": "calc(var(--spacing) * 12)" } as React.CSSProperties}>
+        <AppSidebar variant="inset"/>
+        <SidebarInset>
+          <SiteHeader/>
+          <DashboardContent />
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthGuard>
   )
 }
