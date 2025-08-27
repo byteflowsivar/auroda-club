@@ -59,7 +59,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import type { SportResponse, CategoryResponse } from '@/types/api';
+import type { SportResponse, CategoryInfo1 } from '@/types/api';
 
 interface SportsDetailProps {
   /** ID del deporte */
@@ -75,7 +75,7 @@ export function SportsDetail({ sportId }: SportsDetailProps) {
   const [sport, setSport] = useState<SportResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<CategoryResponse | null>(null);
+  const [editingCategory, setEditingCategory] = useState<CategoryInfo1 | null>(null);
 
   // Cargar datos del deporte
   useEffect(() => {
@@ -156,7 +156,7 @@ Creado: ${formatDate(sport.createdAt)}
     setCategoryDialogOpen(true);
   };
 
-  const handleEditCategory = (category: CategoryResponse) => {
+  const handleEditCategory = (category: CategoryInfo1) => {
     setEditingCategory(category);
     setCategoryDialogOpen(true);
   };
@@ -174,7 +174,7 @@ Creado: ${formatDate(sport.createdAt)}
     }
   };
 
-  const handleDeleteCategory = async (category: CategoryResponse) => {
+  const handleDeleteCategory = async (category: CategoryInfo1) => {
     try {
       await apiClient.deleteCategory(category.id);
       showSuccess('Categoría eliminada exitosamente');
@@ -484,11 +484,6 @@ Creado: ${formatDate(sport.createdAt)}
                         <div className="text-sm text-muted-foreground">
                           Rango: {category.ageRange}
                         </div>
-                        {category.description && (
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {category.description}
-                          </div>
-                        )}
                       </div>
                     </div>
                     
