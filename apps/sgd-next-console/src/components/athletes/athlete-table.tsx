@@ -71,7 +71,7 @@ export function AthleteTable({
         selectedCategory: filters.selectedCategory,
         activeFilter: filters.activeFilter
       });
-      
+
       // Usar getApiParams() para construir parámetros correctamente
       const apiParams = filters.getApiParams();
       const params: AthleteListParams = {
@@ -79,14 +79,14 @@ export function AthleteTable({
         size: 20,
         ...apiParams,
       };
-      
+
       // Ejecutar consulta directamente
       refresh(
         async (apiParams) => {
           console.log('📡 Llamando API con parámetros:', apiParams);
           const response = await apiClient.getAthletes(apiParams as AthleteListParams);
           console.log('📦 Respuesta recibida:', response);
-          
+
           return {
             content: response.content,
             pagination: response.pagination
@@ -96,14 +96,8 @@ export function AthleteTable({
         true
       ).catch(console.error);
     }
-  }, [
-    filters.filtersLoading,
-    filters.searchQuery,
-    filters.selectedSport,
-    filters.selectedVenue,
-    filters.selectedCategory,
-    filters.activeFilter
-  ]);
+  },// eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters.filtersLoading, filters.searchQuery, filters.selectedSport, filters.selectedVenue, filters.selectedCategory, filters.activeFilter]);
 
   // Handlers combinados
   const handleClearFilters = () => {
@@ -121,7 +115,7 @@ export function AthleteTable({
           size: 20,
           ...apiParams,
         };
-        
+
         refresh(
           async (apiParams) => {
             const response = await apiClient.getAthletes(apiParams as AthleteListParams);
@@ -153,7 +147,7 @@ export function AthleteTable({
               size: 20,
               ...apiParams,
             };
-            
+
             refresh(
               async (apiParams) => {
                 const response = await apiClient.getAthletes(apiParams as AthleteListParams);
