@@ -164,15 +164,15 @@ export function AthleteForm({ athlete, onSave, onCancel, readOnly = false }: Ath
       }
     };
 
-    loadData();
+    loadData().then();
   }, []);
 
   // Calcular edad cuando cambia la fecha de nacimiento
   useEffect(() => {
-    const birthDate = form.watch('birthDate');
-    if (birthDate) {
+    const watchedBirthDate = form.watch('birthDate');
+    if (watchedBirthDate) {
       const today = new Date();
-      const birth = new Date(birthDate);
+      const birth = new Date(watchedBirthDate);
       const age = today.getFullYear() - birth.getFullYear() - 
         (today.getMonth() < birth.getMonth() || 
          (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate()) ? 1 : 0);
@@ -183,7 +183,7 @@ export function AthleteForm({ athlete, onSave, onCancel, readOnly = false }: Ath
       setAthleteAge(undefined);
       setIsMinor(false);
     }
-  }, [form.watch('birthDate')]);
+  }, [form]);
 
   // Validar tutores para menores de edad
   const validateGuardians = (data: AthleteFormData): string | null => {
@@ -234,9 +234,18 @@ export function AthleteForm({ athlete, onSave, onCancel, readOnly = false }: Ath
       } else {
         // Crear nuevo atleta
         const createData: AthleteCreateRequest = {
-          ...requestData,
+          fullName: data.fullName,
           birthDate: data.birthDate,
+          venueId: data.venueId,
           sportId: data.sportId,
+          categoryId: data.categoryId,
+          gender: data.gender,
+          email: data.email || undefined,
+          phone: data.phone || undefined,
+          address: data.address || undefined,
+          emergencyContact: data.emergencyContact || undefined,
+          emergencyPhone: data.emergencyPhone || undefined,
+          medicalNotes: data.medicalNotes || undefined,
           guardians: data.guardians || [],
         };
         
@@ -245,9 +254,9 @@ export function AthleteForm({ athlete, onSave, onCancel, readOnly = false }: Ath
         onSave?.(newAthlete);
       }
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error saving athlete:', error);
-      toast.error(error.message || 'Error al guardar el atleta');
+      toast.error(error instanceof Error ? error.message : 'Error al guardar el atleta');
     } finally {
       setLoading(false);
     }
