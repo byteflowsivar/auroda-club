@@ -29,7 +29,7 @@ export function useEditAthlete(athleteId: number | null): UseEditAthleteReturn {
   const [athlete, setAthlete] = useState<AthleteResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
 
   // Función para cargar datos del atleta
   const loadAthlete = useCallback(async () => {
@@ -51,9 +51,9 @@ export function useEditAthlete(athleteId: number | null): UseEditAthleteReturn {
         console.log(`✅ [useEditAthlete] Atleta cargado:`, athleteData.fullName);
         setAthlete(athleteData);
       }
-    } catch (err: any) {
+    } catch (err) {
       if (!cancelled) {
-        const errorMessage = err.message || 'Error al cargar los datos del atleta';
+        const errorMessage = err instanceof Error ? err.message : 'Error al cargar los datos del atleta';
         console.error(`❌ [useEditAthlete] Error cargando atleta:`, err);
         setError(errorMessage);
         setAthlete(null);

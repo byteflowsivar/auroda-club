@@ -27,7 +27,6 @@ interface CategorySelectorProps {
 export function CategorySelector({
   sportId,
   athleteAge,
-  athleteGender, // Added to destructuring
   value,
   onValueChange,
   disabled = false,
