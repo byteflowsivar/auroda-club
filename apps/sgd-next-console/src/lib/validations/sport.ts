@@ -188,7 +188,7 @@ export const TYPICAL_AGE_CATEGORIES = {
  */
 export function getSuggestedCategories(sportName: string): SportCategoryFormData[] {
   const categories = TYPICAL_AGE_CATEGORIES[sportName as keyof typeof TYPICAL_AGE_CATEGORIES];
-  return categories || [
+  return categories?.map(cat => ({ ...cat, active: true })) || [
     { name: 'Principiantes', minAge: 5, maxAge: 12, active: true },
     { name: 'Intermedios', minAge: 13, maxAge: 16, active: true },
     { name: 'Avanzados', minAge: 17, maxAge: 50, active: true }
