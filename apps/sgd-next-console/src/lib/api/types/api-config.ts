@@ -18,7 +18,9 @@ export interface RequestConfig {
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export const DEFAULT_CONFIG: ApiClientConfig = {
-  baseURL: '/api/sgd',
+  baseURL: typeof window === 'undefined' 
+    ? process.env.BACKEND_API_URL || '/api/sgd' 
+    : '/api/sgd',
   timeout: 30000,
   defaultHeaders: {
     'Content-Type': 'application/json',

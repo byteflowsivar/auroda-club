@@ -2,6 +2,7 @@ package com.sgd.athlete.repository;
 
 import com.sgd.athlete.dto.AthleteFilters;
 import com.sgd.athlete.entity.Athlete;
+import com.sgd.dashboard.dto.DashboardSummaryResponse.CountByName;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
@@ -9,9 +10,11 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Repository for Athlete entity using Panache.
@@ -243,6 +246,135 @@ public class AthleteRepository implements PanacheRepository<Athlete> {
      */
     public long countBySport(Long sportId) {
         return count("sport.id = ?1 AND active = true", sportId);
+    }
+
+    // Dashboard statistics methods
+    
+    /**
+     * Count total active athletes.
+     */
+    public Integer countActiveAthletes() {
+        return Math.toIntExact(count("active = true"));
+    }
+    
+    /**
+     * Count active athletes by venues.
+     */
+    public Integer countActiveAthletesByVenues(Set<Long> venueIds) {
+        if (venueIds.isEmpty()) return 0;
+        return Math.toIntExact(count("active = true AND venue.id IN ?1", venueIds));
+    }
+    
+    /**
+     * Count new athletes since date.
+     */
+    public Integer countNewAthletesSince(LocalDateTime since) {
+        return Math.toIntExact(count("active = true AND createdAt >= ?1", since));
+    }
+    
+    /**
+     * Count new athletes since date by venues.
+     */
+    public Integer countNewAthletesSinceByVenues(LocalDateTime since, Set<Long> venueIds) {
+        if (venueIds.isEmpty()) return 0;
+        return Math.toIntExact(count("active = true AND createdAt >= ?1 AND venue.id IN ?2", since, venueIds));
+    }
+    
+    /**
+     * Get athletes count by sport.
+     */
+    public List<CountByName> getAthletesCountBySport() {
+        return getEntityManager()
+                .createQuery("SELECT s.name, COUNT(a) " +
+                           "FROM Athlete a JOIN a.sport s WHERE a.active = true " +
+                           "GROUP BY s.name ORDER BY COUNT(a) DESC", Object[].class)
+                .getResultList()
+                .stream()
+                .map(result -> new CountByName((String) result[0], ((Number) result[1]).intValue()))
+                .toList();
+    }
+    
+    /**
+     * Get athletes count by sport filtered by venues and sports.
+     */
+    public List<CountByName> getAthletesCountBySportFiltered(Set<Long> venueIds, Set<Long> sportIds) {
+        if (venueIds.isEmpty()) return List.of();
+        
+        String query = "SELECT s.name, COUNT(a) " +
+                      "FROM Athlete a JOIN a.sport s WHERE a.active = true AND a.venue.id IN :venueIds";
+        
+        if (!sportIds.isEmpty()) {
+            query += " AND s.id IN :sportIds";
+        }
+        query += " GROUP BY s.name ORDER BY COUNT(a) DESC";
+        
+        var typedQuery = getEntityManager().createQuery(query, Object[].class)
+                .setParameter("venueIds", venueIds);
+        
+        if (!sportIds.isEmpty()) {
+            typedQuery.setParameter("sportIds", sportIds);
+        }
+        
+        return typedQuery.getResultList()
+                .stream()
+                .map(result -> new CountByName((String) result[0], ((Number) result[1]).intValue()))
+                .toList();
+    }
+    
+    /**
+     * Get athletes count by venue.
+     */
+    public List<CountByName> getAthletesCountByVenue() {
+        return getEntityManager()
+                .createQuery("SELECT v.name, COUNT(a) " +
+                           "FROM Athlete a JOIN a.venue v WHERE a.active = true " +
+                           "GROUP BY v.name ORDER BY COUNT(a) DESC", Object[].class)
+                .getResultList()
+                .stream()
+                .map(result -> new CountByName((String) result[0], ((Number) result[1]).intValue()))
+                .toList();
+    }
+    
+    /**
+     * Get athletes count by venue filtered.
+     */
+    public List<CountByName> getAthletesCountByVenueFiltered(Set<Long> venueIds) {
+        if (venueIds.isEmpty()) return List.of();
+        
+        return getEntityManager()
+                .createQuery("SELECT v.name, COUNT(a) " +
+                           "FROM Athlete a JOIN a.venue v WHERE a.active = true AND v.id IN :venueIds " +
+                           "GROUP BY v.name ORDER BY COUNT(a) DESC", Object[].class)
+                .setParameter("venueIds", venueIds)
+                .getResultList()
+                .stream()
+                .map(result -> new CountByName((String) result[0], ((Number) result[1]).intValue()))
+                .toList();
+    }
+    
+    /**
+     * Count minors without guardian.
+     */
+    public Integer countMinorsWithoutGuardian() {
+        LocalDate eighteenYearsAgo = LocalDate.now().minusYears(18);
+        return Math.toIntExact(count(
+            "active = true AND birthDate > ?1 AND NOT EXISTS " +
+            "(SELECT 1 FROM AthleteGuardian ag WHERE ag.athlete = this AND ag.active = true)",
+            eighteenYearsAgo
+        ));
+    }
+    
+    /**
+     * Count minors without guardian by venues.
+     */
+    public Integer countMinorsWithoutGuardianByVenues(Set<Long> venueIds) {
+        if (venueIds.isEmpty()) return 0;
+        LocalDate eighteenYearsAgo = LocalDate.now().minusYears(18);
+        return Math.toIntExact(count(
+            "active = true AND venue.id IN ?1 AND birthDate > ?2 AND NOT EXISTS " +
+            "(SELECT 1 FROM AthleteGuardian ag WHERE ag.athlete = this AND ag.active = true)",
+            venueIds, eighteenYearsAgo
+        ));
     }
 
     /**

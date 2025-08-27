@@ -97,4 +97,20 @@ public class VenueRepository implements PanacheRepository<Venue> {
         long matchingCount = count("id IN ?1 AND club.id IN ?2 AND active = true", venueIds, clubIds);
         return matchingCount == venueIds.size();
     }
+    
+    // Dashboard statistics methods
+    
+    /**
+     * Count total active venues.
+     */
+    public Integer countActiveVenues() {
+        return Math.toIntExact(count("active = true"));
+    }
+    
+    /**
+     * Count active venues by club.
+     */
+    public Integer countActiveVenuesByClub(Long clubId) {
+        return Math.toIntExact(count("active = true AND club.id = ?1", clubId));
+    }
 }

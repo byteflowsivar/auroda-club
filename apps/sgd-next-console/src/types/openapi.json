@@ -486,6 +486,55 @@
           }
         }
       },
+      "CountByName": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DashboardSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "totalActiveAthletes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newAthletesLast30Days": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalActiveVenues": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalActiveSports": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "athletesBySport": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByName"
+            }
+          },
+          "athletesByVenue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByName"
+            }
+          },
+          "athletesWithoutGuardian": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "GuardianAssociation": {
         "type": "object",
         "required": [
@@ -1009,7 +1058,7 @@
       },
       "SecurityScheme": {
         "type": "openIdConnect",
-        "openIdConnectUrl": "http://localhost:8089/realms/SGD/.well-known/openid-configuration",
+        "openIdConnectUrl": "https://auth.byteflowsivar.com/realms/sistema-clubes-dev/.well-known/openid-configuration",
         "description": "Authentication"
       }
     }
@@ -1052,6 +1101,10 @@
     {
       "name": "Venues",
       "description": "Gestión de sedes deportivas"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Dashboard statistics and summary data"
     },
     {
       "name": "Categories",
@@ -1944,6 +1997,38 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dashboard/summary": {
+      "get": {
+        "summary": "Get dashboard summary",
+        "description": "Retrieves aggregated statistics and KPIs for the dashboard. Data is filtered based on user roles and permissions. ADMIN_GENERAL sees all data, ADMIN_CLUB sees club data, PROFESOR sees limited data for assigned venues.",
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard summary retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User not authenticated"
+          },
+          "403": {
+            "description": "User does not have required permissions"
+          }
+        },
+        "security": [
+          {
+            "Keycloak": []
           }
         ]
       }

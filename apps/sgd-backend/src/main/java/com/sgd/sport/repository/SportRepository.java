@@ -79,4 +79,13 @@ public class SportRepository implements PanacheRepository<Sport> {
     public long countActive() {
         return count("active = true");
     }
+    
+    // Dashboard statistics methods
+    
+    /**
+     * Count total active sports.
+     */
+    public Integer countActiveSports() {
+        return Math.toIntExact(count("active = true"));
+    }
 }

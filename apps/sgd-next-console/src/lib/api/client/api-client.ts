@@ -23,7 +23,7 @@ import type {
   VenueCreateRequest,
   VenueUpdateRequest,
   GuardianInfo,
-  AthleteInfo
+  AthleteInfo, DashboardSummaryResponse
 } from '@/types/api';
 
 import { ClubUtils } from '@/lib/config';
@@ -405,5 +405,13 @@ export class ApiClient {
 
   async deleteVenue(id: number): Promise<void> {
     return this.delete<void>(`/venues/${id}`);
+  }
+
+  // =============================================================================
+  // MÉTODOS ESPECÍFICOS PARA DASHBOARD
+  // =============================================================================
+
+  async getDashboardSummary(): Promise<DashboardSummaryResponse> {
+    return this.get<DashboardSummaryResponse>('/dashboard/summary');
   }
 }

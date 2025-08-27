@@ -455,6 +455,32 @@ export interface CategoryResponse {
 }
 
 // ============================================================================
+// DASHBOARD TYPES (según OpenAPI exacto)
+// ============================================================================
+
+/**
+ * Schema: CountByName
+ * Utilizado para datos de gráficos
+ */
+export interface CountByName {
+  name: string;
+  value: number;
+}
+
+/**
+ * Schema: DashboardSummaryResponse
+ */
+export interface DashboardSummaryResponse {
+  totalActiveAthletes: number;
+  newAthletesLast30Days: number;
+  totalActiveVenues: number;
+  totalActiveSports: number;
+  athletesBySport: CountByName[];
+  athletesByVenue: CountByName[];
+  athletesWithoutGuardian: number;
+}
+
+// ============================================================================
 // CLUB TYPES (según OpenAPI exacto)
 // ============================================================================
 
