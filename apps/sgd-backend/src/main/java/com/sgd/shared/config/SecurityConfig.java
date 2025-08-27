@@ -23,26 +23,4 @@ public class SecurityConfig {
         LOG.info("OIDC authentication enabled with Keycloak integration");
         LOG.info("Custom JWT claims processing enabled for: club_id, venue_ids, sport_ids, full_name, phone");
     }
-
-    /**
-     * Custom OIDC tenant configuration if needed.
-     * This method can be used to programmatically configure OIDC settings.
-     */
-    public OidcTenantConfig createTenantConfig() {
-        OidcTenantConfig config = new OidcTenantConfig();
-        
-        // Enable role-based access control
-        config.roles.source = java.util.Optional.of(OidcTenantConfig.Roles.Source.accesstoken);
-        
-        // Configure token verification
-        config.token.verifyAccessTokenWithUserInfo = java.util.Optional.of(false);
-        config.token.allowJwtIntrospection = true;
-        config.token.allowOpaqueTokenIntrospection = false;
-        
-        // Configure claims processing
-        config.authentication.userInfoRequired = java.util.Optional.of(false);
-        config.authentication.sessionAgeExtension = java.time.Duration.ofMinutes(30);
-        
-        return config;
-    }
 }
