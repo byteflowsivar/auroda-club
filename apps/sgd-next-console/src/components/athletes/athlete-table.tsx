@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -103,7 +103,6 @@ export function AthleteTable({
     filters.selectedVenue,
     filters.selectedCategory,
     filters.activeFilter
-    // NO incluir refresh en las dependencias
   ]);
 
   // Handlers combinados

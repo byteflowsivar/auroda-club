@@ -562,6 +562,8 @@ export interface AthleteListParams {
   active?: boolean;
   sort?: string;
   direction?: "ASC" | "DESC";
+  /** Index signature para compatibilidad con parámetros dinámicos */
+  [key: string]: unknown;
 }
 
 /**
