@@ -12,11 +12,11 @@ export const useGuardianPermissions = (
   const { data: session } = useSession();
 
   const canEdit = !readOnly && (
-    session?.user?.roles?.includes('ADMIN_GENERAL') || 
-    session?.user?.roles?.includes('ADMIN_CLUB')
+    (session?.user?.roles?.includes('ADMIN_GENERAL') ?? false) || 
+    (session?.user?.roles?.includes('ADMIN_CLUB') ?? false)
   );
   
-  const canDelete = !readOnly && session?.user?.roles?.includes('ADMIN_GENERAL');
+  const canDelete = !readOnly && (session?.user?.roles?.includes('ADMIN_GENERAL') ?? false);
   
   const canCreate = canEdit; // Misma lógica que editar
 
